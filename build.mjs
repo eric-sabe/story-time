@@ -218,9 +218,16 @@ function renderScene(s) {
 
 function renderExperience(meta, scenes, captions, hasAudio) {
   const scenesHtml = scenes.map(renderScene).join("\n\n");
-  const clientData = scenes.map((s) => ({ id: s.id, sub: s.sub, text: s.narration, cap: captions[s.id] || null }));
+  const clientData = scenes.map((s) => {
+    const cap = captions[s.id] || null;
+    const dur = cap && cap.length
+      ? Math.round((cap[cap.length - 1][0] + 1.8) * 10) / 10
+      : Math.round(estimateSeconds(s.narration) * 10) / 10;
+    return { id: s.id, sub: s.sub, text: s.narration, cap, dur };
+  });
   return EXPERIENCE_TEMPLATE
     .replace(/__TITLE__/g, esc(meta.title))
+    .replace(/__WORK_ID__/g, meta.id)
     .replace("__SIGNATURE__", meta.signature || "gold")
     .replace("__SCENES__", scenesHtml)
     .replace("__DATA__", JSON.stringify(clientData))
@@ -253,7 +260,7 @@ function cardHtml(c) {
     ? '<a class="source" href="' + c.url + '" target="_blank" rel="noopener">Source ↗</a>'
     : "";
   return (
-    '<div class="card" style="--accent: var(--' + c.signature + ')">' +
+    '<div class="card" data-id="' + c.id + '" data-scenes="' + c.chapters + '" style="--accent: var(--' + c.signature + ')">' +
     '<div class="card-top"><span class="chip">' + esc(c.kind) + "</span>" +
     '<span class="dur">' + c.duration + " · " + c.chapters + " ch</span></div>" +
     '<a class="ttl" href="' + c.id + '/index.html"><h2>' + esc(c.title) + "</h2></a>" +
@@ -499,6 +506,8 @@ const EXPERIENCE_TEMPLATE = `<!doctype html>
   .pmeta .now { font-family:var(--mono); font-size:.62rem; letter-spacing:.14em; text-transform:uppercase;
     color:var(--accent); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:11rem; }
   .pmeta .sub { font-size:.76rem; color:var(--muted); white-space:nowrap; }
+  .pmeta .rem { color:var(--accent); }
+  .pmeta .rem:not(:empty):before { content:"·"; color:var(--faint); margin:0 .45em; }
   .seek { width:8rem; height:4px; border-radius:2px; background:rgba(244,239,230,.14); overflow:hidden; margin-top:.35rem; }
   .seek .fill { height:100%; width:0%; background:var(--accent); transition:width .2s linear; }
 
@@ -569,7 +578,7 @@ __SCENES__
   <button class="pbtn speed" id="speedBtn" title="Playback speed" aria-label="Playback speed">1&times;</button>
   <div class="pmeta">
     <span class="now" id="nowTitle">Prologue</span>
-    <span class="sub" id="nowSub">Press play to begin</span>
+    <span class="sub"><span id="nowSub">Press play to begin</span><span class="rem" id="remain"></span></span>
     <div class="seek"><div class="fill" id="seekFill"></div></div>
   </div>
   <div class="dots" id="dots" aria-hidden="true"></div>
@@ -648,7 +657,18 @@ __SCENES__
   var nowTitle=document.getElementById("nowTitle"), nowSub=document.getElementById("nowSub"), seekFill=document.getElementById("seekFill");
   var dotsWrap=document.getElementById("dots"), player=document.getElementById("player");
   var capEl=document.getElementById("caption"), modeFlag=document.getElementById("modeFlag");
-  var speedBtn=document.getElementById("speedBtn"), showCaptions=true, activeIndex=0;
+  var speedBtn=document.getElementById("speedBtn"), remEl=document.getElementById("remain"), showCaptions=true, activeIndex=0;
+
+  // per-work resume + time-left
+  var WORK_ID="__WORK_ID__", PKEY="st-progress-"+WORK_ID, pendingSeek=0, lastSave=0, resumeSeek=0, savedProg=null;
+  try{ savedProg=JSON.parse(localStorage.getItem(PKEY)||"null"); }catch(e){}
+  function saveProgress(scene,t,done){ try{ localStorage.setItem(PKEY, JSON.stringify({scene:scene,t:Math.round(t||0),done:!!done,total:scenes.length,at:Date.now()})); }catch(e){} }
+  function clearProgress(){ try{ localStorage.removeItem(PKEY); }catch(e){} }
+  function fmtLeft(sec){ if(!(sec>1)) return ""; if(sec<60) return "under a minute left"; return "about "+Math.round(sec/60)+" min left"; }
+  function updateRemaining(){ if(!playing){ remEl.textContent=""; return; }
+    var elapsed=(mode==="audio"&&isFinite(audio.currentTime))?audio.currentTime:0;
+    var rem=(SC[activeIndex].dur||0)-elapsed; for(var i=activeIndex+1;i<SC.length;i++) rem+=(SC[i].dur||0);
+    remEl.textContent=fmtLeft(rem/(speed||1)); }
 
   SC.forEach(function(s,i){ var b=document.createElement("button"); b.setAttribute("aria-label","Go to "+s.sub);
     b.addEventListener("click",function(){ jumpTo(i,playing); }); dotsWrap.appendChild(b); });
@@ -658,7 +678,7 @@ __SCENES__
     document.getElementById("topbar").style.width=(scenes.length>1?(activeIndex/(scenes.length-1))*100:0)+"%"; }
   function setActive(idx,doScroll){ activeIndex=Math.max(0,Math.min(scenes.length-1,idx)); var s=scenes[activeIndex];
     applyHue(s.getAttribute("data-hue")); nowTitle.textContent=SC[activeIndex].sub; nowSub.textContent=(activeIndex+1)+" / "+scenes.length;
-    updateDots(); if(doScroll) s.scrollIntoView({behavior:reduced?"auto":"smooth",block:"center"}); }
+    updateDots(); updateRemaining(); if(doScroll) s.scrollIntoView({behavior:reduced?"auto":"smooth",block:"center"}); }
   function setPlayIcon(on){ playIcon.style.display=on?"none":"block"; pauseIcon.style.display=on?"block":"none";
     playBtn.setAttribute("aria-label",on?"Pause narration":"Play narration"); }
 
@@ -683,17 +703,21 @@ __SCENES__
   function highlightByWordIndex(k){ if(k<capTokens.length) markToken(k); }
 
   function srcFor(i){ return "audio/"+SC[i].id+".mp3"; }
-  function playScene(i){ setActive(i,true); playing=true; paused=false; setPlayIcon(true); buildCaption(i);
+  function playScene(i,seek){ setActive(i,true); playing=true; paused=false; setPlayIcon(true); buildCaption(i);
     var useAudio=HAS_AUDIO && SC[i].cap;
     if(useAudio){ mode="audio"; modeFlag.textContent="ElevenLabs"; audio.src=srcFor(i); audio.currentTime=0;
+      pendingSeek=(seek&&seek>0)?seek:0;
       audio.playbackRate=speed; audio.volume=parseFloat(document.getElementById("vol").value);
       var p=audio.play(); if(p&&p.catch) p.catch(function(){ ttsSpeak(i); }); }
-    else { ttsSpeak(i); } }
-  function advance(){ if(activeIndex<scenes.length-1) playScene(activeIndex+1); else stopNarration(); }
+    else { ttsSpeak(i); }
+    saveProgress(i, seek||0, false); updateRemaining(); }
+  function advance(){ if(activeIndex<scenes.length-1) playScene(activeIndex+1); else { saveProgress(activeIndex,0,true); stopNarration(); } }
   audio.addEventListener("ended",function(){ if(playing&&mode==="audio") advance(); });
   audio.addEventListener("error",function(){ if(playing&&mode==="audio") ttsSpeak(activeIndex); });
+  audio.addEventListener("loadedmetadata",function(){ if(pendingSeek>0&&isFinite(audio.duration)){ try{ audio.currentTime=Math.min(pendingSeek,audio.duration-0.3); }catch(e){} pendingSeek=0; } });
   audio.addEventListener("timeupdate",function(){ if(mode!=="audio")return;
-    if(audio.duration) seekFill.style.width=(audio.currentTime/audio.duration*100)+"%"; highlightByTime(audio.currentTime); });
+    if(audio.duration) seekFill.style.width=(audio.currentTime/audio.duration*100)+"%"; highlightByTime(audio.currentTime); updateRemaining();
+    var now=Date.now(); if(now-lastSave>4000){ lastSave=now; saveProgress(activeIndex, audio.currentTime, false); } });
 
   function ttsSpeak(i){ mode="tts"; modeFlag.textContent=ttsOK?"Browser voice":"unavailable"; if(!ttsOK)return; synth.cancel();
     var u=new SpeechSynthesisUtterance(SC[i].text); u.rate=0.98*speed; u.pitch=1.0;
@@ -702,13 +726,13 @@ __SCENES__
     u.onend=function(){ if(playing&&mode==="tts") advance(); };
     setTimeout(function(){ if(playing) synth.speak(u); }, reduced?40:420); }
 
-  function startNarration(i){ playScene(typeof i==="number"?i:activeIndex); player.classList.add("show"); }
+  function startNarration(i,seek){ playScene(typeof i==="number"?i:activeIndex, seek); player.classList.add("show"); }
   function stopNarration(){ playing=false; paused=false; setPlayIcon(false); try{ audio.pause(); }catch(e){}
-    if(ttsOK) synth.cancel(); capEl.classList.remove("show"); seekFill.style.width="0%"; }
+    if(ttsOK) synth.cancel(); capEl.classList.remove("show"); seekFill.style.width="0%"; remEl.textContent=""; }
 
   playBtn.addEventListener("click",function(){
     if(!playing){ startNarration(activeIndex); return; }
-    if(!paused){ paused=true; setPlayIcon(false); if(mode==="audio")audio.pause(); else if(ttsOK)synth.pause(); }
+    if(!paused){ paused=true; setPlayIcon(false); if(mode==="audio"){ audio.pause(); saveProgress(activeIndex,audio.currentTime,false); } else if(ttsOK)synth.pause(); }
     else { paused=false; setPlayIcon(true); if(mode==="audio")audio.play(); else if(ttsOK)synth.resume(); } });
   document.getElementById("nextBtn").addEventListener("click",function(){ jumpTo(activeIndex+1,playing); });
   document.getElementById("prevBtn").addEventListener("click",function(){ jumpTo(activeIndex-1,playing); });
@@ -717,8 +741,15 @@ __SCENES__
     if(keep){ playScene(i); } else { stopNarration(); setActive(i,true); } }
 
   var beginBtn=document.getElementById("beginBtn");
-  if(beginBtn) beginBtn.addEventListener("click",function(){ player.classList.add("show");
-    if(ttsOK){ try{ synth.resume(); }catch(e){} } startNarration(0); });
+  if(beginBtn){
+    if(savedProg && !savedProg.done && savedProg.scene>0){ resumeSeek=savedProg.t||0;
+      beginBtn.innerHTML='<span class="tri"></span> Resume &middot; '+Math.min(99,Math.round(savedProg.scene/scenes.length*100))+'%'; }
+    else if(savedProg && savedProg.done){ beginBtn.innerHTML='<span class="tri"></span> Play again'; }
+    beginBtn.addEventListener("click",function(){ player.classList.add("show"); if(ttsOK){ try{ synth.resume(); }catch(e){} }
+      if(savedProg && savedProg.done){ clearProgress(); savedProg=null; startNarration(0,0); }
+      else if(savedProg && !savedProg.done && savedProg.scene>0){ startNarration(savedProg.scene, resumeSeek); }
+      else { startNarration(0,0); } });
+  }
   addEventListener("scroll",function(){ if(scrollY>innerHeight*0.5) player.classList.add("show"); },{passive:true});
 
   var centerIO=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){
@@ -730,7 +761,7 @@ __SCENES__
   function applySpeed(v){ speed=v; localStorage.setItem("st-speed",String(v));
     speedBtn.innerHTML=(v%1===0?v:v.toFixed(2).replace(/0$/,""))+"&times;";
     if(mode==="audio") audio.playbackRate=v;
-    Array.prototype.forEach.call(speedsWrap.children,function(b){ b.classList.toggle("on",parseFloat(b.dataset.v)===v); }); }
+    Array.prototype.forEach.call(speedsWrap.children,function(b){ b.classList.toggle("on",parseFloat(b.dataset.v)===v); }); updateRemaining(); }
   SPEEDS.forEach(function(v){ var b=document.createElement("button"); b.dataset.v=v;
     b.textContent=(v%1===0?v:v.toFixed(2).replace(/0$/,""))+"\\u00d7";
     b.addEventListener("click",function(){ applySpeed(v); }); speedsWrap.appendChild(b); });
@@ -758,7 +789,7 @@ __SCENES__
   if(!HAS_AUDIO){ ttsRow.style.display="flex"; modeFlag.textContent=ttsOK?"Browser voice":"unavailable"; }
   else { modeFlag.textContent="ElevenLabs"; }
 
-  addEventListener("beforeunload",function(){ if(ttsOK) synth.cancel(); try{audio.pause();}catch(e){} });
+  addEventListener("beforeunload",function(){ if(playing&&mode==="audio") saveProgress(activeIndex,audio.currentTime,false); if(ttsOK) synth.cancel(); try{audio.pause();}catch(e){} });
   document.addEventListener("keydown",function(e){ if(e.code==="Space"&&player.classList.contains("show")&&e.target===document.body){ e.preventDefault(); playBtn.click(); } });
   setActive(0,false);
 })();
@@ -848,6 +879,13 @@ const LIBRARY_TEMPLATE = `<!doctype html>
   .card .play { display:inline-flex; align-items:center; gap:.5rem; font-family:var(--mono); font-size:.64rem;
     letter-spacing:.16em; text-transform:uppercase; color:var(--accent); white-space:nowrap; }
   .card .play .tri { width:0; height:0; border-left:8px solid var(--accent); border-top:5px solid transparent; border-bottom:5px solid transparent; }
+  .card .stbadge { position:absolute; top:-9px; right:16px; z-index:4; font-family:var(--mono); font-size:.54rem;
+    letter-spacing:.1em; text-transform:uppercase; padding:.24rem .55rem; border-radius:999px; background:var(--accent);
+    color:var(--ink); font-weight:700; box-shadow:0 4px 14px -4px rgba(0,0,0,.65); }
+  .card .stbadge.fin { background:var(--sage); }
+  .card .pbar { position:absolute; left:0; bottom:0; height:3px; width:0; background:var(--accent);
+    border-radius:0 2px 2px 18px; z-index:2; transition:width .6s ease; }
+  .card.done .pbar { background:var(--sage); opacity:.75; }
 
   footer { margin-top:4rem; font-family:var(--mono); font-size:.66rem; letter-spacing:.1em; color:var(--faint); text-transform:uppercase; }
   footer a { color:var(--muted); text-decoration:none; border-bottom:1px solid transparent; }
@@ -899,6 +937,24 @@ __CHRONO__
   tS.addEventListener("click",function(){ show(true); });
   tC.addEventListener("click",function(){ show(false); });
   try{ if(localStorage.getItem("st-view")==="chrono") show(false); }catch(e){}
+})();
+(function(){
+  // decorate cards with this visitor's listening progress
+  function pget(id){ try{ return JSON.parse(localStorage.getItem("st-progress-"+id)||"null"); }catch(e){ return null; } }
+  Array.prototype.forEach.call(document.querySelectorAll(".card"),function(card){
+    var id=card.getAttribute("data-id"), total=+card.getAttribute("data-scenes")||1, p=pget(id);
+    if(!p) return;
+    var playEl=card.querySelector(".play");
+    var badge=document.createElement("span"); badge.className="stbadge";
+    var bar=document.createElement("div"); bar.className="pbar"; card.appendChild(bar);
+    if(p.done){ card.classList.add("done"); badge.className="stbadge fin"; badge.textContent="\\u2713 Done";
+      if(playEl) playEl.innerHTML="\\u2713 Replay"; card.appendChild(badge);
+      setTimeout(function(){ bar.style.width="100%"; },30); }
+    else { var pct=Math.max(3,Math.min(97,Math.round(p.scene/total*100)));
+      badge.textContent="\\u25B8 "+pct+"%";
+      if(playEl) playEl.innerHTML='<span class="tri"></span> Resume'; card.appendChild(badge);
+      setTimeout(function(){ bar.style.width=pct+"%"; },30); }
+  });
 })();
 (function(){
   var c=document.getElementById("meadow"), x=c.getContext("2d"), W,H,pts=[],raf;
