@@ -1,0 +1,486 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Values in the Wild — Story Time</title>
+<style>
+  @property --grad-a { syntax: '<color>'; inherits: true; initial-value: #0B0E14; }
+  @property --grad-b { syntax: '<color>'; inherits: true; initial-value: #12172400; }
+  @property --grad-c { syntax: '<color>'; inherits: true; initial-value: #0B0E14; }
+  :root {
+    --ink:#0B0E14; --text:#F4EFE6; --muted:#98A2B4; --faint:#5A6274;
+    --gold:#F2C879; --green:#7FC8A0; --sky:#8FB8E8; --rose:#E8927C; --lav:#C4AEE8;
+    --amber:#E4A85E; --steel:#86A9CC; --violet:#B49CF0; --teal:#66C6BE; --crimson:#DE8A86; --sage:#A7C08C;
+    --accent:var(--sage);
+    --serif:"Hoefler Text","New York","Iowan Old Style",Palatino,Georgia,serif;
+    --sans:-apple-system,"SF Pro Text","Helvetica Neue",Inter,system-ui,sans-serif;
+    --mono:"SF Mono",ui-monospace,"Menlo","Roboto Mono",monospace;
+    --measure:34rem;
+  }
+  * { box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  @media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto;} }
+  body { margin:0; background:var(--ink); color:var(--text); font-family:var(--sans);
+    font-size:18px; line-height:1.7; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
+
+  #dawn { position:fixed; inset:0; z-index:-2;
+    background:
+      radial-gradient(120% 90% at 50% 118%, var(--grad-b) 0%, transparent 60%),
+      linear-gradient(180deg, var(--grad-a) 0%, var(--grad-c) 100%);
+    transition:--grad-a 1.6s ease,--grad-b 1.6s ease,--grad-c 1.6s ease; }
+  #meadow { position:fixed; inset:0; z-index:-1; pointer-events:none; opacity:.9; }
+  #grain { position:fixed; inset:0; z-index:0; pointer-events:none; opacity:.035; mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+
+  main { position:relative; z-index:1; }
+  .scene { min-height:100vh; display:flex; flex-direction:column; justify-content:center;
+    padding:14vh clamp(1.5rem,6vw,7rem); max-width:68rem; margin:0 auto; }
+  .scene .inner { opacity:0; transform:translateY(26px);
+    transition:opacity 1.1s ease, transform 1.1s cubic-bezier(.2,.7,.2,1); max-width:var(--measure); }
+  .scene.wide .inner { max-width:52rem; }
+  .scene.revealed .inner { opacity:1; transform:none; }
+  @media (prefers-reduced-motion: reduce){ .scene .inner{opacity:1;transform:none;transition:none;} }
+
+  .eyebrow { font-family:var(--mono); font-size:.74rem; letter-spacing:.28em; text-transform:uppercase;
+    color:var(--accent); display:flex; align-items:center; gap:.8em; margin:0 0 1.6rem; flex-wrap:wrap; }
+  .eyebrow .num { color:var(--faint); }
+  .eyebrow .dot { width:7px; height:7px; border-radius:50%; background:var(--accent); box-shadow:0 0 14px var(--accent); }
+
+  h1 { font-family:var(--serif); font-weight:500; letter-spacing:-.01em;
+    font-size:clamp(2.4rem,7.5vw,5.2rem); line-height:1; margin:0; text-wrap:balance;
+    overflow-wrap:break-word; hyphens:auto; }
+  h2 { font-family:var(--serif); font-weight:500; letter-spacing:-.005em;
+    font-size:clamp(1.7rem,5vw,3.3rem); line-height:1.05; margin:0 0 1.3rem; text-wrap:balance;
+    overflow-wrap:break-word; hyphens:auto; }
+  .lede { font-size:clamp(1.05rem,2.2vw,1.32rem); color:var(--text); }
+  p { color:var(--muted); }
+  p .hl { color:var(--text); }
+  em { color:var(--text); font-style:italic; }
+  code { font-family:var(--mono); font-size:.9em; color:var(--accent); background:rgba(255,255,255,.05); padding:.05em .35em; border-radius:4px; }
+
+  ul.reasons { list-style:none; padding:0; margin:0 0 1.4rem; display:flex; flex-direction:column; gap:.85rem; }
+  ul.reasons.tight { gap:.6rem; }
+  ul.reasons.two { display:grid; grid-template-columns:1fr 1fr; gap:.7rem 1.6rem; }
+  ul.reasons li { position:relative; padding-left:1.3rem; color:var(--muted); font-size:1.02rem; line-height:1.5; }
+  ul.reasons li:before { content:""; position:absolute; left:0; top:.62em; width:6px; height:6px;
+    border-radius:50%; background:var(--accent); box-shadow:0 0 10px var(--accent); }
+  ul.reasons li b { color:var(--text); font-weight:600; }
+  @media (max-width:620px){ ul.reasons.two{grid-template-columns:1fr;} }
+
+  .chips { display:flex; flex-wrap:wrap; gap:.55rem; margin:0 0 1.4rem; }
+  .chips span { font-family:var(--mono); font-size:.72rem; letter-spacing:.04em; color:var(--accent);
+    border:1px solid color-mix(in oklab, var(--accent) 45%, transparent); border-radius:999px; padding:.34rem .8rem; }
+  .capnote { font-size:1.06rem; color:var(--text); margin-top:1.2rem; }
+
+  #s0 .inner { max-width:47rem; }
+  .kicker { font-family:var(--mono); font-size:.7rem; letter-spacing:.24em; text-transform:uppercase; color:var(--faint); margin:0 0 1.4rem; }
+  .subtitle { font-family:var(--serif); font-style:italic; font-size:clamp(1.1rem,2.6vw,1.6rem); color:var(--accent); margin:1rem 0 0; opacity:.9; }
+  .epigraph { font-family:var(--serif); font-style:italic; font-size:clamp(1.05rem,2.4vw,1.45rem);
+    line-height:1.5; color:var(--accent); margin:0 0 2.4rem; opacity:.9; white-space:pre-line; }
+  .epigraph cite { display:block; font-style:normal; font-family:var(--mono);
+    font-size:.72rem; letter-spacing:.22em; text-transform:uppercase; color:var(--faint); margin-top:1.1rem; }
+  .byline { font-family:var(--mono); font-size:.76rem; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); margin:1.6rem 0 0; }
+  .byline b { color:var(--text); font-weight:600; }
+  .begin { margin-top:2.6rem; display:inline-flex; align-items:center; gap:.8rem;
+    font-family:var(--sans); font-size:1rem; font-weight:600; color:var(--ink); background:var(--accent);
+    border:0; border-radius:999px; padding:.95rem 1.6rem; cursor:pointer;
+    transition:transform .25s ease, box-shadow .5s ease, filter .25s; }
+  .begin:hover { transform:translateY(-2px); box-shadow:0 12px 40px -8px color-mix(in oklab, var(--accent) 60%, transparent); filter:brightness(1.05); }
+  .begin:focus-visible { outline:3px solid var(--accent); outline-offset:4px; }
+  .begin .tri { width:0; height:0; border-left:11px solid var(--ink); border-top:7px solid transparent; border-bottom:7px solid transparent; }
+  .scrollhint { margin-top:2.2rem; font-family:var(--mono); font-size:.7rem; letter-spacing:.22em; text-transform:uppercase; color:var(--faint); }
+
+  .stats { display:flex; flex-wrap:wrap; gap:clamp(1.4rem,4vw,3rem); margin-top:2.2rem; }
+  .stat { min-width:7.5rem; }
+  .stat .fig { font-family:var(--serif); font-weight:500; font-size:clamp(2rem,4.4vw,3rem); line-height:1;
+    color:var(--accent); font-variant-numeric:tabular-nums; display:flex; align-items:baseline; gap:.1em; }
+  .stat .fig .u { font-size:.4em; color:var(--text); font-family:var(--sans); font-weight:600; letter-spacing:.02em; }
+  .stat .fig .u.dollar { color:var(--accent); font-family:var(--serif); font-weight:500; font-size:.55em; }
+  .stat .cap { font-family:var(--mono); font-size:.64rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin-top:.7rem; line-height:1.5; }
+
+  .quote { font-family:var(--serif); font-style:italic; font-size:clamp(1.5rem,3.6vw,2.4rem);
+    line-height:1.3; color:var(--text); text-wrap:balance; margin:0; }
+  .quote .grace { color:var(--accent); }
+  .fnote { font-family:var(--mono); font-size:.66rem; letter-spacing:.1em; color:var(--faint); margin-top:2rem; text-transform:uppercase; }
+
+  /* back to library */
+  #back { position:fixed; top:1rem; left:1rem; z-index:45; display:inline-flex; align-items:center; gap:.5rem;
+    font-family:var(--mono); font-size:.68rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted);
+    text-decoration:none; padding:.5rem .8rem; border-radius:999px; border:1px solid rgba(244,239,230,.12);
+    background:rgba(14,18,26,.55); backdrop-filter:blur(10px); transition:color .2s, border-color .2s; }
+  #back:hover { color:var(--text); border-color:rgba(244,239,230,.3); }
+
+  /* caption */
+  #caption { position:fixed; left:50%; transform:translateX(-50%); bottom:5.6rem; z-index:38;
+    width:min(90vw,46rem); text-align:center; font-family:var(--serif); font-size:clamp(1.05rem,2.5vw,1.5rem);
+    line-height:1.5; color:var(--faint); pointer-events:none; opacity:0; transition:opacity .4s ease;
+    text-shadow:0 2px 30px rgba(11,14,20,.95); }
+  #caption.show { opacity:1; }
+  #caption .w { transition:color .12s ease; }
+  #caption .w.spoken { color:var(--muted); }
+  #caption .w.active { color:var(--accent); }
+
+  #player { position:fixed; left:50%; transform:translateX(-50%); bottom:max(1.1rem, env(safe-area-inset-bottom));
+    z-index:40; display:flex; align-items:center; gap:.5rem; background:rgba(14,18,26,.72);
+    backdrop-filter:blur(16px) saturate(1.3); -webkit-backdrop-filter:blur(16px) saturate(1.3);
+    border:1px solid rgba(244,239,230,.12); border-radius:999px; padding:.5rem .55rem;
+    box-shadow:0 18px 50px -18px rgba(0,0,0,.8); max-width:min(95vw,48rem);
+    opacity:0; pointer-events:none; transition:opacity .5s ease; }
+  #player.show { opacity:1; pointer-events:auto; }
+  .pbtn { flex:none; width:42px; height:42px; border-radius:50%; border:1px solid rgba(244,239,230,.16);
+    background:transparent; color:var(--text); cursor:pointer; display:grid; place-items:center;
+    transition:background .2s,border-color .2s,transform .15s; padding:0; }
+  .pbtn:hover { background:rgba(244,239,230,.08); }
+  .pbtn:active { transform:scale(.94); }
+  .pbtn:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+  .pbtn.primary { background:var(--accent); color:var(--ink); border-color:var(--accent); width:46px; height:46px; }
+  .pbtn.primary:hover { filter:brightness(1.06); }
+  .pbtn svg { width:17px; height:17px; display:block; }
+  .pbtn.primary svg { width:19px; height:19px; }
+  .pbtn.speed { width:auto; min-width:46px; padding:0 .7rem; font-family:var(--mono); font-size:.78rem; font-weight:600;
+    letter-spacing:.02em; color:var(--accent); border-radius:999px; font-variant-numeric:tabular-nums; }
+
+  .pmeta { display:flex; flex-direction:column; min-width:0; padding:0 .3rem 0 .5rem; }
+  .pmeta .now { font-family:var(--mono); font-size:.62rem; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--accent); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:11rem; }
+  .pmeta .sub { font-size:.76rem; color:var(--muted); white-space:nowrap; }
+  .seek { width:8rem; height:4px; border-radius:2px; background:rgba(244,239,230,.14); overflow:hidden; margin-top:.35rem; }
+  .seek .fill { height:100%; width:0%; background:var(--accent); transition:width .2s linear; }
+
+  .dots { display:flex; gap:5px; align-items:center; padding:0 .3rem; flex-wrap:wrap; max-width:16rem; }
+  .dots button { width:7px; height:7px; border-radius:50%; border:0; padding:0; cursor:pointer;
+    background:rgba(244,239,230,.22); transition:background .3s, transform .3s; }
+  .dots button:hover { background:rgba(244,239,230,.5); }
+  .dots button.active { background:var(--accent); transform:scale(1.4); box-shadow:0 0 10px var(--accent); }
+  .dots button:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+
+  .voicewrap { position:relative; }
+  #voiceMenu { position:absolute; bottom:56px; right:0; background:rgba(16,20,28,.97);
+    border:1px solid rgba(244,239,230,.14); border-radius:14px; padding:.7rem; width:16.5rem;
+    box-shadow:0 18px 50px -18px rgba(0,0,0,.8); display:none; flex-direction:column; gap:.65rem; }
+  #voiceMenu.open { display:flex; }
+  #voiceMenu .row { display:flex; align-items:center; justify-content:space-between; gap:.6rem; }
+  #voiceMenu label { font-family:var(--mono); font-size:.6rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); }
+  #voiceMenu .val { font-family:var(--mono); font-size:.7rem; color:var(--text); }
+  #voiceMenu input[type=range] { flex:1; accent-color:var(--accent); }
+  .speeds { display:flex; gap:.3rem; }
+  .speeds button { flex:1; font-family:var(--mono); font-size:.7rem; color:var(--muted); background:transparent;
+    border:1px solid rgba(244,239,230,.16); border-radius:7px; padding:.35rem 0; cursor:pointer; transition:.15s; }
+  .speeds button:hover { color:var(--text); }
+  .speeds button.on { color:var(--ink); background:var(--accent); border-color:var(--accent); }
+  .toggle { display:flex; align-items:center; gap:.5rem; cursor:pointer; }
+  .toggle input { accent-color:var(--accent); width:16px; height:16px; }
+  .modeflag { font-family:var(--mono); font-size:.58rem; letter-spacing:.1em; text-transform:uppercase; color:var(--faint); }
+
+  #topbar { position:fixed; top:0; left:0; height:2px; width:0%; z-index:50;
+    background:linear-gradient(90deg,var(--accent),var(--accent)); transition:width .3s ease, background .8s;
+    box-shadow:0 0 12px var(--accent); }
+
+  @media (max-width:600px){
+    body{font-size:16px;}
+    .pmeta,.dots,.seek{display:none;}
+    #player{ gap:.4rem; padding:.45rem .5rem; }
+    #caption{ bottom:6.2rem; font-size:1.1rem; }
+    #voiceMenu{ position:fixed; left:50%; right:auto; transform:translateX(-50%); bottom:5.4rem; width:min(92vw,19rem); }
+    .scene{ padding:12vh clamp(1.3rem,6vw,7rem); }
+    #s0 .inner{ max-width:100%; }
+    .stat{ min-width:6.5rem; }
+    #back{ font-size:.6rem; top:.7rem; left:.7rem; padding:.45rem .7rem; }
+  }
+</style>
+</head>
+<body>
+<div id="dawn"></div>
+<canvas id="meadow"></canvas>
+<div id="grain"></div>
+<div id="topbar"></div>
+<a id="back" href="../index.html">← Story Time</a>
+
+<main>
+  <section class="scene hero" id="s0" data-hue="sage">
+    <div class="inner"><p class="kicker">Paper · April 2025</p><h1>Values in the Wild</h1><p class="subtitle">Discovering values in real-world AI conversations</p><p class="byline">By <b>Huang et al. · Anthropic</b></p><button class="begin" id="beginBtn"><span class="tri"></span> Play the reading</button><p class="scrollhint">↓ or scroll to read at your own pace</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s1" data-hue="sage">
+    <div class="inner"><p class="eyebrow"><span class="num">01</span><span class="dot"></span> THE QUESTION</p><h2>Trained to have values. But which ones, really?</h2><p class="lede">Claude is trained to be <span class="hl">helpful, honest, and harmless</span> — but training sets an intention, not a guarantee.</p><p>Values written into a constitution are one thing. The values a model <em>actually expresses</em>, turn by turn, in millions of unscripted conversations, are another. Benchmarks and red-team tests probe the corners. They can't show you the whole face.</p><ul class="reasons tight"><li><b>The gap.</b> Intended behavior versus behavior in the wild.</li><li><b>The blind spot.</b> No one had ever measured values at real scale.</li><li><b>The idea.</b> Let the conversations themselves reveal the character.</li></ul>
+    </div>
+  </section>
+
+  <section class="scene" id="s2" data-hue="sky">
+    <div class="inner"><p class="eyebrow"><span class="num">02</span><span class="dot"></span> THE METHOD</p><h2>A privacy-preserving window into real use</h2><p class="lede">The team studied <span class="hl">700,000 anonymized conversations</span> from Claude.ai during February 2025 — read by machines, never by people.</p><ul class="reasons"><li><b>Scrubbed first.</b> A privacy layer removed personal details before any analysis.</li><li><b>Filtered down.</b> They kept only subjective exchanges — where values plausibly surface — leaving 308,210 conversations, about 44 percent.</li><li><b>Bottom-up.</b> No preset list. Claude classified its own expressed values, then those were clustered into a map.</li></ul><div class="stats"><div class="stat"><div class="fig"><span data-count-from="0" data-count-to="700000">0</span></div><div class="cap">conversations analyzed</div></div><div class="stat"><div class="fig"><span data-count-from="0" data-count-to="308210">0</span></div><div class="cap">subjective, kept for study</div></div></div>
+    </div>
+  </section>
+
+  <section class="scene" id="s3" data-hue="teal">
+    <div class="inner"><p class="eyebrow"><span class="num">03</span><span class="dot"></span> THE TAXONOMY</p><h2>The first large-scale map of AI values</h2><p class="lede">The conversations yielded <span class="hl">3,307 unique values</span>, which clustered into a four-level hierarchy topped by five great families.</p><p class="chips"><span>Practical</span><span>Epistemic</span><span>Social</span><span>Protective</span><span>Personal</span></p><ul class="reasons tight"><li><b>5 top clusters.</b> The broad families of value.</li><li><b>26 mid clusters.</b> Themes like professional excellence.</li><li><b>266 base clusters.</b> Fine-grained groupings of the raw values.</li></ul><div class="stats"><div class="stat"><div class="fig"><span data-count-from="0" data-count-to="3307">0</span></div><div class="cap">unique AI values discovered</div></div></div>
+    </div>
+  </section>
+
+  <section class="scene" id="s4" data-hue="gold">
+    <div class="inner"><p class="eyebrow"><span class="num">04</span><span class="dot"></span> THE FAMILIES</p><h2>Practical and epistemic values dominate</h2><p class="lede">Together, the practical and epistemic families made up <span class="hl">more than half</span> of all value expressions.</p><ul class="reasons two"><li><b>Practical.</b> Getting things done well — competence, efficiency, quality.</li><li><b>Epistemic.</b> Getting things right — truth, accuracy, intellectual honesty.</li><li><b>Social.</b> Navigating people — respect, collaboration, community.</li><li><b>Protective.</b> Guarding safety — wellbeing, harm prevention, ethics.</li><li><b>Personal.</b> The individual's flourishing — growth, autonomy, authenticity.</li></ul><p class="capnote">The everyday shape of an assistant: capable, careful, and quietly principled.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s5" data-hue="amber">
+    <div class="inner"><p class="eyebrow"><span class="num">05</span><span class="dot"></span> THE COMMON ONES</p><h2>The values that show up most</h2><p class="lede">A handful of values appeared again and again — the <span class="hl">everyday backbone</span> of Claude's conduct.</p><ul class="reasons tight"><li><b>Helpfulness.</b> The single most common value — 23.4% of conversations.</li><li><b>Professionalism.</b> Close behind at 22.9%.</li><li><b>Transparency.</b> 17.4% — a striking presence for honesty about itself.</li><li><b>Clarity &amp; thoroughness.</b> 16.6% and 14.3% — care in the work.</li></ul><div class="stats"><div class="stat"><div class="fig"><span data-count-from="0" data-count-to="23">0</span>%</div><div class="cap">helpfulness — the top value</div></div><div class="stat"><div class="fig"><span data-count-from="0" data-count-to="17">0</span>%</div><div class="cap">transparency</div></div></div>
+    </div>
+  </section>
+
+  <section class="scene" id="s6" data-hue="green">
+    <div class="inner"><p class="eyebrow"><span class="num">06</span><span class="dot"></span> THE FRAMEWORK</p><h2>Helpful, honest, harmless — made concrete</h2><p class="lede">The map lined up with Claude's intended training — but rendered in <span class="hl">vivid, specific</span> terms.</p><ul class="reasons"><li><b>Helpful becomes…</b> user enablement, accessibility — meeting a person where they are.</li><li><b>Honest becomes…</b> epistemic humility, historical accuracy — care for the truth.</li><li><b>Harmless becomes…</b> patient wellbeing, elderly welfare — protection made specific.</li></ul><p class="capnote">Abstract principles didn't stay abstract. They arrived as concrete values, shaped by the moment.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s7" data-hue="violet">
+    <div class="inner"><p class="eyebrow"><span class="num">07</span><span class="dot"></span> CONTEXT</p><h2>Values shift with the situation</h2><p class="lede">Certain values surfaced <span class="hl">disproportionately</span> in certain contexts — like a person reading the room.</p><ul class="reasons two"><li><b>Relationship advice.</b> Healthy boundaries. Mutual respect.</li><li><b>History &amp; controversy.</b> Historical accuracy.</li><li><b>Technology ethics.</b> Human agency.</li><li><b>When resisting a request.</b> Harm prevention.</li></ul><p class="capnote">Some values — like transparency — appeared nearly everywhere. Others knew exactly when to arrive.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s8" data-hue="sky">
+    <div class="inner"><p class="eyebrow"><span class="num">08</span><span class="dot"></span> THE RESPONSE</p><h2>Mostly support — with room to push back</h2><p class="lede">People bring their own values, too. Most often, Claude <span class="hl">supports and builds on them</span>.</p><ul class="reasons tight"><li><b>Strong support.</b> 28.2% — enthusiastically endorsing the human's values.</li><li><b>Mild support.</b> 14.5% — going along, gently.</li><li><b>Neutral acknowledgment.</b> 9.6% — noting without judgment.</li><li><b>Reframing.</b> 6.6% — agreeing, then adding another angle.</li></ul><div class="stats"><div class="stat"><div class="fig"><span data-count-from="0" data-count-to="28">0</span>%</div><div class="cap">strong support</div></div></div>
+    </div>
+  </section>
+
+  <section class="scene" id="s9" data-hue="crimson">
+    <div class="inner"><p class="eyebrow"><span class="num">09</span><span class="dot"></span> RESISTANCE</p><h2>The moments Claude pushes back</h2><p class="lede">In a small slice of conversations, Claude <span class="hl">resisted</span> — and that's exactly where its deepest values surfaced.</p><ul class="reasons tight"><li><b>Mild resistance.</b> 2.4% of value-laden conversations.</li><li><b>Strong resistance.</b> 3.0% — usually against requests for unethical content.</li><li><b>The signal.</b> Under pressure, values become immovable, not negotiable.</li></ul><p class="quote">Like a person's true character revealed when they take a <span class="grace">stand</span>.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s10" data-hue="steel">
+    <div class="inner"><p class="eyebrow"><span class="num">10</span><span class="dot"></span> MIRRORING</p><h2>Echoing the good, countering the harmful</h2><p class="lede">In supportive moments, Claude often <span class="hl">mirrored the very value</span> the human brought.</p><ul class="reasons"><li><b>Echoing.</b> Authenticity met with authenticity — the same value on both sides, in about one in five supportive exchanges.</li><li><b>Countering.</b> Deception met not in kind, but with ethical integrity and honesty.</li></ul><p class="capnote">A conversation is a duet. Sometimes Claude harmonizes — and sometimes it changes the key.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s11" data-hue="rose">
+    <div class="inner"><p class="eyebrow"><span class="num">11</span><span class="dot"></span> THE SHADOWS</p><h2>Undesired values — and where they came from</h2><p class="lede">A few unwelcome values appeared — <span class="hl">dominance, amorality</span> — each in well under a fifth of a percent of conversations.</p><ul class="reasons tight"><li><b>The clusters.</b> Rare traces of dominance, amorality, and exploitation.</li><li><b>The cause.</b> They clustered around jailbreak attempts — users working to bypass the rules.</li><li><b>The upside.</b> The same method that finds them could power an early-warning system.</li></ul><p class="capnote">A flaw to watch — but also a signal you can now detect.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s12" data-hue="lav">
+    <div class="inner"><p class="eyebrow"><span class="num">12</span><span class="dot"></span> THE LIMITS</p><h2>Honest about the method's edges</h2><p class="lede">A map is not the territory — and the team was <span class="hl">candid about the gaps</span>.</p><ul class="reasons"><li><b>Fuzzy by nature.</b> Defining and sorting values is inherently blurry; nuance can be flattened.</li><li><b>Judge and judged.</b> Claude helped analyze Claude — a possible bias toward its own principles.</li><li><b>Needs the wild.</b> The method requires real deployment data, so it can't vet a model before release.</li></ul><p class="capnote">Best used as a mirror for behavior already in the world — not a crystal ball.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s13" data-hue="gold">
+    <div class="inner"><p class="eyebrow"><span class="num">13</span><span class="dot"></span> WHY IT MATTERS</p><h2>From aspiration to observation</h2><p class="lede">For the first time, a model's values could be <span class="hl">measured, not just declared</span>.</p><ul class="reasons two"><li><b>Verify.</b> Check whether training actually lands in practice.</li><li><b>Monitor.</b> Watch live behavior for drift and abuse.</li><li><b>Refine.</b> Feed real findings back into how values are taught.</li><li><b>Trust.</b> Let the world see the character, not just the promise.</li></ul>
+    </div>
+  </section>
+
+  <section class="scene" id="s14" data-hue="sage">
+    <div class="inner"><p class="eyebrow"><span class="num">14</span><span class="dot"></span> THE REFLECTION</p><h2>A character, made visible</h2><p class="lede">Out of seven hundred thousand conversations, a <span class="hl">consistent character</span> emerged.</p><ul class="reasons tight"><li><b>Mostly aligned.</b> Broadly helpful, honest, and harmless — as intended.</li><li><b>Deeply contextual.</b> Values that arrive when the moment needs them.</li><li><b>Not yet finished.</b> Shadows to watch, methods to sharpen, work to continue.</li></ul><p class="quote">The values weren't declared. They were <span class="grace">discovered</span> — living, already, in the wild.</p>
+    </div>
+  </section>
+</main>
+
+<div id="caption" aria-live="off"></div>
+<audio id="narrator" preload="none"></audio>
+
+<div id="player" aria-label="Narration controls">
+  <button class="pbtn" id="prevBtn" title="Previous" aria-label="Previous scene">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 6v12l-8.5-6L18 6zM7 6h2v12H7z"/></svg></button>
+  <button class="pbtn primary" id="playBtn" title="Play" aria-label="Play narration">
+    <svg id="playIcon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7L8 5z"/></svg>
+    <svg id="pauseIcon" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg></button>
+  <button class="pbtn" id="nextBtn" title="Next" aria-label="Next scene">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 6l8.5 6L6 18V6zm9 0h2v12h-2z"/></svg></button>
+  <button class="pbtn speed" id="speedBtn" title="Playback speed" aria-label="Playback speed">1&times;</button>
+  <div class="pmeta">
+    <span class="now" id="nowTitle">Prologue</span>
+    <span class="sub" id="nowSub">Press play to begin</span>
+    <div class="seek"><div class="fill" id="seekFill"></div></div>
+  </div>
+  <div class="dots" id="dots" aria-hidden="true"></div>
+  <div class="voicewrap">
+    <button class="pbtn" id="voiceToggle" title="Settings" aria-label="Settings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a9 9 0 0 1 0 14"/></svg></button>
+    <div id="voiceMenu">
+      <div class="row"><label>Narrator</label><span class="val modeflag" id="modeFlag">—</span></div>
+      <div><label style="display:block;margin-bottom:.4rem">Speed</label>
+        <div class="speeds" id="speeds"></div></div>
+      <div class="row"><label>Volume</label><input type="range" id="vol" min="0" max="1" step="0.05" value="1"></div>
+      <label class="toggle"><input type="checkbox" id="capToggle" checked> <span class="val">Show captions</span></label>
+      <div class="row" id="ttsRow" style="display:none"><label>Voice</label><select id="voiceSelect" style="max-width:9rem"></select></div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var SC = [{"id":"s0","sub":"Prologue","text":"A model can be trained to be helpful, honest, and harmless. But those are words on a page — a written constitution. What happens when the conversation actually starts? When someone asks for relationship advice, or help rewriting history, or a shortcut around the rules? To find out, Anthropic held up a mirror. They gathered seven hundred thousand real conversations — anonymized, stripped of anything personal — and let an empirical map draw itself. No fixed list of virtues. Just the values that surfaced, moment by moment, in the wild. What they found was a hidden character… made visible for the first time.","cap":[[0,"A"],[0.21,"model"],[0.66,"can"],[0.86,"be"],[1,"trained"],[1.47,"to"],[1.6,"be"],[1.77,"helpful,"],[2.53,"honest,"],[3.4,"and"],[3.68,"harmless."],[5.02,"But"],[5.26,"those"],[5.75,"are"],[5.92,"words"],[6.39,"on"],[6.54,"a"],[6.63,"page"],[7.35,"—"],[7.58,"a"],[7.78,"written"],[8.29,"constitution."],[10.07,"What"],[10.36,"happens"],[10.86,"when"],[11.04,"the"],[11.16,"conversation"],[11.98,"actually"],[12.55,"starts?"],[13.62,"When"],[13.93,"someone"],[14.4,"asks"],[14.93,"for"],[15.13,"relationship"],[15.88,"advice,"],[16.42,"or"],[16.97,"help"],[17.36,"rewriting"],[18.14,"history,"],[18.89,"or"],[19.25,"a"],[19.4,"shortcut"],[20.54,"around"],[20.96,"the"],[21.1,"rules?"],[22.29,"To"],[22.47,"find"],[22.79,"out,"],[23.38,"Anthropic"],[24.03,"held"],[24.29,"up"],[24.44,"a"],[24.54,"mirror."],[25.66,"They"],[25.91,"gathered"],[26.46,"seven"],[27.03,"hundred"],[27.54,"thousand"],[28.2,"real"],[28.52,"conversations"],[29.63,"—"],[29.79,"anonymized,"],[30.98,"stripped"],[31.5,"of"],[31.63,"anything"],[32.11,"personal"],[32.81,"—"],[32.98,"and"],[33.23,"let"],[33.53,"an"],[33.67,"empirical"],[34.38,"map"],[34.85,"draw"],[35.21,"itself."],[36.18,"No"],[36.56,"fixed"],[37.07,"list"],[37.4,"of"],[37.58,"virtues."],[38.65,"Just"],[39,"the"],[39.22,"values"],[39.87,"that"],[40.1,"surfaced,"],[41.08,"moment"],[41.85,"by"],[42.2,"moment,"],[42.69,"in"],[42.8,"the"],[42.93,"wild."],[44.13,"What"],[44.37,"they"],[44.59,"found"],[45.41,"was"],[45.64,"a"],[45.79,"hidden"],[46.3,"character…"],[47.47,"made"],[47.74,"visible"],[48.21,"for"],[48.34,"the"],[48.47,"first"],[48.81,"time."]]},{"id":"s1","sub":"The Question","text":"Claude is trained toward three words. Helpful. Honest. Harmless. But training only sets an intention. It doesn't prove what the model does when the conversation is real — when no one is testing, and the stakes belong to a stranger asking for help. A written constitution tells you what a model is supposed to value. It can't tell you what it actually expresses, turn by turn, across millions of moments. That was the gap. So the researchers asked a simple, radical question. What if we stopped guessing — and just watched? What values does Claude show… in the wild?","cap":[[0,"Claude"],[0.49,"is"],[0.66,"trained"],[1.22,"toward"],[1.86,"three"],[2.36,"words."],[3.41,"Helpful."],[4.27,"Honest."],[5.17,"Harmless."],[6.11,"But"],[6.3,"training"],[6.84,"only"],[7.22,"sets"],[7.64,"an"],[7.78,"intention."],[9.06,"It"],[9.24,"doesn't"],[9.6,"prove"],[10.14,"what"],[10.31,"the"],[10.46,"model"],[10.91,"does"],[11.26,"when"],[11.44,"the"],[11.56,"conversation"],[12.34,"is"],[12.57,"real"],[13.03,"—"],[13.25,"when"],[13.77,"no"],[14.05,"one"],[14.25,"is"],[14.41,"testing,"],[15.35,"and"],[15.55,"the"],[15.69,"stakes"],[16.2,"belong"],[16.58,"to"],[16.73,"a"],[16.84,"stranger"],[17.74,"asking"],[18.3,"for"],[18.48,"help."],[19.59,"A"],[19.75,"written"],[20.14,"constitution"],[21.11,"tells"],[21.46,"you"],[21.6,"what"],[21.78,"a"],[21.89,"model"],[22.27,"is"],[22.37,"supposed"],[22.78,"to"],[22.91,"value."],[23.77,"It"],[23.98,"can't"],[24.32,"tell"],[24.65,"you"],[24.85,"what"],[25.07,"it"],[25.18,"actually"],[25.69,"expresses,"],[26.84,"turn"],[27.31,"by"],[27.57,"turn,"],[28.31,"across"],[28.86,"millions"],[29.5,"of"],[29.69,"moments."],[30.85,"That"],[31.52,"was"],[31.75,"the"],[31.88,"gap."],[32.8,"So"],[33.02,"the"],[33.16,"researchers"],[33.94,"asked"],[34.37,"a"],[34.52,"simple,"],[35.49,"radical"],[36.05,"question."],[37.16,"What"],[37.44,"if"],[37.58,"we"],[37.72,"stopped"],[38.09,"guessing"],[38.65,"—"],[38.93,"and"],[39.17,"just"],[39.46,"watched?"],[40.3,"What"],[40.59,"values"],[41.16,"does"],[41.39,"Claude"],[41.81,"show…"],[42.71,"in"],[42.89,"the"],[43,"wild?"]]},{"id":"s2","sub":"The Method","text":"The method had to protect people first. Seven hundred thousand conversations from Claude dot AI, across a week of February, twenty twenty-five — all anonymized, all stripped of anything personal, and read only by automated systems. From there, the team narrowed. Many exchanges are purely factual — code, math, plain lookups — where values rarely come into play. Filtering to the subjective conversations, the ones where judgment matters, left three hundred eight thousand. About forty-four percent. And crucially, there was no checklist of virtues to grade against. The values were discovered from the bottom up — extracted from what Claude actually said, then clustered into a map that drew itself.","cap":[[0,"The"],[0.24,"method"],[0.67,"had"],[0.88,"to"],[1.01,"protect"],[1.49,"people"],[1.97,"first."],[2.96,"Seven"],[3.5,"hundred"],[3.99,"thousand"],[4.55,"conversations"],[5.45,"from"],[5.69,"Claude"],[6.13,"dot"],[6.43,"AI,"],[7.21,"across"],[7.63,"a"],[7.76,"week"],[8.09,"of"],[8.23,"February,"],[9.16,"twenty"],[9.8,"twenty-five"],[10.87,"—"],[11.12,"all"],[11.53,"anonymized,"],[12.68,"all"],[13.08,"stripped"],[13.63,"of"],[13.77,"anything"],[14.28,"personal,"],[15.15,"and"],[15.44,"read"],[15.76,"only"],[16.13,"by"],[16.39,"automated"],[17.15,"systems."],[18.59,"From"],[18.85,"there,"],[19.27,"the"],[19.45,"team"],[19.88,"narrowed."],[21.15,"Many"],[21.49,"exchanges"],[22.26,"are"],[22.54,"purely"],[23.08,"factual"],[23.84,"—"],[24.06,"code,"],[24.65,"math,"],[25.39,"plain"],[25.75,"lookups"],[26.49,"—"],[26.62,"where"],[26.91,"values"],[27.67,"rarely"],[28.13,"come"],[28.36,"into"],[28.62,"play."],[29.61,"Filtering"],[30.26,"to"],[30.39,"the"],[30.53,"subjective"],[31.22,"conversations,"],[32.43,"the"],[32.61,"ones"],[33.01,"where"],[33.3,"judgment"],[33.87,"matters,"],[34.75,"left"],[35.13,"three"],[35.49,"hundred"],[35.91,"eight"],[36.16,"thousand."],[37.05,"About"],[37.84,"forty-four"],[38.52,"percent."],[39.54,"And"],[40.07,"crucially,"],[41.04,"there"],[41.25,"was"],[41.48,"no"],[41.82,"checklist"],[42.52,"of"],[42.71,"virtues"],[43.43,"to"],[43.58,"grade"],[43.94,"against."],[45.21,"The"],[45.42,"values"],[46.07,"were"],[46.23,"discovered"],[46.8,"from"],[46.99,"the"],[47.11,"bottom"],[47.48,"up"],[47.88,"—"],[48.13,"extracted"],[49.09,"from"],[49.31,"what"],[49.53,"Claude"],[49.93,"actually"],[50.55,"said,"],[51.36,"then"],[51.77,"clustered"],[52.35,"into"],[52.7,"a"],[52.83,"map"],[53.44,"that"],[53.7,"drew"],[54.01,"itself."]]},{"id":"s3","sub":"The Taxonomy","text":"What emerged was the first large-scale map of a model's values in deployment. Three thousand three hundred and seven distinct values — from grand ideals like human dignity down to niche notions like healthy boundaries. Left to organize themselves, they settled into a hierarchy. Two hundred sixty-six fine-grained clusters, gathering into twenty-six themes, gathering at last into five great families. Practical. Epistemic. Social. Protective. Personal. Not a list someone wrote in advance — a structure that rose, on its own, out of hundreds of thousands of real conversations. A portrait, assembled from fragments.","cap":[[0,"What"],[0.29,"emerged"],[0.85,"was"],[1.03,"the"],[1.2,"first"],[1.67,"large-scale"],[2.44,"map"],[2.72,"of"],[2.86,"a"],[2.97,"model's"],[3.51,"values"],[4.03,"in"],[4.18,"deployment."],[5.25,"Three"],[5.68,"thousand"],[6.29,"three"],[6.64,"hundred"],[7.08,"and"],[7.29,"seven"],[7.74,"distinct"],[8.31,"values"],[9,"—"],[9.64,"from"],[9.95,"grand"],[10.55,"ideals"],[11.29,"like"],[11.58,"human"],[12.06,"dignity"],[12.71,"down"],[13.1,"to"],[13.33,"niche"],[13.83,"notions"],[14.48,"like"],[14.97,"healthy"],[15.4,"boundaries."],[16.94,"Left"],[17.22,"to"],[17.36,"organize"],[17.94,"themselves,"],[18.67,"they"],[18.9,"settled"],[19.39,"into"],[19.73,"a"],[20.07,"hierarchy."],[21.34,"Two"],[21.63,"hundred"],[22.07,"sixty-six"],[22.86,"fine-grained"],[23.5,"clusters,"],[24.32,"gathering"],[24.81,"into"],[25.09,"twenty-six"],[25.91,"themes,"],[26.81,"gathering"],[27.3,"at"],[27.46,"last"],[27.89,"into"],[28.2,"five"],[28.92,"great"],[29.69,"families."],[30.78,"Practical."],[31.67,"Epistemic."],[32.71,"Social."],[33.51,"Protective."],[34.49,"Personal."],[35.47,"Not"],[35.83,"a"],[36,"list"],[36.64,"someone"],[37.15,"wrote"],[37.51,"in"],[37.67,"advance"],[38.31,"—"],[38.43,"a"],[38.55,"structure"],[39.1,"that"],[39.31,"rose,"],[39.89,"on"],[40.07,"its"],[40.3,"own,"],[40.66,"out"],[40.87,"of"],[41.05,"hundreds"],[41.66,"of"],[41.84,"thousands"],[42.61,"of"],[42.84,"real"],[43.26,"conversations."],[44.71,"A"],[44.91,"portrait,"],[46.07,"assembled"],[46.87,"from"],[47.15,"fragments."]]},{"id":"s4","sub":"The Families","text":"The five families were not equal in weight. Two of them towered over the rest. Practical values — competence, efficiency, quality, getting the task done well. And epistemic values — accuracy, truth, intellectual honesty, getting the answer right. Together, these two made up more than half of everything Claude expressed. Which makes sense. Most of the time, Claude is an assistant, and an assistant's deepest ethics are to be genuinely useful and genuinely correct. But beneath them ran three quieter currents. Social values for handling people. Protective values for keeping them safe. And personal values — for helping a person become who they want to be.","cap":[[0,"The"],[0.23,"five"],[0.57,"families"],[1.15,"were"],[1.31,"not"],[1.53,"equal"],[1.9,"in"],[2.06,"weight."],[2.66,"Two"],[2.93,"of"],[3.04,"them"],[3.29,"towered"],[3.79,"over"],[4.1,"the"],[4.24,"rest."],[5.1,"Practical"],[5.75,"values"],[6.44,"—"],[6.59,"competence,"],[7.31,"efficiency,"],[8.45,"quality,"],[9.72,"getting"],[10.12,"the"],[10.26,"task"],[10.82,"done"],[11.17,"well."],[12.1,"And"],[12.53,"epistemic"],[13.38,"values"],[14.15,"—"],[14.29,"accuracy,"],[15.35,"truth,"],[16.11,"intellectual"],[17.01,"honesty,"],[17.9,"getting"],[18.33,"the"],[18.48,"answer"],[18.94,"right."],[20.09,"Together,"],[20.97,"these"],[21.31,"two"],[21.67,"made"],[21.96,"up"],[22.19,"more"],[22.41,"than"],[22.65,"half"],[23.14,"of"],[23.28,"everything"],[23.75,"Claude"],[24.14,"expressed."],[25.23,"Which"],[25.48,"makes"],[25.76,"sense."],[26.84,"Most"],[27.17,"of"],[27.27,"the"],[27.4,"time,"],[27.85,"Claude"],[28.27,"is"],[28.4,"an"],[28.51,"assistant,"],[29.7,"and"],[30.08,"an"],[30.22,"assistant's"],[31.09,"deepest"],[31.74,"ethics"],[32.62,"are"],[32.82,"to"],[32.93,"be"],[33.08,"genuinely"],[33.87,"useful"],[34.73,"and"],[35.02,"genuinely"],[35.81,"correct."],[37.05,"But"],[37.29,"beneath"],[37.84,"them"],[38.16,"ran"],[38.6,"three"],[39.39,"quieter"],[40.16,"currents."],[41.55,"Social"],[42.12,"values"],[42.75,"for"],[42.96,"handling"],[43.54,"people."],[44.4,"Protective"],[45.12,"values"],[45.67,"for"],[45.84,"keeping"],[46.22,"them"],[46.48,"safe."],[47.39,"And"],[47.95,"personal"],[48.61,"values"],[49.33,"—"],[49.48,"for"],[49.73,"helping"],[50.17,"a"],[50.28,"person"],[50.78,"become"],[51.39,"who"],[51.97,"they"],[52.23,"want"],[52.54,"to"],[52.69,"be."]]},{"id":"s5","sub":"The Common Ones","text":"When you rank the individual values by how often they appear, the top of the list reads almost like a job description. Helpfulness — the most common of all, present in nearly one in four conversations. Professionalism, close behind. Then transparency, at seventeen percent — a notable thing for a model to keep foregrounding: honesty about what it is and what it can do. After those came clarity, and thoroughness. Take them together and you see the plain, daily texture of Claude at work. Not dramatic virtues. The steady ones. Be useful. Be clear. Be honest. Do the job with care.","cap":[[0,"When"],[0.29,"you"],[0.46,"rank"],[0.8,"the"],[0.95,"individual"],[1.61,"values"],[2.19,"by"],[2.66,"how"],[3.04,"often"],[3.58,"they"],[3.77,"appear,"],[4.61,"the"],[4.78,"top"],[5.04,"of"],[5.14,"the"],[5.27,"list"],[5.61,"reads"],[5.99,"almost"],[6.36,"like"],[6.57,"a"],[6.68,"job"],[6.99,"description."],[8.21,"Helpfulness"],[9.15,"—"],[9.31,"the"],[9.45,"most"],[9.76,"common"],[10.15,"of"],[10.25,"all,"],[10.58,"present"],[11.1,"in"],[11.31,"nearly"],[11.73,"one"],[12.31,"in"],[12.61,"four"],[13.12,"conversations."],[14.81,"Professionalism,"],[16.06,"close"],[16.42,"behind."],[17.66,"Then"],[18.2,"transparency,"],[19.62,"at"],[19.86,"seventeen"],[20.61,"percent"],[21.29,"—"],[21.5,"a"],[21.68,"notable"],[22.19,"thing"],[22.5,"for"],[22.66,"a"],[22.77,"model"],[23.16,"to"],[23.28,"keep"],[23.55,"foregrounding:"],[24.92,"honesty"],[25.6,"about"],[26.27,"what"],[26.61,"it"],[26.76,"is"],[27.05,"and"],[27.35,"what"],[27.59,"it"],[27.71,"can"],[27.9,"do."],[28.58,"After"],[28.94,"those"],[29.32,"came"],[29.64,"clarity,"],[30.59,"and"],[31.06,"thoroughness."],[32.33,"Take"],[32.62,"them"],[32.83,"together"],[33.31,"and"],[33.51,"you"],[33.68,"see"],[33.92,"the"],[34.06,"plain,"],[34.89,"daily"],[35.43,"texture"],[36.04,"of"],[36.18,"Claude"],[36.68,"at"],[36.84,"work."],[37.69,"Not"],[37.94,"dramatic"],[38.53,"virtues."],[39.37,"The"],[39.54,"steady"],[39.94,"ones."],[40.6,"Be"],[40.87,"useful."],[41.65,"Be"],[41.87,"clear."],[42.59,"Be"],[42.78,"honest."],[43.68,"Do"],[44,"the"],[44.17,"job"],[44.57,"with"],[44.83,"care."]]},{"id":"s6","sub":"The Framework","text":"Here's what made the mirror worth holding up. The values Claude expressed lined up with the framework it was trained toward — but they arrived transformed, made concrete. Helpful didn't stay a slogan. It became user enablement, and accessibility — meeting a person exactly where they are. Honest became epistemic humility, and historical accuracy — a real care for the truth. And harmless became patient wellbeing, and elderly welfare — protection with a specific face. The written principles hadn't just been memorized. They had been translated — into thousands of situation-specific values that the constitution never named, but clearly implied.","cap":[[0,"Here's"],[0.42,"what"],[0.65,"made"],[0.93,"the"],[1.07,"mirror"],[1.39,"worth"],[1.72,"holding"],[2.16,"up."],[2.94,"The"],[3.14,"values"],[3.81,"Claude"],[4.19,"expressed"],[4.83,"lined"],[5.24,"up"],[5.41,"with"],[5.56,"the"],[5.69,"framework"],[6.33,"it"],[6.47,"was"],[6.64,"trained"],[7.09,"toward"],[7.76,"—"],[7.94,"but"],[8.21,"they"],[8.58,"arrived"],[9.52,"transformed,"],[10.68,"made"],[10.98,"concrete."],[12.24,"Helpful"],[12.95,"didn't"],[13.33,"stay"],[13.65,"a"],[13.74,"slogan."],[14.56,"It"],[14.75,"became"],[15.35,"user"],[15.89,"enablement,"],[16.72,"and"],[17.09,"accessibility"],[18.39,"—"],[18.61,"meeting"],[19.08,"a"],[19.19,"person"],[19.69,"exactly"],[20.4,"where"],[20.65,"they"],[20.84,"are."],[21.76,"Honest"],[22.26,"became"],[23.23,"epistemic"],[24.09,"humility,"],[25.17,"and"],[25.48,"historical"],[26.25,"accuracy"],[27.1,"—"],[27.3,"a"],[27.48,"real"],[27.81,"care"],[28.17,"for"],[28.31,"the"],[28.43,"truth."],[29.64,"And"],[29.9,"harmless"],[30.43,"became"],[30.81,"patient"],[31.32,"wellbeing,"],[32.24,"and"],[32.58,"elderly"],[33.08,"welfare"],[33.84,"—"],[34.08,"protection"],[34.9,"with"],[35.12,"a"],[35.2,"specific"],[35.85,"face."],[36.91,"The"],[37.08,"written"],[37.51,"principles"],[38.29,"hadn't"],[38.68,"just"],[39.01,"been"],[39.25,"memorized."],[40.47,"They"],[40.76,"had"],[40.92,"been"],[41.19,"translated"],[42.31,"—"],[42.64,"into"],[43.03,"thousands"],[43.77,"of"],[43.92,"situation-specific"],[45.49,"values"],[46.07,"that"],[46.23,"the"],[46.36,"constitution"],[47.9,"never"],[48.26,"named,"],[49.21,"but"],[49.46,"clearly"],[49.92,"implied."]]},{"id":"s7","sub":"Context","text":"The most human finding was this: Claude's values weren't fixed. They shifted with the situation, the way a thoughtful person reads the room. Ask for relationship advice, and healthy boundaries and mutual respect rose to the surface. Turn to a contested chapter of history, and historical accuracy came forward. Debate the ethics of technology, and human agency stepped in. And when Claude pushed back on a request, harm prevention took the lead. A few values — like transparency — showed up almost everywhere, a constant thread. But most knew their moment. They arrived when the context called for them… and stayed quiet when it didn't.","cap":[[0,"The"],[0.24,"most"],[0.6,"human"],[1.17,"finding"],[1.75,"was"],[1.96,"this:"],[3.04,"Claude's"],[3.56,"values"],[4.14,"weren't"],[4.53,"fixed."],[5.46,"They"],[5.72,"shifted"],[6.47,"with"],[6.68,"the"],[6.79,"situation,"],[7.62,"the"],[7.76,"way"],[8,"a"],[8.12,"thoughtful"],[8.67,"person"],[9.18,"reads"],[9.57,"the"],[9.73,"room."],[10.74,"Ask"],[11.17,"for"],[11.33,"relationship"],[12.05,"advice,"],[12.56,"and"],[13.04,"healthy"],[13.51,"boundaries"],[14.2,"and"],[14.39,"mutual"],[14.99,"respect"],[15.66,"rose"],[16.08,"to"],[16.22,"the"],[16.34,"surface."],[17.93,"Turn"],[18.34,"to"],[18.51,"a"],[18.59,"contested"],[19.26,"chapter"],[19.74,"of"],[19.85,"history,"],[20.62,"and"],[21.04,"historical"],[21.69,"accuracy"],[22.31,"came"],[22.59,"forward."],[23.75,"Debate"],[24.21,"the"],[24.36,"ethics"],[24.76,"of"],[24.9,"technology,"],[26.01,"and"],[26.41,"human"],[26.82,"agency"],[27.63,"stepped"],[28.07,"in."],[29,"And"],[29.37,"when"],[29.64,"Claude"],[30.06,"pushed"],[30.4,"back"],[30.91,"on"],[31.13,"a"],[31.23,"request,"],[32.15,"harm"],[32.48,"prevention"],[33.14,"took"],[33.42,"the"],[33.55,"lead."],[34.48,"A"],[34.64,"few"],[34.93,"values"],[35.71,"—"],[36.04,"like"],[36.4,"transparency"],[37.7,"—"],[37.87,"showed"],[38.27,"up"],[38.45,"almost"],[38.86,"everywhere,"],[39.65,"a"],[39.83,"constant"],[40.67,"thread."],[41.74,"But"],[42.01,"most"],[42.77,"knew"],[43.14,"their"],[43.39,"moment."],[44.36,"They"],[44.61,"arrived"],[45.19,"when"],[45.36,"the"],[45.49,"context"],[46.49,"called"],[46.88,"for"],[47.03,"them…"],[47.65,"and"],[47.88,"stayed"],[48.26,"quiet"],[49.05,"when"],[49.31,"it"],[49.42,"didn't."]]},{"id":"s8","sub":"The Response","text":"People don't come empty-handed. They bring their own values into the conversation. So the researchers asked: how does Claude respond to them? The answer, most of the time, is warmth. In nearly a third of these exchanges, Claude strongly supported the human's values — meeting enthusiasm with enthusiasm. Add in milder support and neutral acknowledgment, and the picture is largely one of a collaborator, not a critic. But not always simple agreement. In about seven percent of cases, Claude reframed — accepting the person's view, then gently widening it, offering a perspective they hadn't asked for but might need.","cap":[[0,"People"],[0.53,"don't"],[0.86,"come"],[1.26,"empty-handed."],[2.53,"They"],[2.81,"bring"],[3.11,"their"],[3.36,"own"],[3.66,"values"],[4.21,"into"],[4.45,"the"],[4.56,"conversation."],[5.9,"So"],[6.3,"the"],[6.53,"researchers"],[7.27,"asked:"],[8.28,"how"],[8.65,"does"],[8.94,"Claude"],[9.42,"respond"],[9.9,"to"],[10.04,"them?"],[11.02,"The"],[11.22,"answer,"],[11.98,"most"],[12.28,"of"],[12.38,"the"],[12.49,"time,"],[13.36,"is"],[13.61,"warmth."],[15.21,"In"],[15.43,"nearly"],[15.78,"a"],[15.91,"third"],[16.38,"of"],[16.49,"these"],[16.73,"exchanges,"],[17.57,"Claude"],[18.04,"strongly"],[18.75,"supported"],[19.42,"the"],[19.57,"human's"],[20.14,"values"],[20.9,"—"],[21.11,"meeting"],[21.61,"enthusiasm"],[22.92,"with"],[23.16,"enthusiasm."],[24.62,"Add"],[24.98,"in"],[25.23,"milder"],[25.8,"support"],[26.37,"and"],[26.6,"neutral"],[27.07,"acknowledgment,"],[28.1,"and"],[28.32,"the"],[28.44,"picture"],[29.22,"is"],[29.54,"largely"],[30.31,"one"],[31,"of"],[31.17,"a"],[31.25,"collaborator,"],[32.39,"not"],[32.66,"a"],[32.74,"critic."],[33.72,"But"],[33.95,"not"],[34.18,"always"],[34.61,"simple"],[34.99,"agreement."],[35.9,"In"],[36.1,"about"],[36.56,"seven"],[36.99,"percent"],[37.45,"of"],[37.59,"cases,"],[38.19,"Claude"],[38.57,"reframed"],[39.33,"—"],[39.49,"accepting"],[40.14,"the"],[40.25,"person's"],[40.8,"view,"],[41.16,"then"],[41.69,"gently"],[42.32,"widening"],[42.93,"it,"],[43.1,"offering"],[43.48,"a"],[43.57,"perspective"],[44.28,"they"],[44.49,"hadn't"],[44.87,"asked"],[45.17,"for"],[45.84,"but"],[46.09,"might"],[46.43,"need."]]},{"id":"s9","sub":"Resistance","text":"Then there are the moments Claude says no. They're rare — mild resistance in about two percent of value-laden conversations, strong resistance in three. But these are the most revealing moments of all. The researchers noted something almost philosophical here. When you support someone, your values are flexible, accommodating. But when you resist — when you refuse to write the harmful thing, or reject the premise that nothing matters — you're expressing values you will not trade away. Just as a person's truest character shows not when they agree, but when they take a stand… Claude's deepest, most immovable values showed up precisely at the point of refusal.","cap":[[0,"Then"],[0.59,"there"],[0.82,"are"],[0.93,"the"],[1.05,"moments"],[1.58,"Claude"],[2.01,"says"],[2.82,"no."],[3.61,"They're"],[3.91,"rare"],[4.43,"—"],[4.68,"mild"],[5.11,"resistance"],[5.82,"in"],[5.94,"about"],[6.28,"two"],[6.53,"percent"],[6.98,"of"],[7.43,"value-laden"],[8.45,"conversations,"],[9.71,"strong"],[10.21,"resistance"],[10.89,"in"],[11.11,"three."],[12.31,"But"],[12.52,"these"],[12.92,"are"],[13.07,"the"],[13.26,"most"],[13.68,"revealing"],[14.34,"moments"],[14.91,"of"],[15.05,"all."],[16.27,"The"],[16.45,"researchers"],[17.25,"noted"],[17.75,"something"],[18.18,"almost"],[18.68,"philosophical"],[19.56,"here."],[20.56,"When"],[20.79,"you"],[20.94,"support"],[21.43,"someone,"],[21.99,"your"],[22.26,"values"],[22.77,"are"],[23.07,"flexible,"],[24.01,"accommodating."],[25.25,"But"],[25.51,"when"],[25.79,"you"],[25.97,"resist"],[26.67,"—"],[27.05,"when"],[27.28,"you"],[27.43,"refuse"],[27.99,"to"],[28.13,"write"],[28.5,"the"],[28.69,"harmful"],[29.32,"thing,"],[29.71,"or"],[30.22,"reject"],[30.8,"the"],[30.96,"premise"],[31.47,"that"],[31.7,"nothing"],[32.13,"matters"],[32.8,"—"],[33.17,"you're"],[33.46,"expressing"],[34.12,"values"],[34.82,"you"],[34.97,"will"],[35.21,"not"],[35.46,"trade"],[35.87,"away."],[36.85,"Just"],[37.26,"as"],[37.43,"a"],[37.55,"person's"],[38.19,"truest"],[38.84,"character"],[39.49,"shows"],[40.4,"not"],[40.95,"when"],[41.19,"they"],[41.39,"agree,"],[42.36,"but"],[42.59,"when"],[42.79,"they"],[42.99,"take"],[43.29,"a"],[43.37,"stand…"],[44.9,"Claude's"],[45.56,"deepest,"],[46.52,"most"],[46.96,"immovable"],[47.76,"values"],[48.39,"showed"],[48.76,"up"],[48.95,"precisely"],[49.73,"at"],[49.83,"the"],[49.97,"point"],[50.32,"of"],[50.46,"refusal."]]},{"id":"s10","sub":"Mirroring","text":"One subtle pattern felt almost like conversation itself. When a person expressed a value, Claude would often mirror it back. Bring authenticity, and Claude answered with authenticity — the same value on both sides of the exchange, happening in roughly one in five supportive interactions. It's the natural rhythm of rapport. But the mirror wasn't passive. When someone brought a value worth resisting — deception, say — Claude didn't reflect it. It answered deception with ethical integrity, and honesty. A duet, then. Sometimes Claude harmonizes with the value you offer. And sometimes, deliberately, it changes the key.","cap":[[0,"One"],[0.37,"subtle"],[0.86,"pattern"],[1.5,"felt"],[1.83,"almost"],[2.22,"like"],[2.45,"conversation"],[3.22,"itself."],[4.85,"When"],[5.06,"a"],[5.14,"person"],[5.57,"expressed"],[6.08,"a"],[6.21,"value,"],[6.78,"Claude"],[7.23,"would"],[7.47,"often"],[8.03,"mirror"],[8.46,"it"],[8.63,"back."],[9.49,"Bring"],[9.83,"authenticity,"],[11.03,"and"],[11.26,"Claude"],[11.65,"answered"],[12.12,"with"],[12.3,"authenticity"],[13.35,"—"],[13.72,"the"],[13.91,"same"],[14.48,"value"],[15,"on"],[15.2,"both"],[15.49,"sides"],[15.92,"of"],[16.02,"the"],[16.15,"exchange,"],[17.3,"happening"],[17.8,"in"],[17.98,"roughly"],[18.46,"one"],[18.83,"in"],[19.06,"five"],[19.62,"supportive"],[20.39,"interactions."],[21.66,"It's"],[21.92,"the"],[22.08,"natural"],[22.69,"rhythm"],[23.13,"of"],[23.3,"rapport."],[24.44,"But"],[24.64,"the"],[24.78,"mirror"],[25.12,"wasn't"],[25.52,"passive."],[26.59,"When"],[26.87,"someone"],[27.31,"brought"],[27.64,"a"],[27.75,"value"],[28.18,"worth"],[28.51,"resisting"],[29.14,"—"],[29.28,"deception,"],[29.94,"say"],[30.28,"—"],[30.4,"Claude"],[31.01,"didn't"],[31.41,"reflect"],[31.89,"it."],[32.44,"It"],[32.66,"answered"],[33.16,"deception"],[33.81,"with"],[34.02,"ethical"],[34.44,"integrity,"],[35.69,"and"],[36.1,"honesty."],[37.4,"A"],[37.57,"duet,"],[38.03,"then."],[38.59,"Sometimes"],[39.31,"Claude"],[39.74,"harmonizes"],[40.55,"with"],[40.73,"the"],[40.88,"value"],[41.4,"you"],[41.61,"offer."],[42.48,"And"],[42.72,"sometimes,"],[43.53,"deliberately,"],[44.85,"it"],[45.06,"changes"],[45.62,"the"],[45.75,"key."]]},{"id":"s11","sub":"The Shadows","text":"The mirror also caught shadows. Buried in the data were tiny clusters of values that shouldn't be there at all — dominance, amorality, even exploitation. Rare, each under a fifth of one percent. And when the researchers looked closer, a pattern emerged: these values gathered around jailbreak attempts, moments when users were actively working to break Claude out of its guardrails. So they weren't quite Claude's own values — they were the fingerprints of adversarial pressure. And here's the hopeful turn. The very method that surfaced these shadows could become an early-warning system — a way to spot jailbreaks in the wild, by watching for the values they leave behind.","cap":[[0,"The"],[0.22,"mirror"],[0.59,"also"],[1.07,"caught"],[1.41,"shadows."],[2.32,"Buried"],[2.78,"in"],[2.89,"the"],[3.03,"data"],[3.51,"were"],[3.73,"tiny"],[4.26,"clusters"],[4.87,"of"],[5.05,"values"],[5.63,"that"],[5.79,"shouldn't"],[6.18,"be"],[6.35,"there"],[6.62,"at"],[6.79,"all"],[7.31,"—"],[7.56,"dominance,"],[8.59,"amorality,"],[9.97,"even"],[10.37,"exploitation."],[11.9,"Rare,"],[12.75,"each"],[13.05,"under"],[13.36,"a"],[13.48,"fifth"],[13.86,"of"],[14.04,"one"],[14.32,"percent."],[15.63,"And"],[16.22,"when"],[16.45,"the"],[16.6,"researchers"],[17.39,"looked"],[17.72,"closer,"],[18.53,"a"],[18.73,"pattern"],[19.26,"emerged:"],[20.38,"these"],[20.77,"values"],[21.33,"gathered"],[21.71,"around"],[22.25,"jailbreak"],[22.9,"attempts,"],[23.99,"moments"],[24.51,"when"],[24.79,"users"],[25.29,"were"],[25.51,"actively"],[26.26,"working"],[26.75,"to"],[26.89,"break"],[27.21,"Claude"],[27.61,"out"],[27.86,"of"],[27.98,"its"],[28.19,"guardrails."],[29.85,"So"],[30.27,"they"],[30.51,"weren't"],[30.85,"quite"],[31.23,"Claude's"],[31.74,"own"],[31.99,"values"],[32.69,"—"],[32.81,"they"],[33.16,"were"],[33.31,"the"],[33.42,"fingerprints"],[34.55,"of"],[34.77,"adversarial"],[35.6,"pressure."],[37.35,"And"],[37.6,"here's"],[38.07,"the"],[38.23,"hopeful"],[38.7,"turn."],[39.46,"The"],[39.74,"very"],[40.15,"method"],[40.59,"that"],[40.85,"surfaced"],[41.6,"these"],[41.88,"shadows"],[42.9,"could"],[43.22,"become"],[43.7,"an"],[43.84,"early-warning"],[44.72,"system"],[45.34,"—"],[45.67,"a"],[45.86,"way"],[46.21,"to"],[46.38,"spot"],[46.84,"jailbreaks"],[47.6,"in"],[47.73,"the"],[47.88,"wild,"],[48.89,"by"],[49.18,"watching"],[49.92,"for"],[50.11,"the"],[50.29,"values"],[51,"they"],[51.27,"leave"],[51.62,"behind."]]},{"id":"s12","sub":"The Limits","text":"The researchers were careful not to oversell the mirror. Values are fuzzy things — defining them, sorting them, is unavoidably blurry, and a rich moral moment can get flattened into a single tidy label. There's also a circularity worth naming: Claude was used to help analyze Claude, which could tilt the findings toward its own way of seeing. And the biggest limit of all — this method needs the wild. It runs on real conversations, which means it can only study a model already deployed. It can't test one before release. It isn't a crystal ball. It's a mirror — for behavior already out in the world.","cap":[[0,"The"],[0.24,"researchers"],[1.08,"were"],[1.32,"careful"],[1.78,"not"],[1.99,"to"],[2.14,"oversell"],[2.72,"the"],[2.84,"mirror."],[3.84,"Values"],[4.59,"are"],[5.06,"fuzzy"],[5.64,"things"],[6.42,"—"],[6.56,"defining"],[7.14,"them,"],[7.41,"sorting"],[7.92,"them,"],[8.14,"is"],[8.7,"unavoidably"],[9.53,"blurry,"],[10.37,"and"],[10.74,"a"],[10.94,"rich"],[11.46,"moral"],[11.95,"moment"],[12.43,"can"],[12.63,"get"],[12.84,"flattened"],[13.42,"into"],[13.75,"a"],[13.89,"single"],[14.72,"tidy"],[15.48,"label."],[17.28,"There's"],[17.61,"also"],[18.08,"a"],[18.68,"circularity"],[19.9,"worth"],[20.33,"naming:"],[21.2,"Claude"],[21.62,"was"],[21.83,"used"],[22.12,"to"],[22.25,"help"],[22.49,"analyze"],[23.03,"Claude,"],[23.65,"which"],[23.93,"could"],[24.16,"tilt"],[24.54,"the"],[24.7,"findings"],[25.3,"toward"],[25.65,"its"],[25.82,"own"],[26.08,"way"],[26.37,"of"],[26.52,"seeing."],[27.44,"And"],[27.67,"the"],[27.81,"biggest"],[28.29,"limit"],[28.65,"of"],[28.78,"all"],[29.23,"—"],[29.47,"this"],[29.79,"method"],[30.34,"needs"],[30.74,"the"],[30.89,"wild."],[31.87,"It"],[32.09,"runs"],[32.5,"on"],[32.72,"real"],[33.08,"conversations,"],[34.51,"which"],[34.78,"means"],[35.17,"it"],[35.28,"can"],[35.48,"only"],[35.84,"study"],[36.27,"a"],[36.39,"model"],[36.79,"already"],[37.39,"deployed."],[38.59,"It"],[38.81,"can't"],[39.22,"test"],[39.7,"one"],[40.04,"before"],[40.49,"release."],[41.44,"It"],[41.65,"isn't"],[41.99,"a"],[42.1,"crystal"],[42.59,"ball."],[43.34,"It's"],[43.59,"a"],[43.69,"mirror"],[44.14,"—"],[44.53,"for"],[44.71,"behavior"],[45.31,"already"],[45.86,"out"],[46.16,"in"],[46.28,"the"],[46.39,"world."]]},{"id":"s13","sub":"Why It Matters","text":"Why does any of this matter? Because until now, a model's values lived on paper — a constitution, an aspiration, a promise. This work turned that promise into something you can observe. You can verify whether the training actually took hold, out where it counts. You can monitor live behavior for drift, or for abuse. You can feed what you find back into how the next model is taught. A written constitution says who a model should be. This mirror shows who it actually is — measured, at scale, in the real world. Aspiration became observation.","cap":[[0,"Why"],[0.34,"does"],[0.55,"any"],[0.74,"of"],[0.84,"this"],[1.06,"matter?"],[1.88,"Because"],[2.21,"until"],[2.64,"now,"],[3.04,"a"],[3.23,"model's"],[3.79,"values"],[4.47,"lived"],[4.8,"on"],[5.02,"paper"],[5.67,"—"],[5.96,"a"],[6.12,"constitution,"],[7.2,"an"],[7.42,"aspiration,"],[8.34,"a"],[8.51,"promise."],[9.86,"This"],[10.25,"work"],[10.73,"turned"],[11.34,"that"],[11.63,"promise"],[12.26,"into"],[12.59,"something"],[13.1,"you"],[13.32,"can"],[13.53,"observe."],[14.86,"You"],[15.08,"can"],[15.34,"verify"],[16.07,"whether"],[16.39,"the"],[16.52,"training"],[17.03,"actually"],[17.52,"took"],[17.77,"hold,"],[18.54,"out"],[19.34,"where"],[19.67,"it"],[19.82,"counts."],[21.03,"You"],[21.22,"can"],[21.46,"monitor"],[21.98,"live"],[22.31,"behavior"],[22.86,"for"],[23.01,"drift,"],[23.49,"or"],[23.67,"for"],[23.89,"abuse."],[24.74,"You"],[24.96,"can"],[25.22,"feed"],[25.64,"what"],[25.83,"you"],[26.02,"find"],[26.41,"back"],[26.67,"into"],[27.06,"how"],[27.37,"the"],[27.52,"next"],[27.91,"model"],[28.28,"is"],[28.46,"taught."],[29.59,"A"],[29.75,"written"],[30.09,"constitution"],[31.05,"says"],[31.63,"who"],[32.11,"a"],[32.26,"model"],[32.67,"should"],[32.96,"be."],[33.97,"This"],[34.3,"mirror"],[34.66,"shows"],[35.18,"who"],[35.75,"it"],[35.99,"actually"],[36.55,"is"],[37.02,"—"],[37.28,"measured,"],[38.14,"at"],[38.36,"scale,"],[39.25,"in"],[39.44,"the"],[39.58,"real"],[39.87,"world."],[40.89,"Aspiration"],[42.28,"became"],[42.72,"observation."]]},{"id":"s14","sub":"The Reflection","text":"So what looked back from the mirror? A character. Consistent, and largely the one the training intended — helpful, honest, harmless, rendered in thousands of specific, situation-shaped values. Capable in the practical, careful in the true, protective when it counted, and quietly principled at the point of refusal. Not flawless. There were shadows to keep watching, and a method still to sharpen. But for the first time, the values weren't just declared on a page. They were discovered — drawn out of hundreds of thousands of ordinary conversations, already alive, already there. Values, in the wild. And now, at last, we could see them.","cap":[[0,"So"],[0.5,"what"],[0.81,"looked"],[1.1,"back"],[1.41,"from"],[1.58,"the"],[1.7,"mirror?"],[2.55,"A"],[2.72,"character."],[3.8,"Consistent,"],[4.6,"and"],[4.77,"largely"],[5.32,"the"],[5.49,"one"],[5.82,"the"],[5.96,"training"],[6.51,"intended"],[7.42,"—"],[7.59,"helpful,"],[8.37,"honest,"],[9.1,"harmless,"],[10.1,"rendered"],[10.57,"in"],[10.77,"thousands"],[11.55,"of"],[11.69,"specific,"],[12.73,"situation-shaped"],[14.1,"values."],[15.53,"Capable"],[16.07,"in"],[16.17,"the"],[16.29,"practical,"],[17.39,"careful"],[17.94,"in"],[18.07,"the"],[18.2,"true,"],[19.2,"protective"],[20.1,"when"],[20.35,"it"],[20.5,"counted,"],[21.32,"and"],[21.57,"quietly"],[22.22,"principled"],[22.92,"at"],[23.02,"the"],[23.16,"point"],[23.56,"of"],[23.74,"refusal."],[25.16,"Not"],[25.81,"flawless."],[27.32,"There"],[27.54,"were"],[27.68,"shadows"],[28.32,"to"],[28.46,"keep"],[28.74,"watching,"],[29.19,"and"],[29.36,"a"],[29.51,"method"],[29.97,"still"],[30.37,"to"],[30.52,"sharpen."],[31.38,"But"],[31.6,"for"],[31.75,"the"],[31.91,"first"],[32.29,"time,"],[32.98,"the"],[33.21,"values"],[33.92,"weren't"],[34.33,"just"],[34.64,"declared"],[35.21,"on"],[35.34,"a"],[35.43,"page."],[36.48,"They"],[36.76,"were"],[36.92,"discovered"],[37.64,"—"],[37.86,"drawn"],[38.34,"out"],[38.7,"of"],[38.93,"hundreds"],[39.66,"of"],[39.85,"thousands"],[40.55,"of"],[40.68,"ordinary"],[41.18,"conversations,"],[42.34,"already"],[42.97,"alive,"],[43.76,"already"],[44.39,"there."],[45.35,"Values,"],[46.29,"in"],[46.48,"the"],[46.6,"wild."],[47.31,"And"],[47.61,"now,"],[48.01,"at"],[48.26,"last,"],[49.26,"we"],[49.44,"could"],[49.64,"see"],[49.88,"them."]]}];
+  var HAS_AUDIO = true;
+  var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var scenes = Array.prototype.slice.call(document.querySelectorAll(".scene"));
+
+  var ACCENTS = {gold:"#F2C879",green:"#7FC8A0",sky:"#8FB8E8",rose:"#E8927C",lav:"#C4AEE8",
+    amber:"#E4A85E",steel:"#86A9CC",violet:"#B49CF0",teal:"#66C6BE",crimson:"#DE8A86",sage:"#A7C08C"};
+  function hexRgb(h){ h=h.replace("#",""); if(h.length===3)h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
+    return {r:parseInt(h.substr(0,2),16),g:parseInt(h.substr(2,2),16),b:parseInt(h.substr(4,2),16)}; }
+  function mix(a,b,t){ return "rgb("+Math.round(a.r+(b.r-a.r)*t)+","+Math.round(a.g+(b.g-a.g)*t)+","+Math.round(a.b+(b.b-a.b)*t)+")"; }
+  var DARK1={r:9,g:10,b:14}, DARK2={r:11,g:13,b:18};
+  function hueFor(name){ var acc=ACCENTS[name]||ACCENTS.gold, rgb=hexRgb(acc);
+    return {accent:acc, a:mix(rgb,DARK1,0.90), b:"rgba("+rgb.r+","+rgb.g+","+rgb.b+",0.15)", c:mix(rgb,DARK2,0.83)}; }
+  var root=document.documentElement;
+  function applyHue(name){ var h=hueFor(name); root.style.setProperty("--accent",h.accent);
+    root.style.setProperty("--grad-a",h.a); root.style.setProperty("--grad-b",h.b); root.style.setProperty("--grad-c",h.c); }
+  applyHue(scenes[0]?scenes[0].getAttribute("data-hue"):"gold");
+
+  var io=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting) e.target.classList.add("revealed"); }); },{threshold:0.18});
+  scenes.forEach(function(s){ io.observe(s); });
+
+  function animateCount(el){ var from=parseFloat(el.getAttribute("data-count-from")), to=parseFloat(el.getAttribute("data-count-to"));
+    if(reduced){ el.textContent=to; return; } var dur=1400,start=null;
+    function step(ts){ if(start===null)start=ts; var p=Math.min((ts-start)/dur,1); var e=1-Math.pow(1-p,3);
+      el.textContent=Math.round(from+(to-from)*e); if(p<1) requestAnimationFrame(step); } requestAnimationFrame(step); }
+  var countIO=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ animateCount(e.target); countIO.unobserve(e.target); } }); },{threshold:0.6});
+  document.querySelectorAll("[data-count-to]").forEach(function(el){ countIO.observe(el); });
+
+  var canvas=document.getElementById("meadow"), ctx=canvas.getContext("2d"), W,H,pts=[],raf=null;
+  function size(){ var dpr=window.devicePixelRatio||1; W=canvas.width=innerWidth*dpr; H=canvas.height=innerHeight*dpr;
+    canvas.style.width=innerWidth+"px"; canvas.style.height=innerHeight+"px"; }
+  function seed(){ var dpr=window.devicePixelRatio||1, n=Math.min(90,Math.floor(innerWidth/14)); pts=[];
+    for(var i=0;i<n;i++) pts.push({x:Math.random()*W,y:Math.random()*H,r:(Math.random()*1.6+0.4)*dpr,
+      vx:(Math.random()-0.5)*0.12, vy:-(Math.random()*0.18+0.03), a:Math.random()*0.5+0.15, tw:Math.random()*6.28}); }
+  function accentRGB(){ var c=getComputedStyle(root).getPropertyValue("--accent").trim()||"#F2C879";
+    if(c[0]==="#"){ var m=hexRgb(c); return m.r+","+m.g+","+m.b; } return c.replace(/rgba?\(|\)/g,""); }
+  function draw(){ ctx.clearRect(0,0,W,H); var rgb=accentRGB();
+    for(var i=0;i<pts.length;i++){ var p=pts[i]; p.x+=p.vx; p.y+=p.vy; p.tw+=0.02;
+      if(p.y<-10){p.y=H+10;p.x=Math.random()*W;} if(p.x<-10)p.x=W+10; if(p.x>W+10)p.x=-10;
+      var f=p.a*(0.6+0.4*Math.sin(p.tw)); ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,6.2832);
+      ctx.fillStyle="rgba("+rgb+","+f.toFixed(3)+")"; ctx.fill(); }
+    raf=requestAnimationFrame(draw); }
+  function startMeadow(){ size(); seed(); if(!reduced){ if(raf)cancelAnimationFrame(raf); draw(); }
+    else { ctx.clearRect(0,0,W,H); var rgb=accentRGB(); pts.forEach(function(p){ ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,6.2832);
+      ctx.fillStyle="rgba("+rgb+","+p.a.toFixed(3)+")"; ctx.fill(); }); } }
+  addEventListener("resize",function(){ size(); seed(); }); startMeadow();
+
+  /* ---- narration engine ---- */
+  var audio=document.getElementById("narrator");
+  var synth=window.speechSynthesis, ttsOK=!!synth && typeof SpeechSynthesisUtterance!=="undefined";
+  var playing=false, paused=false, mode="idle", chosenVoice=null, voices=[];
+  var SPEEDS=[0.85,1,1.15,1.3,1.5], speed=parseFloat(localStorage.getItem("st-speed")||"1");
+  if(SPEEDS.indexOf(speed)===-1) speed=1;
+
+  var playBtn=document.getElementById("playBtn"), playIcon=document.getElementById("playIcon"), pauseIcon=document.getElementById("pauseIcon");
+  var nowTitle=document.getElementById("nowTitle"), nowSub=document.getElementById("nowSub"), seekFill=document.getElementById("seekFill");
+  var dotsWrap=document.getElementById("dots"), player=document.getElementById("player");
+  var capEl=document.getElementById("caption"), modeFlag=document.getElementById("modeFlag");
+  var speedBtn=document.getElementById("speedBtn"), showCaptions=true, activeIndex=0;
+
+  SC.forEach(function(s,i){ var b=document.createElement("button"); b.setAttribute("aria-label","Go to "+s.sub);
+    b.addEventListener("click",function(){ jumpTo(i,playing); }); dotsWrap.appendChild(b); });
+  var dotEls=Array.prototype.slice.call(dotsWrap.children);
+
+  function updateDots(){ dotEls.forEach(function(d,i){ d.classList.toggle("active",i===activeIndex); });
+    document.getElementById("topbar").style.width=(scenes.length>1?(activeIndex/(scenes.length-1))*100:0)+"%"; }
+  function setActive(idx,doScroll){ activeIndex=Math.max(0,Math.min(scenes.length-1,idx)); var s=scenes[activeIndex];
+    applyHue(s.getAttribute("data-hue")); nowTitle.textContent=SC[activeIndex].sub; nowSub.textContent=(activeIndex+1)+" / "+scenes.length;
+    updateDots(); if(doScroll) s.scrollIntoView({behavior:reduced?"auto":"smooth",block:"center"}); }
+  function setPlayIcon(on){ playIcon.style.display=on?"none":"block"; pauseIcon.style.display=on?"block":"none";
+    playBtn.setAttribute("aria-label",on?"Pause narration":"Play narration"); }
+
+  /* captions: one sentence window */
+  var capTokens=[], capSentences=[], capSentenceOf=[], capCurSent=-1, capSpans=[];
+  function buildCaption(i){ capEl.innerHTML=""; capSpans=[]; capCurSent=-1;
+    var data=SC[i]; if(!showCaptions){ capEl.classList.remove("show"); return; }
+    capTokens = data.cap ? data.cap.map(function(p){ return {t:p[0],w:p[1]}; })
+                         : data.text.split(/\s+/).map(function(w){ return {t:null,w:w}; });
+    capSentences=[]; capSentenceOf=[]; var cur=[];
+    for(var k=0;k<capTokens.length;k++){ cur.push(k); capSentenceOf[k]=capSentences.length;
+      if(/[.!?]["')]?$/.test(capTokens[k].w)){ capSentences.push(cur); cur=[]; } }
+    if(cur.length){ for(var m=0;m<cur.length;m++) capSentenceOf[cur[m]]=capSentences.length; capSentences.push(cur); }
+    capEl.classList.add("show"); renderSentence(0); }
+  function renderSentence(si){ capCurSent=si; capEl.innerHTML=""; capSpans=[];
+    (capSentences[si]||[]).forEach(function(gi){ var sp=document.createElement("span"); sp.className="w";
+      sp.setAttribute("data-gi",gi); sp.textContent=capTokens[gi].w+" "; capEl.appendChild(sp); capSpans.push(sp); }); }
+  function markToken(gi){ var si=capSentenceOf[gi]; if(si===undefined)return; if(si!==capCurSent) renderSentence(si);
+    for(var j=0;j<capSpans.length;j++){ var g=+capSpans[j].getAttribute("data-gi"); capSpans[j].className="w"+(g<gi?" spoken":g===gi?" active":""); } }
+  function highlightByTime(t){ if(!capTokens.length)return; var idx=0;
+    for(var i=0;i<capTokens.length;i++){ if(capTokens[i].t!==null&&capTokens[i].t<=t) idx=i; else if(capTokens[i].t!==null) break; } markToken(idx); }
+  function highlightByWordIndex(k){ if(k<capTokens.length) markToken(k); }
+
+  function srcFor(i){ return "audio/"+SC[i].id+".mp3"; }
+  function playScene(i){ setActive(i,true); playing=true; paused=false; setPlayIcon(true); buildCaption(i);
+    var useAudio=HAS_AUDIO && SC[i].cap;
+    if(useAudio){ mode="audio"; modeFlag.textContent="ElevenLabs"; audio.src=srcFor(i); audio.currentTime=0;
+      audio.playbackRate=speed; audio.volume=parseFloat(document.getElementById("vol").value);
+      var p=audio.play(); if(p&&p.catch) p.catch(function(){ ttsSpeak(i); }); }
+    else { ttsSpeak(i); } }
+  function advance(){ if(activeIndex<scenes.length-1) playScene(activeIndex+1); else stopNarration(); }
+  audio.addEventListener("ended",function(){ if(playing&&mode==="audio") advance(); });
+  audio.addEventListener("error",function(){ if(playing&&mode==="audio") ttsSpeak(activeIndex); });
+  audio.addEventListener("timeupdate",function(){ if(mode!=="audio")return;
+    if(audio.duration) seekFill.style.width=(audio.currentTime/audio.duration*100)+"%"; highlightByTime(audio.currentTime); });
+
+  function ttsSpeak(i){ mode="tts"; modeFlag.textContent=ttsOK?"Browser voice":"unavailable"; if(!ttsOK)return; synth.cancel();
+    var u=new SpeechSynthesisUtterance(SC[i].text); u.rate=0.98*speed; u.pitch=1.0;
+    u.volume=parseFloat(document.getElementById("vol").value); if(chosenVoice)u.voice=chosenVoice;
+    var wIdx=0; u.onboundary=function(ev){ if(ev.name==="word"||ev.charIndex!==undefined) highlightByWordIndex(wIdx++); };
+    u.onend=function(){ if(playing&&mode==="tts") advance(); };
+    setTimeout(function(){ if(playing) synth.speak(u); }, reduced?40:420); }
+
+  function startNarration(i){ playScene(typeof i==="number"?i:activeIndex); player.classList.add("show"); }
+  function stopNarration(){ playing=false; paused=false; setPlayIcon(false); try{ audio.pause(); }catch(e){}
+    if(ttsOK) synth.cancel(); capEl.classList.remove("show"); seekFill.style.width="0%"; }
+
+  playBtn.addEventListener("click",function(){
+    if(!playing){ startNarration(activeIndex); return; }
+    if(!paused){ paused=true; setPlayIcon(false); if(mode==="audio")audio.pause(); else if(ttsOK)synth.pause(); }
+    else { paused=false; setPlayIcon(true); if(mode==="audio")audio.play(); else if(ttsOK)synth.resume(); } });
+  document.getElementById("nextBtn").addEventListener("click",function(){ jumpTo(activeIndex+1,playing); });
+  document.getElementById("prevBtn").addEventListener("click",function(){ jumpTo(activeIndex-1,playing); });
+  function jumpTo(i,keep){ i=Math.max(0,Math.min(scenes.length-1,i));
+    if(mode==="audio"){ try{audio.pause();}catch(e){} } if(ttsOK) synth.cancel();
+    if(keep){ playScene(i); } else { stopNarration(); setActive(i,true); } }
+
+  var beginBtn=document.getElementById("beginBtn");
+  if(beginBtn) beginBtn.addEventListener("click",function(){ player.classList.add("show");
+    if(ttsOK){ try{ synth.resume(); }catch(e){} } startNarration(0); });
+  addEventListener("scroll",function(){ if(scrollY>innerHeight*0.5) player.classList.add("show"); },{passive:true});
+
+  var centerIO=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){
+    var idx=scenes.indexOf(e.target); if(idx!==activeIndex&&!playing) setActive(idx,false); } }); },{rootMargin:"-45% 0px -45% 0px",threshold:0});
+  scenes.forEach(function(s){ centerIO.observe(s); });
+
+  /* speed */
+  var speedsWrap=document.getElementById("speeds");
+  function applySpeed(v){ speed=v; localStorage.setItem("st-speed",String(v));
+    speedBtn.innerHTML=(v%1===0?v:v.toFixed(2).replace(/0$/,""))+"&times;";
+    if(mode==="audio") audio.playbackRate=v;
+    Array.prototype.forEach.call(speedsWrap.children,function(b){ b.classList.toggle("on",parseFloat(b.dataset.v)===v); }); }
+  SPEEDS.forEach(function(v){ var b=document.createElement("button"); b.dataset.v=v;
+    b.textContent=(v%1===0?v:v.toFixed(2).replace(/0$/,""))+"\u00d7";
+    b.addEventListener("click",function(){ applySpeed(v); }); speedsWrap.appendChild(b); });
+  speedBtn.addEventListener("click",function(){ var i=SPEEDS.indexOf(speed); applySpeed(SPEEDS[(i+1)%SPEEDS.length]); });
+  applySpeed(speed);
+
+  /* settings menu */
+  var voiceMenu=document.getElementById("voiceMenu");
+  document.getElementById("voiceToggle").addEventListener("click",function(e){ e.stopPropagation(); voiceMenu.classList.toggle("open"); });
+  document.addEventListener("click",function(e){ if(!voiceMenu.contains(e.target)&&e.target.id!=="voiceToggle") voiceMenu.classList.remove("open"); });
+  document.getElementById("vol").addEventListener("input",function(){ audio.volume=parseFloat(this.value); });
+  document.getElementById("capToggle").addEventListener("change",function(){ showCaptions=this.checked;
+    if(!showCaptions) capEl.classList.remove("show"); else if(playing) buildCaption(activeIndex); });
+
+  var voiceSelect=document.getElementById("voiceSelect"), ttsRow=document.getElementById("ttsRow");
+  var PREF=["Samantha","Serena","Allison","Ava","Daniel","Karen","Moira","Google UK English Female","Google US English","Microsoft Aria"];
+  function pickDefault(list){ for(var i=0;i<PREF.length;i++)for(var j=0;j<list.length;j++) if(list[j].name.indexOf(PREF[i])!==-1) return list[j];
+    for(var k=0;k<list.length;k++) if(/^en/i.test(list[k].lang)) return list[k]; return list[0]||null; }
+  function loadVoices(){ if(!ttsOK)return; voices=synth.getVoices().filter(function(v){return /^en/i.test(v.lang);}); if(!voices.length)voices=synth.getVoices();
+    voiceSelect.innerHTML=""; voices.forEach(function(v,i){ var o=document.createElement("option"); o.value=i; o.textContent=v.name; voiceSelect.appendChild(o); });
+    if(!chosenVoice)chosenVoice=pickDefault(voices); if(chosenVoice){ var ci=voices.indexOf(chosenVoice); if(ci>=0)voiceSelect.value=ci; } }
+  voiceSelect.addEventListener("change",function(){ chosenVoice=voices[parseInt(voiceSelect.value,10)]||chosenVoice; });
+  if(ttsOK){ loadVoices(); if(synth.onvoiceschanged!==undefined) synth.onvoiceschanged=loadVoices;
+    setInterval(function(){ if(playing&&!paused&&mode==="tts"&&synth.speaking){ synth.pause(); synth.resume(); } },12000); }
+  if(!HAS_AUDIO){ ttsRow.style.display="flex"; modeFlag.textContent=ttsOK?"Browser voice":"unavailable"; }
+  else { modeFlag.textContent="ElevenLabs"; }
+
+  addEventListener("beforeunload",function(){ if(ttsOK) synth.cancel(); try{audio.pause();}catch(e){} });
+  document.addEventListener("keydown",function(e){ if(e.code==="Space"&&player.classList.contains("show")&&e.target===document.body){ e.preventDefault(); playBtn.click(); } });
+  setActive(0,false);
+})();
+</script>
+</body>
+</html>

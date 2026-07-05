@@ -1,0 +1,491 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>On DeepSeek and Export Controls — Story Time</title>
+<style>
+  @property --grad-a { syntax: '<color>'; inherits: true; initial-value: #0B0E14; }
+  @property --grad-b { syntax: '<color>'; inherits: true; initial-value: #12172400; }
+  @property --grad-c { syntax: '<color>'; inherits: true; initial-value: #0B0E14; }
+  :root {
+    --ink:#0B0E14; --text:#F4EFE6; --muted:#98A2B4; --faint:#5A6274;
+    --gold:#F2C879; --green:#7FC8A0; --sky:#8FB8E8; --rose:#E8927C; --lav:#C4AEE8;
+    --amber:#E4A85E; --steel:#86A9CC; --violet:#B49CF0; --teal:#66C6BE; --crimson:#DE8A86; --sage:#A7C08C;
+    --accent:var(--amber);
+    --serif:"Hoefler Text","New York","Iowan Old Style",Palatino,Georgia,serif;
+    --sans:-apple-system,"SF Pro Text","Helvetica Neue",Inter,system-ui,sans-serif;
+    --mono:"SF Mono",ui-monospace,"Menlo","Roboto Mono",monospace;
+    --measure:34rem;
+  }
+  * { box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  @media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto;} }
+  body { margin:0; background:var(--ink); color:var(--text); font-family:var(--sans);
+    font-size:18px; line-height:1.7; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
+
+  #dawn { position:fixed; inset:0; z-index:-2;
+    background:
+      radial-gradient(120% 90% at 50% 118%, var(--grad-b) 0%, transparent 60%),
+      linear-gradient(180deg, var(--grad-a) 0%, var(--grad-c) 100%);
+    transition:--grad-a 1.6s ease,--grad-b 1.6s ease,--grad-c 1.6s ease; }
+  #meadow { position:fixed; inset:0; z-index:-1; pointer-events:none; opacity:.9; }
+  #grain { position:fixed; inset:0; z-index:0; pointer-events:none; opacity:.035; mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+
+  main { position:relative; z-index:1; }
+  .scene { min-height:100vh; display:flex; flex-direction:column; justify-content:center;
+    padding:14vh clamp(1.5rem,6vw,7rem); max-width:68rem; margin:0 auto; }
+  .scene .inner { opacity:0; transform:translateY(26px);
+    transition:opacity 1.1s ease, transform 1.1s cubic-bezier(.2,.7,.2,1); max-width:var(--measure); }
+  .scene.wide .inner { max-width:52rem; }
+  .scene.revealed .inner { opacity:1; transform:none; }
+  @media (prefers-reduced-motion: reduce){ .scene .inner{opacity:1;transform:none;transition:none;} }
+
+  .eyebrow { font-family:var(--mono); font-size:.74rem; letter-spacing:.28em; text-transform:uppercase;
+    color:var(--accent); display:flex; align-items:center; gap:.8em; margin:0 0 1.6rem; flex-wrap:wrap; }
+  .eyebrow .num { color:var(--faint); }
+  .eyebrow .dot { width:7px; height:7px; border-radius:50%; background:var(--accent); box-shadow:0 0 14px var(--accent); }
+
+  h1 { font-family:var(--serif); font-weight:500; letter-spacing:-.01em;
+    font-size:clamp(2.4rem,7.5vw,5.2rem); line-height:1; margin:0; text-wrap:balance;
+    overflow-wrap:break-word; hyphens:auto; }
+  h2 { font-family:var(--serif); font-weight:500; letter-spacing:-.005em;
+    font-size:clamp(1.7rem,5vw,3.3rem); line-height:1.05; margin:0 0 1.3rem; text-wrap:balance;
+    overflow-wrap:break-word; hyphens:auto; }
+  .lede { font-size:clamp(1.05rem,2.2vw,1.32rem); color:var(--text); }
+  p { color:var(--muted); }
+  p .hl { color:var(--text); }
+  em { color:var(--text); font-style:italic; }
+  code { font-family:var(--mono); font-size:.9em; color:var(--accent); background:rgba(255,255,255,.05); padding:.05em .35em; border-radius:4px; }
+
+  ul.reasons { list-style:none; padding:0; margin:0 0 1.4rem; display:flex; flex-direction:column; gap:.85rem; }
+  ul.reasons.tight { gap:.6rem; }
+  ul.reasons.two { display:grid; grid-template-columns:1fr 1fr; gap:.7rem 1.6rem; }
+  ul.reasons li { position:relative; padding-left:1.3rem; color:var(--muted); font-size:1.02rem; line-height:1.5; }
+  ul.reasons li:before { content:""; position:absolute; left:0; top:.62em; width:6px; height:6px;
+    border-radius:50%; background:var(--accent); box-shadow:0 0 10px var(--accent); }
+  ul.reasons li b { color:var(--text); font-weight:600; }
+  @media (max-width:620px){ ul.reasons.two{grid-template-columns:1fr;} }
+
+  .chips { display:flex; flex-wrap:wrap; gap:.55rem; margin:0 0 1.4rem; }
+  .chips span { font-family:var(--mono); font-size:.72rem; letter-spacing:.04em; color:var(--accent);
+    border:1px solid color-mix(in oklab, var(--accent) 45%, transparent); border-radius:999px; padding:.34rem .8rem; }
+  .capnote { font-size:1.06rem; color:var(--text); margin-top:1.2rem; }
+
+  #s0 .inner { max-width:47rem; }
+  .kicker { font-family:var(--mono); font-size:.7rem; letter-spacing:.24em; text-transform:uppercase; color:var(--faint); margin:0 0 1.4rem; }
+  .subtitle { font-family:var(--serif); font-style:italic; font-size:clamp(1.1rem,2.6vw,1.6rem); color:var(--accent); margin:1rem 0 0; opacity:.9; }
+  .epigraph { font-family:var(--serif); font-style:italic; font-size:clamp(1.05rem,2.4vw,1.45rem);
+    line-height:1.5; color:var(--accent); margin:0 0 2.4rem; opacity:.9; white-space:pre-line; }
+  .epigraph cite { display:block; font-style:normal; font-family:var(--mono);
+    font-size:.72rem; letter-spacing:.22em; text-transform:uppercase; color:var(--faint); margin-top:1.1rem; }
+  .byline { font-family:var(--mono); font-size:.76rem; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); margin:1.6rem 0 0; }
+  .byline b { color:var(--text); font-weight:600; }
+  .begin { margin-top:2.6rem; display:inline-flex; align-items:center; gap:.8rem;
+    font-family:var(--sans); font-size:1rem; font-weight:600; color:var(--ink); background:var(--accent);
+    border:0; border-radius:999px; padding:.95rem 1.6rem; cursor:pointer;
+    transition:transform .25s ease, box-shadow .5s ease, filter .25s; }
+  .begin:hover { transform:translateY(-2px); box-shadow:0 12px 40px -8px color-mix(in oklab, var(--accent) 60%, transparent); filter:brightness(1.05); }
+  .begin:focus-visible { outline:3px solid var(--accent); outline-offset:4px; }
+  .begin .tri { width:0; height:0; border-left:11px solid var(--ink); border-top:7px solid transparent; border-bottom:7px solid transparent; }
+  .scrollhint { margin-top:2.2rem; font-family:var(--mono); font-size:.7rem; letter-spacing:.22em; text-transform:uppercase; color:var(--faint); }
+
+  .stats { display:flex; flex-wrap:wrap; gap:clamp(1.4rem,4vw,3rem); margin-top:2.2rem; }
+  .stat { min-width:7.5rem; }
+  .stat .fig { font-family:var(--serif); font-weight:500; font-size:clamp(2rem,4.4vw,3rem); line-height:1;
+    color:var(--accent); font-variant-numeric:tabular-nums; display:flex; align-items:baseline; gap:.1em; }
+  .stat .fig .u { font-size:.4em; color:var(--text); font-family:var(--sans); font-weight:600; letter-spacing:.02em; }
+  .stat .fig .u.dollar { color:var(--accent); font-family:var(--serif); font-weight:500; font-size:.55em; }
+  .stat .cap { font-family:var(--mono); font-size:.64rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin-top:.7rem; line-height:1.5; }
+
+  .quote { font-family:var(--serif); font-style:italic; font-size:clamp(1.5rem,3.6vw,2.4rem);
+    line-height:1.3; color:var(--text); text-wrap:balance; margin:0; }
+  .quote .grace { color:var(--accent); }
+  .fnote { font-family:var(--mono); font-size:.66rem; letter-spacing:.1em; color:var(--faint); margin-top:2rem; text-transform:uppercase; }
+
+  /* back to library */
+  #back { position:fixed; top:1rem; left:1rem; z-index:45; display:inline-flex; align-items:center; gap:.5rem;
+    font-family:var(--mono); font-size:.68rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted);
+    text-decoration:none; padding:.5rem .8rem; border-radius:999px; border:1px solid rgba(244,239,230,.12);
+    background:rgba(14,18,26,.55); backdrop-filter:blur(10px); transition:color .2s, border-color .2s; }
+  #back:hover { color:var(--text); border-color:rgba(244,239,230,.3); }
+
+  /* caption */
+  #caption { position:fixed; left:50%; transform:translateX(-50%); bottom:5.6rem; z-index:38;
+    width:min(90vw,46rem); text-align:center; font-family:var(--serif); font-size:clamp(1.05rem,2.5vw,1.5rem);
+    line-height:1.5; color:var(--faint); pointer-events:none; opacity:0; transition:opacity .4s ease;
+    text-shadow:0 2px 30px rgba(11,14,20,.95); }
+  #caption.show { opacity:1; }
+  #caption .w { transition:color .12s ease; }
+  #caption .w.spoken { color:var(--muted); }
+  #caption .w.active { color:var(--accent); }
+
+  #player { position:fixed; left:50%; transform:translateX(-50%); bottom:max(1.1rem, env(safe-area-inset-bottom));
+    z-index:40; display:flex; align-items:center; gap:.5rem; background:rgba(14,18,26,.72);
+    backdrop-filter:blur(16px) saturate(1.3); -webkit-backdrop-filter:blur(16px) saturate(1.3);
+    border:1px solid rgba(244,239,230,.12); border-radius:999px; padding:.5rem .55rem;
+    box-shadow:0 18px 50px -18px rgba(0,0,0,.8); max-width:min(95vw,48rem);
+    opacity:0; pointer-events:none; transition:opacity .5s ease; }
+  #player.show { opacity:1; pointer-events:auto; }
+  .pbtn { flex:none; width:42px; height:42px; border-radius:50%; border:1px solid rgba(244,239,230,.16);
+    background:transparent; color:var(--text); cursor:pointer; display:grid; place-items:center;
+    transition:background .2s,border-color .2s,transform .15s; padding:0; }
+  .pbtn:hover { background:rgba(244,239,230,.08); }
+  .pbtn:active { transform:scale(.94); }
+  .pbtn:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+  .pbtn.primary { background:var(--accent); color:var(--ink); border-color:var(--accent); width:46px; height:46px; }
+  .pbtn.primary:hover { filter:brightness(1.06); }
+  .pbtn svg { width:17px; height:17px; display:block; }
+  .pbtn.primary svg { width:19px; height:19px; }
+  .pbtn.speed { width:auto; min-width:46px; padding:0 .7rem; font-family:var(--mono); font-size:.78rem; font-weight:600;
+    letter-spacing:.02em; color:var(--accent); border-radius:999px; font-variant-numeric:tabular-nums; }
+
+  .pmeta { display:flex; flex-direction:column; min-width:0; padding:0 .3rem 0 .5rem; }
+  .pmeta .now { font-family:var(--mono); font-size:.62rem; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--accent); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:11rem; }
+  .pmeta .sub { font-size:.76rem; color:var(--muted); white-space:nowrap; }
+  .seek { width:8rem; height:4px; border-radius:2px; background:rgba(244,239,230,.14); overflow:hidden; margin-top:.35rem; }
+  .seek .fill { height:100%; width:0%; background:var(--accent); transition:width .2s linear; }
+
+  .dots { display:flex; gap:5px; align-items:center; padding:0 .3rem; flex-wrap:wrap; max-width:16rem; }
+  .dots button { width:7px; height:7px; border-radius:50%; border:0; padding:0; cursor:pointer;
+    background:rgba(244,239,230,.22); transition:background .3s, transform .3s; }
+  .dots button:hover { background:rgba(244,239,230,.5); }
+  .dots button.active { background:var(--accent); transform:scale(1.4); box-shadow:0 0 10px var(--accent); }
+  .dots button:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+
+  .voicewrap { position:relative; }
+  #voiceMenu { position:absolute; bottom:56px; right:0; background:rgba(16,20,28,.97);
+    border:1px solid rgba(244,239,230,.14); border-radius:14px; padding:.7rem; width:16.5rem;
+    box-shadow:0 18px 50px -18px rgba(0,0,0,.8); display:none; flex-direction:column; gap:.65rem; }
+  #voiceMenu.open { display:flex; }
+  #voiceMenu .row { display:flex; align-items:center; justify-content:space-between; gap:.6rem; }
+  #voiceMenu label { font-family:var(--mono); font-size:.6rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); }
+  #voiceMenu .val { font-family:var(--mono); font-size:.7rem; color:var(--text); }
+  #voiceMenu input[type=range] { flex:1; accent-color:var(--accent); }
+  .speeds { display:flex; gap:.3rem; }
+  .speeds button { flex:1; font-family:var(--mono); font-size:.7rem; color:var(--muted); background:transparent;
+    border:1px solid rgba(244,239,230,.16); border-radius:7px; padding:.35rem 0; cursor:pointer; transition:.15s; }
+  .speeds button:hover { color:var(--text); }
+  .speeds button.on { color:var(--ink); background:var(--accent); border-color:var(--accent); }
+  .toggle { display:flex; align-items:center; gap:.5rem; cursor:pointer; }
+  .toggle input { accent-color:var(--accent); width:16px; height:16px; }
+  .modeflag { font-family:var(--mono); font-size:.58rem; letter-spacing:.1em; text-transform:uppercase; color:var(--faint); }
+
+  #topbar { position:fixed; top:0; left:0; height:2px; width:0%; z-index:50;
+    background:linear-gradient(90deg,var(--accent),var(--accent)); transition:width .3s ease, background .8s;
+    box-shadow:0 0 12px var(--accent); }
+
+  @media (max-width:600px){
+    body{font-size:16px;}
+    .pmeta,.dots,.seek{display:none;}
+    #player{ gap:.4rem; padding:.45rem .5rem; }
+    #caption{ bottom:6.2rem; font-size:1.1rem; }
+    #voiceMenu{ position:fixed; left:50%; right:auto; transform:translateX(-50%); bottom:5.4rem; width:min(92vw,19rem); }
+    .scene{ padding:12vh clamp(1.3rem,6vw,7rem); }
+    #s0 .inner{ max-width:100%; }
+    .stat{ min-width:6.5rem; }
+    #back{ font-size:.6rem; top:.7rem; left:.7rem; padding:.45rem .7rem; }
+  }
+</style>
+</head>
+<body>
+<div id="dawn"></div>
+<canvas id="meadow"></canvas>
+<div id="grain"></div>
+<div id="topbar"></div>
+<a id="back" href="../index.html">← Story Time</a>
+
+<main>
+  <section class="scene hero" id="s0" data-hue="amber">
+    <div class="inner"><p class="kicker">Essay · January 2025</p><h1>On DeepSeek and Export Controls</h1><p class="subtitle">What DeepSeek really meant, and why chips are the chokepoint</p><p class="byline">By <b>Dario Amodei</b> · Anthropic</p><button class="begin" id="beginBtn"><span class="tri"></span> Play the reading</button><p class="scrollhint">↓ or scroll to read at your own pace</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s1" data-hue="amber">
+    <div class="inner"><p class="eyebrow"><span class="num">01</span><span class="dot"></span> THE MOMENT</p><h2>A panic built on a misreading</h2><p class="lede">DeepSeek's release triggered a wave of alarm — and a headline number that <span class="hl">didn't mean what people thought it meant</span>.</p><p>The claim rippling through markets was that a Chinese lab had reached the frontier for roughly six million dollars, a fraction of what American companies spend. If true, it would suggest export controls were pointless and the U.S. lead was gone.</p><p>Dario's argument is that the panic <em>inverted</em> the real lesson. Understanding why requires understanding how AI development actually behaves.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s2" data-hue="gold">
+    <div class="inner"><p class="eyebrow"><span class="num">02</span><span class="dot"></span> DYNAMIC ONE</p><h2>Scaling laws</h2><p class="lede">Spend more on training, and models get predictably, reliably <span class="hl">smarter across the board</span>.</p><p>This isn't a hunch — it's one of the most robust patterns in the field. More compute, more data, more scale yields better performance on nearly every cognitive task.</p><ul class="reasons"><li><b>A million-dollar model</b> might solve twenty percent of coding tasks.</li><li><b>A hundred-million-dollar model</b> might solve sixty percent.</li></ul><p>The gap between those two is the difference between an undergraduate and a PhD.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s3" data-hue="steel">
+    <div class="inner"><p class="eyebrow"><span class="num">03</span><span class="dot"></span> DYNAMIC TWO</p><h2>Shifting the curve</h2><p class="lede">Better ideas make the same result cheaper — they <span class="hl">shift the whole cost curve down</span>.</p><p>Dario calls these <em>compute multipliers</em>. A clever architecture or efficiency trick lets you reach a given capability for less. Small ones are common; large ones are rare.</p><p class="chips"><span>Small ~1.2x</span><span>Medium ~2x</span><span>Large ~10x</span></p><div class="stats"><div class="stat"><div class="n">~4x</div><div class="l">per year — the pace the curve shifts today</div></div><div class="stat"><div class="n">~1.68x</div><div class="l">the estimated pace back in 2020</div></div></div>
+    </div>
+  </section>
+
+  <section class="scene" id="s4" data-hue="sky">
+    <div class="inner"><p class="eyebrow"><span class="num">04</span><span class="dot"></span> DYNAMIC THREE</p><h2>A new paradigm</h2><p class="lede">Occasionally the <em>method itself</em> changes — a new place to pour scale, <span class="hl">early on its own curve</span>.</p><p>From 2020 to 2023, the game was pretrained models. In 2024, a second stage arrived: reinforcement learning to train chains of reasoning.</p><p>Because this paradigm is young, small amounts of spending still buy large gains — for now.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s5" data-hue="teal">
+    <div class="inner"><p class="eyebrow"><span class="num">05</span><span class="dot"></span> THE MODELS</p><h2>What DeepSeek actually shipped</h2><p class="lede">Two releases — and neither one was <span class="hl">a break in the trend</span>.</p><ul class="reasons two"><li><b>V3, December 2024.</b> A strong pretrained model, close to top U.S. models on some tasks, trained for notably less.</li><li><b>R1, January 2025.</b> V3 plus the new reasoning stage — essentially replicating what OpenAI did with o1.</li></ul><p>V3 is the genuine innovation. R1 caught the headlines. But R1 was likely <em>very cheap</em> to make from V3, because reasoning is early on its curve.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s6" data-hue="crimson">
+    <div class="inner"><p class="eyebrow"><span class="num">06</span><span class="dot"></span> THE NUMBER</p><h2>About that six million dollars</h2><p class="lede">The famous figure is <span class="hl">one training run — not the cost of the company</span>.</p><p>Six million dollars covers compute for a single model. It excludes research, prior experiments, salaries, and the hardware behind them all.</p><ul class="reasons tight"><li><b>Claude 3.5 Sonnet</b> cost a few tens of millions to train.</li><li><b>It was trained nine to twelve months earlier</b> — and stayed ahead on many evaluations.</li></ul><p>Comparing a headline training cost to a whole company's R&D is comparing <em>different things</em>.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s7" data-hue="gold">
+    <div class="inner"><p class="eyebrow"><span class="num">07</span><span class="dot"></span> ON TREND</p><h2>Right where the curve predicts</h2><p class="lede">Run the math on the shifting curve, and V3's cost is <span class="hl">totally, boringly normal</span>.</p><p>Costs for a given capability fall over time — inference prices for GPT-4-level quality dropped roughly tenfold in a year and a half.</p><p>V3 sits about a factor of two behind the current frontier on the scaling curve. Being roughly eight times cheaper to train would be exactly on trend.</p><p class="capnote">Not ahead of the curve. On it.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s8" data-hue="steel">
+    <div class="inner"><p class="eyebrow"><span class="num">08</span><span class="dot"></span> THE CHIPS</p><h2>Not a shoestring operation</h2><p class="lede">DeepSeek reportedly ran on <span class="hl">tens of thousands of advanced chips</span> — not a garage budget.</p><div class="stats"><div class="stat"><div class="n">~50,000</div><div class="l">Hopper-generation chips, reportedly</div></div><div class="stat"><div class="n">~$1B</div><div class="l">plausible hardware investment</div></div></div><p>That's within a factor of two to three of what major U.S. labs command. DeepSeek's edge was <em>engineering talent</em>, deployed against real resources — not scarcity overcome by magic.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s9" data-hue="violet">
+    <div class="inner"><p class="eyebrow"><span class="num">09</span><span class="dot"></span> THE PARADOX</p><h2>Cheaper means we buy more</h2><p class="lede">Efficiency doesn't shrink compute demand. It <span class="hl">grows it</span>.</p><p>When training gets cheaper, no one pockets the savings and stops. The prize at the end of the curve is so valuable that everyone simply <em>traverses the curve faster</em> — spending the savings on smarter models.</p><p>This is the old Jevons pattern: greater efficiency, greater total consumption. Budgets keep climbing toward billions.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s10" data-hue="amber">
+    <div class="inner"><p class="eyebrow"><span class="num">10</span><span class="dot"></span> THE REVERSAL</p><h2>Why controls matter more</h2><p class="lede">If efficiency raises total chip demand, then who <span class="hl">gets the chips still decides everything</span>.</p><p>The naive takeaway was: DeepSeek proves chips don't matter, so drop the controls. The actual logic runs the other way.</p><p>Because the world will keep pouring millions of chips into ever-larger training, control over that supply becomes <em>more</em> decisive, not less. DeepSeek strengthens the case.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s11" data-hue="sage">
+    <div class="inner"><p class="eyebrow"><span class="num">11</span><span class="dot"></span> THE STAKES</p><h2>Two possible worlds</h2><p class="lede">By 2026 or 2027, powerful AI will need <span class="hl">millions of chips and tens of billions of dollars</span>. Who has them shapes everything.</p><ul class="reasons two"><li><b>Unipolar.</b> Controls hold. Democracies keep the lead — and because AI helps build better AI, a temporary edge could become durable.</li><li><b>Bipolar.</b> China reaches parity. It could pour more talent and capital into military uses, and take a commanding global lead.</li></ul>
+    </div>
+  </section>
+
+  <section class="scene" id="s12" data-hue="rose">
+    <div class="inner"><p class="eyebrow"><span class="num">12</span><span class="dot"></span> THE JUDGMENT</p><h2>Why one led by democracies is safer</h2><p class="lede">Dario's aim isn't to deny China the <span class="hl">benefits of AI</span> — it's to prevent authoritarian <em>military dominance</em>.</p><p>He's clear the DeepSeek researchers seem like smart, curious people. But they answer to an authoritarian government.</p><p>A world where the most powerful technology sits with democracies is, in his view, the safer bet — not a perfect one, but the one worth defending.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s13" data-hue="steel">
+    <div class="inner"><p class="eyebrow"><span class="num">13</span><span class="dot"></span> THE EVIDENCE</p><h2>The controls are working</h2><p class="lede">DeepSeek's chip mix isn't a failure of controls — it's a snapshot of them <span class="hl">taking hold</span>.</p><ul class="reasons tight"><li><b>H100s.</b> Banned — likely smuggled.</li><li><b>H800s.</b> Shipped before the October ban closed that gap.</li><li><b>H20s.</b> Still allowed — a loophole Dario thinks should close.</li></ul><p>A full fleet of top-line H100s would signal failure. This mix signals <em>loopholes closing, one by one</em>.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s14" data-hue="sky">
+    <div class="inner"><p class="eyebrow"><span class="num">14</span><span class="dot"></span> THE SCALE TEST</p><h2>You can hide a billion, not a hundred</h2><p class="lede">The controls don't need to be perfect. They need to make <span class="hl">massive buildouts impossible to conceal</span>.</p><p>A billion dollars of chips can be smuggled and hidden. A hundred billion cannot. Millions of chips are physically hard to sneak across borders.</p><p>The frontier of the future is a <em>giant, visible</em> thing. Controls raise the cost of matching it — and that margin is the whole point.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s15" data-hue="amber">
+    <div class="inner"><p class="eyebrow"><span class="num">15</span><span class="dot"></span> THE STAKES</p><h2>One of our most powerful tools</h2><p class="lede">Export controls are, in Dario's view, <span class="hl">one of the most powerful levers</span> we have over how powerful AI arrives.</p><p>DeepSeek didn't weaken that case. It clarified it. Progress is smooth and predictable; efficiency raises demand; chips are the chokepoint.</p><p class="quote">The question isn't whether China gets AI's benefits. <span class="grace">It's whether a temporary lead becomes a durable, democratic one — before the window closes.</span></p>
+    </div>
+  </section>
+</main>
+
+<div id="caption" aria-live="off"></div>
+<audio id="narrator" preload="none"></audio>
+
+<div id="player" aria-label="Narration controls">
+  <button class="pbtn" id="prevBtn" title="Previous" aria-label="Previous scene">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 6v12l-8.5-6L18 6zM7 6h2v12H7z"/></svg></button>
+  <button class="pbtn primary" id="playBtn" title="Play" aria-label="Play narration">
+    <svg id="playIcon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7L8 5z"/></svg>
+    <svg id="pauseIcon" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg></button>
+  <button class="pbtn" id="nextBtn" title="Next" aria-label="Next scene">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 6l8.5 6L6 18V6zm9 0h2v12h-2z"/></svg></button>
+  <button class="pbtn speed" id="speedBtn" title="Playback speed" aria-label="Playback speed">1&times;</button>
+  <div class="pmeta">
+    <span class="now" id="nowTitle">Prologue</span>
+    <span class="sub" id="nowSub">Press play to begin</span>
+    <div class="seek"><div class="fill" id="seekFill"></div></div>
+  </div>
+  <div class="dots" id="dots" aria-hidden="true"></div>
+  <div class="voicewrap">
+    <button class="pbtn" id="voiceToggle" title="Settings" aria-label="Settings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a9 9 0 0 1 0 14"/></svg></button>
+    <div id="voiceMenu">
+      <div class="row"><label>Narrator</label><span class="val modeflag" id="modeFlag">—</span></div>
+      <div><label style="display:block;margin-bottom:.4rem">Speed</label>
+        <div class="speeds" id="speeds"></div></div>
+      <div class="row"><label>Volume</label><input type="range" id="vol" min="0" max="1" step="0.05" value="1"></div>
+      <label class="toggle"><input type="checkbox" id="capToggle" checked> <span class="val">Show captions</span></label>
+      <div class="row" id="ttsRow" style="display:none"><label>Voice</label><select id="voiceSelect" style="max-width:9rem"></select></div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var SC = [{"id":"s0","sub":"Prologue","text":"In January of twenty twenty-five, a Chinese company called DeepSeek released a model that rattled markets and headlines. The story people told was simple. China had caught up… on a shoestring… for six million dollars. Dario Amodei thought that story got almost everything wrong. Not because DeepSeek's engineers weren't excellent — they were. But because the numbers were misread, and the lesson drawn from them was backwards. This essay is his correction. It's about how AI progress actually works. And why the moment made the case for export controls stronger, not weaker.","cap":[[0,"In"],[0.24,"January"],[0.73,"of"],[0.82,"twenty"],[1.2,"twenty-five,"],[2.02,"a"],[2.11,"Chinese"],[2.69,"company"],[3.16,"called"],[3.5,"DeepSeek"],[4.66,"released"],[5.18,"a"],[5.29,"model"],[5.69,"that"],[5.89,"rattled"],[6.42,"markets"],[7.01,"and"],[7.22,"headlines."],[8.6,"The"],[8.78,"story"],[9.23,"people"],[9.61,"told"],[10.11,"was"],[10.34,"simple."],[11.48,"China"],[11.99,"had"],[12.2,"caught"],[12.59,"up…"],[13.34,"on"],[13.54,"a"],[13.63,"shoestring…"],[14.8,"for"],[15.04,"six"],[15.57,"million"],[16.07,"dollars."],[17.44,"Dario"],[18.01,"Amodei"],[18.54,"thought"],[18.83,"that"],[19.08,"story"],[19.56,"got"],[19.78,"almost"],[20.29,"everything"],[20.81,"wrong."],[21.79,"Not"],[22.04,"because"],[22.52,"DeepSeek's"],[23.25,"engineers"],[23.91,"weren't"],[24.23,"excellent"],[24.82,"—"],[25.07,"they"],[25.28,"were."],[26.13,"But"],[26.34,"because"],[26.7,"the"],[26.91,"numbers"],[27.39,"were"],[27.56,"misread,"],[28.2,"and"],[28.34,"the"],[28.53,"lesson"],[29.06,"drawn"],[29.52,"from"],[29.8,"them"],[29.99,"was"],[30.2,"backwards."],[31.22,"This"],[31.72,"essay"],[32.86,"is"],[33.17,"his"],[33.41,"correction."],[34.59,"It's"],[34.83,"about"],[35.24,"how"],[35.61,"AI"],[36.14,"progress"],[36.83,"actually"],[37.36,"works."],[38.38,"And"],[38.61,"why"],[38.92,"the"],[39.08,"moment"],[39.55,"made"],[39.85,"the"],[39.97,"case"],[40.4,"for"],[40.61,"export"],[41.04,"controls"],[41.55,"stronger,"],[42.38,"not"],[42.62,"weaker."]]},{"id":"s1","sub":"The moment","text":"When DeepSeek released its models in early twenty twenty-five, the reaction was close to panic. Markets moved. Commentators declared that China had caught up to the American frontier — and done it for almost nothing. Six million dollars, the story went. A rounding error next to what the big labs spend. And if that were true, then export controls looked useless, and the American lead looked gone. Dario Amodei's essay is a patient correction. The headline number was misleading. And the conclusion drawn from it was exactly backwards. To see why, you first have to understand how progress in AI really works.","cap":[[0,"When"],[0.34,"DeepSeek"],[0.98,"released"],[1.43,"its"],[1.65,"models"],[2.11,"in"],[2.28,"early"],[2.57,"twenty"],[3.04,"twenty-five,"],[4.49,"the"],[4.68,"reaction"],[5.27,"was"],[5.46,"close"],[5.81,"to"],[5.93,"panic."],[6.99,"Markets"],[7.54,"moved."],[8.41,"Commentators"],[9.27,"declared"],[9.79,"that"],[9.96,"China"],[10.46,"had"],[10.66,"caught"],[11.03,"up"],[11.24,"to"],[11.34,"the"],[11.47,"American"],[12.03,"frontier"],[12.85,"—"],[13.35,"and"],[13.67,"done"],[13.91,"it"],[14.45,"for"],[14.68,"almost"],[15.07,"nothing."],[16.51,"Six"],[16.93,"million"],[17.38,"dollars,"],[18.32,"the"],[18.47,"story"],[18.89,"went."],[19.61,"A"],[19.82,"rounding"],[20.38,"error"],[20.7,"next"],[20.98,"to"],[21.08,"what"],[21.33,"the"],[21.46,"big"],[21.72,"labs"],[22.07,"spend."],[23.19,"And"],[23.41,"if"],[23.56,"that"],[23.79,"were"],[23.96,"true,"],[24.62,"then"],[24.9,"export"],[25.46,"controls"],[26.13,"looked"],[26.45,"useless,"],[27.32,"and"],[27.54,"the"],[27.67,"American"],[28.22,"lead"],[29.04,"looked"],[29.4,"gone."],[30.46,"Dario"],[30.98,"Amodei's"],[31.47,"essay"],[32.22,"is"],[32.46,"a"],[32.55,"patient"],[33.09,"correction."],[34.2,"The"],[34.4,"headline"],[34.88,"number"],[35.25,"was"],[35.47,"misleading."],[36.52,"And"],[36.71,"the"],[36.84,"conclusion"],[37.6,"drawn"],[38.08,"from"],[38.34,"it"],[38.88,"was"],[39.13,"exactly"],[39.83,"backwards."],[40.89,"To"],[41.08,"see"],[41.3,"why,"],[41.91,"you"],[42.13,"first"],[42.53,"have"],[42.76,"to"],[42.92,"understand"],[43.71,"how"],[43.94,"progress"],[44.56,"in"],[44.7,"AI"],[45.15,"really"],[45.55,"works."]]},{"id":"s2","sub":"Dynamic one","text":"The first dynamic is the one everyone has heard of — scaling laws. Put simply, when you spend more on training a model, it gets better. Not on one narrow task, but across almost every kind of thinking. And the pattern is remarkably smooth. Dario gives a concrete picture. A model that costs a million dollars to train might solve twenty percent of a set of coding problems. A model that costs a hundred million might solve sixty percent. That gap — twenty to sixty — is roughly the distance between an undergraduate and a PhD. More scale, more capability. It's one of the most dependable facts in the whole field.","cap":[[0,"The"],[0.21,"first"],[0.52,"dynamic"],[1.09,"is"],[1.23,"the"],[1.37,"one"],[1.57,"everyone"],[1.96,"has"],[2.15,"heard"],[2.47,"of"],[2.87,"—"],[3.08,"scaling"],[3.61,"laws."],[4.83,"Put"],[5.1,"simply,"],[5.49,"when"],[5.68,"you"],[5.82,"spend"],[6.11,"more"],[6.36,"on"],[6.5,"training"],[6.93,"a"],[7.01,"model,"],[7.38,"it"],[7.51,"gets"],[7.79,"better."],[8.56,"Not"],[8.81,"on"],[9,"one"],[9.28,"narrow"],[9.71,"task,"],[10.22,"but"],[10.38,"across"],[10.77,"almost"],[11.16,"every"],[11.45,"kind"],[11.78,"of"],[11.9,"thinking."],[13.15,"And"],[13.35,"the"],[13.48,"pattern"],[13.98,"is"],[14.18,"remarkably"],[15.08,"smooth."],[16.93,"Dario"],[17.43,"gives"],[17.66,"a"],[17.75,"concrete"],[18.29,"picture."],[18.93,"A"],[19.11,"model"],[19.47,"that"],[19.66,"costs"],[20.11,"a"],[20.24,"million"],[20.67,"dollars"],[21.07,"to"],[21.22,"train"],[21.91,"might"],[22.26,"solve"],[22.66,"twenty"],[23.1,"percent"],[23.53,"of"],[23.64,"a"],[23.73,"set"],[24.01,"of"],[24.4,"coding"],[24.97,"problems."],[26.18,"A"],[26.35,"model"],[26.71,"that"],[26.91,"costs"],[27.39,"a"],[27.54,"hundred"],[27.99,"million"],[28.44,"might"],[28.73,"solve"],[29.56,"sixty"],[30.13,"percent."],[31.43,"That"],[31.79,"gap"],[32.32,"—"],[32.53,"twenty"],[33.2,"to"],[33.42,"sixty"],[34.1,"—"],[34.22,"is"],[34.47,"roughly"],[34.92,"the"],[35.05,"distance"],[35.57,"between"],[35.92,"an"],[36.05,"undergraduate"],[36.86,"and"],[36.97,"a"],[37.05,"PhD."],[38.32,"More"],[38.62,"scale,"],[39.09,"more"],[39.39,"capability."],[40.79,"It's"],[41.09,"one"],[41.36,"of"],[41.46,"the"],[41.62,"most"],[41.94,"dependable"],[42.64,"facts"],[43.09,"in"],[43.19,"the"],[43.32,"whole"],[43.74,"field."]]},{"id":"s3","sub":"Dynamic two","text":"The second dynamic is the one that matters most for understanding DeepSeek. It's this. Better ideas make the same result cheaper. A smarter architecture, a training trick, a hardware improvement — Dario calls these compute multipliers. Small ones are everywhere, worth maybe twenty percent. Medium ones double your efficiency. Large ones, which are rare, might be worth ten times. Frontier labs discover these constantly. And when you add them up, the entire cost curve slides downward over time. Dario's estimate is that the curve now shifts by roughly four times per year — up from something closer to one-point-seven times a year back in twenty twenty. Getting cheaper is normal. It's the baseline.","cap":[[0,"The"],[0.23,"second"],[0.64,"dynamic"],[1.21,"is"],[1.35,"the"],[1.5,"one"],[1.7,"that"],[1.88,"matters"],[2.33,"most"],[2.69,"for"],[2.87,"understanding"],[3.63,"DeepSeek."],[4.67,"It's"],[4.96,"this."],[5.98,"Better"],[6.42,"ideas"],[7.06,"make"],[7.3,"the"],[7.47,"same"],[7.9,"result"],[8.39,"cheaper."],[9.51,"A"],[9.69,"smarter"],[10.44,"architecture,"],[11.33,"a"],[11.48,"training"],[12.12,"trick,"],[12.53,"a"],[12.68,"hardware"],[13.28,"improvement"],[14.18,"—"],[14.42,"Dario"],[14.99,"calls"],[15.45,"these"],[15.79,"compute"],[16.44,"multipliers."],[18.09,"Small"],[18.54,"ones"],[18.84,"are"],[18.99,"everywhere,"],[19.74,"worth"],[20.07,"maybe"],[20.45,"twenty"],[20.97,"percent."],[21.83,"Medium"],[22.36,"ones"],[22.73,"double"],[23.13,"your"],[23.36,"efficiency."],[24.64,"Large"],[25.08,"ones,"],[25.41,"which"],[25.65,"are"],[25.97,"rare,"],[26.72,"might"],[27.01,"be"],[27.14,"worth"],[27.5,"ten"],[28.07,"times."],[29.5,"Frontier"],[30.04,"labs"],[30.36,"discover"],[30.82,"these"],[31.1,"constantly."],[32.31,"And"],[32.51,"when"],[32.72,"you"],[32.88,"add"],[33.08,"them"],[33.26,"up,"],[33.87,"the"],[34.05,"entire"],[34.58,"cost"],[35.06,"curve"],[35.57,"slides"],[36.2,"downward"],[36.79,"over"],[37.05,"time."],[38,"Dario's"],[38.62,"estimate"],[39.15,"is"],[39.31,"that"],[39.47,"the"],[39.63,"curve"],[40.13,"now"],[40.5,"shifts"],[41.08,"by"],[41.37,"roughly"],[41.9,"four"],[42.27,"times"],[42.84,"per"],[43.18,"year"],[43.74,"—"],[44.17,"up"],[44.39,"from"],[44.62,"something"],[45.05,"closer"],[45.51,"to"],[45.71,"one-point-seven"],[46.82,"times"],[47.27,"a"],[47.38,"year"],[48.04,"back"],[48.36,"in"],[48.54,"twenty"],[49.04,"twenty."],[50.4,"Getting"],[50.81,"cheaper"],[51.35,"is"],[51.61,"normal."],[52.33,"It's"],[52.63,"the"],[52.75,"baseline."]]},{"id":"s4","sub":"Dynamic three","text":"The third dynamic is the rarest. Sometimes the very method of building AI shifts. From twenty twenty to twenty twenty-three, progress came almost entirely from pretraining — feeding models vast amounts of text. Then, in twenty twenty-four, a second stage emerged. Reinforcement learning, used to train models to reason step by step, to think in chains before answering. What matters here is timing. This new paradigm is young. It sits near the bottom of its own scaling curve. And when a curve is that early, modest amounts of money still buy dramatic improvements. That fact — a fresh paradigm, cheap to climb at first — is about to explain what DeepSeek actually did.","cap":[[0,"The"],[0.22,"third"],[0.56,"dynamic"],[1.1,"is"],[1.3,"the"],[1.5,"rarest."],[2.57,"Sometimes"],[3.27,"the"],[3.44,"very"],[3.73,"method"],[4.06,"of"],[4.2,"building"],[4.62,"AI"],[5.05,"shifts."],[6.2,"From"],[6.55,"twenty"],[7.06,"twenty"],[7.66,"to"],[7.84,"twenty"],[8.29,"twenty-three,"],[9.51,"progress"],[10.14,"came"],[10.46,"almost"],[11,"entirely"],[11.66,"from"],[11.89,"pretraining"],[12.85,"—"],[13.08,"feeding"],[13.55,"models"],[14.06,"vast"],[14.51,"amounts"],[14.95,"of"],[15.09,"text."],[16.32,"Then,"],[17.13,"in"],[17.4,"twenty"],[17.89,"twenty-four,"],[19.08,"a"],[19.27,"second"],[19.73,"stage"],[20.14,"emerged."],[21.12,"Reinforcement"],[21.99,"learning,"],[22.74,"used"],[23.07,"to"],[23.21,"train"],[23.68,"models"],[24.14,"to"],[24.33,"reason"],[24.86,"step"],[25.22,"by"],[25.44,"step,"],[26.11,"to"],[26.32,"think"],[26.7,"in"],[26.9,"chains"],[27.45,"before"],[27.83,"answering."],[29.08,"What"],[29.39,"matters"],[29.86,"here"],[30.42,"is"],[30.69,"timing."],[31.99,"This"],[32.32,"new"],[32.58,"paradigm"],[33.26,"is"],[33.48,"young."],[34.35,"It"],[34.6,"sits"],[35.03,"near"],[35.26,"the"],[35.41,"bottom"],[35.83,"of"],[35.96,"its"],[36.17,"own"],[36.55,"scaling"],[37.17,"curve."],[38.06,"And"],[38.27,"when"],[38.46,"a"],[38.57,"curve"],[38.94,"is"],[39.08,"that"],[39.45,"early,"],[40.19,"modest"],[40.67,"amounts"],[41.11,"of"],[41.3,"money"],[41.66,"still"],[42.06,"buy"],[42.4,"dramatic"],[42.97,"improvements."],[44.4,"That"],[44.74,"fact"],[45.33,"—"],[45.5,"a"],[45.67,"fresh"],[46.06,"paradigm,"],[46.73,"cheap"],[47.03,"to"],[47.15,"climb"],[47.47,"at"],[47.61,"first"],[48.15,"—"],[48.27,"is"],[48.47,"about"],[48.81,"to"],[48.95,"explain"],[49.55,"what"],[49.76,"DeepSeek"],[50.54,"actually"],[51.25,"did."]]},{"id":"s5","sub":"The models","text":"So what did DeepSeek actually release? Two things. The first was V3, in December of twenty twenty-four — a pretrained model that came close to leading American systems on some important tasks, and cost meaningfully less to train. The second was R1, in January, which took V3 and added the new reasoning stage. R1 got the attention. But Dario points out that R1 was probably cheap to produce, precisely because the reasoning paradigm is so young. The real engineering achievement was V3. And here's the key claim. V3 was impressive — but it was not a break in the trend. It was the trend, arriving roughly on schedule.","cap":[[0,"So"],[0.45,"what"],[0.77,"did"],[1.06,"DeepSeek"],[1.66,"actually"],[2.11,"release?"],[3.23,"Two"],[3.51,"things."],[4.43,"The"],[4.62,"first"],[5,"was"],[5.32,"V3,"],[6.03,"in"],[6.15,"December"],[6.69,"of"],[6.78,"twenty"],[7.22,"twenty-four"],[8.16,"—"],[8.3,"a"],[8.48,"pretrained"],[9.4,"model"],[9.78,"that"],[9.95,"came"],[10.25,"close"],[10.65,"to"],[10.8,"leading"],[11.17,"American"],[11.68,"systems"],[12.21,"on"],[12.4,"some"],[12.68,"important"],[13.25,"tasks,"],[14.11,"and"],[14.34,"cost"],[14.73,"meaningfully"],[15.42,"less"],[15.69,"to"],[15.82,"train."],[16.95,"The"],[17.15,"second"],[17.65,"was"],[18.08,"R1,"],[18.84,"in"],[19.13,"January,"],[19.7,"which"],[19.92,"took"],[20.19,"V3"],[20.82,"and"],[20.96,"added"],[21.28,"the"],[21.44,"new"],[21.75,"reasoning"],[22.31,"stage."],[23.42,"R1"],[23.8,"got"],[23.98,"the"],[24.08,"attention."],[24.93,"But"],[25.15,"Dario"],[25.65,"points"],[26,"out"],[26.22,"that"],[26.39,"R1"],[26.77,"was"],[26.96,"probably"],[27.45,"cheap"],[27.79,"to"],[27.91,"produce,"],[28.83,"precisely"],[29.58,"because"],[30.02,"the"],[30.2,"reasoning"],[30.79,"paradigm"],[31.42,"is"],[31.58,"so"],[31.9,"young."],[32.66,"The"],[32.87,"real"],[33.18,"engineering"],[33.78,"achievement"],[34.35,"was"],[34.62,"V3."],[35.82,"And"],[36.39,"here's"],[36.85,"the"],[37,"key"],[37.34,"claim."],[38.33,"V3"],[39.06,"was"],[39.29,"impressive"],[40.06,"—"],[40.35,"but"],[40.57,"it"],[40.68,"was"],[40.93,"not"],[41.45,"a"],[41.65,"break"],[42.01,"in"],[42.12,"the"],[42.24,"trend."],[43.25,"It"],[43.46,"was"],[43.68,"the"],[43.82,"trend,"],[44.86,"arriving"],[45.58,"roughly"],[46.05,"on"],[46.22,"schedule."]]},{"id":"s6","sub":"The number","text":"Now, the six million dollars. Dario is direct about this. That number is the cost of a single training run — the compute for one model. It is not the cost of the company. It leaves out the research, the failed experiments, the salaries, the accumulated know-how, the hardware behind everything. To make the comparison honest, he offers Anthropic's own model. Claude three-point-five Sonnet cost a few tens of millions of dollars to train. Its training finished nine to twelve months earlier. And it remained ahead on many evaluations. So placing a lone training cost next to a rival's entire research budget isn't a fair fight. It's comparing two completely different things.","cap":[[0,"Now,"],[0.74,"the"],[0.92,"six"],[1.31,"million"],[1.75,"dollars."],[2.81,"Dario"],[3.39,"is"],[3.59,"direct"],[4.28,"about"],[4.61,"this."],[5.54,"That"],[5.86,"number"],[6.29,"is"],[6.44,"the"],[6.57,"cost"],[6.98,"of"],[7.11,"a"],[7.25,"single"],[7.86,"training"],[8.49,"run"],[9.09,"—"],[9.33,"the"],[9.5,"compute"],[10.11,"for"],[10.33,"one"],[10.57,"model."],[11.75,"It"],[11.95,"is"],[12.14,"not"],[12.42,"the"],[12.56,"cost"],[12.92,"of"],[13.03,"the"],[13.14,"company."],[14.12,"It"],[14.34,"leaves"],[14.72,"out"],[15,"the"],[15.15,"research,"],[15.82,"the"],[16.01,"failed"],[16.58,"experiments,"],[17.42,"the"],[17.58,"salaries,"],[18.34,"the"],[18.48,"accumulated"],[19.46,"know-how,"],[20.41,"the"],[20.62,"hardware"],[21.48,"behind"],[21.96,"everything."],[23.66,"To"],[23.85,"make"],[24.11,"the"],[24.25,"comparison"],[24.94,"honest,"],[25.37,"he"],[25.51,"offers"],[25.91,"Anthropic's"],[26.82,"own"],[27.2,"model."],[28.54,"Claude"],[29.1,"three-point-five"],[31.29,"Sonnet"],[31.82,"cost"],[32.11,"a"],[32.22,"few"],[32.49,"tens"],[33.01,"of"],[33.19,"millions"],[33.72,"of"],[33.83,"dollars"],[34.3,"to"],[34.46,"train."],[35.19,"Its"],[35.46,"training"],[35.98,"finished"],[36.85,"nine"],[37.34,"to"],[37.5,"twelve"],[38.03,"months"],[38.55,"earlier."],[39.45,"And"],[39.69,"it"],[39.86,"remained"],[40.37,"ahead"],[41.2,"on"],[41.54,"many"],[41.98,"evaluations."],[43.92,"So"],[44.19,"placing"],[44.76,"a"],[44.93,"lone"],[45.42,"training"],[46.03,"cost"],[46.75,"next"],[47.11,"to"],[47.28,"a"],[47.43,"rival's"],[48.05,"entire"],[48.72,"research"],[49.35,"budget"],[50.26,"isn't"],[50.67,"a"],[50.76,"fair"],[51.06,"fight."],[51.82,"It's"],[52.07,"comparing"],[52.7,"two"],[53.3,"completely"],[54.04,"different"],[54.46,"things."]]},{"id":"s7","sub":"On trend","text":"So was V3's low cost a shock? Only if you forgot the second dynamic. Costs for a given level of capability fall steadily — Dario notes that the price to run GPT-four-level intelligence dropped by roughly ten times in about a year and a half. When you place V3 against the current frontier, it lands about a factor of two behind on the scaling curve. And for a model that's a bit behind, being something like eight times cheaper to train is not a miracle. It is exactly what the trend predicts. This is the heart of his argument. DeepSeek did not leap ahead of the curve. A Chinese company arrived at the curve. That is a real milestone — and a very different one.","cap":[[0,"So"],[0.35,"was"],[0.63,"V3's"],[1.53,"low"],[1.8,"cost"],[2.21,"a"],[2.36,"shock?"],[3.33,"Only"],[3.61,"if"],[3.7,"you"],[3.84,"forgot"],[4.18,"the"],[4.31,"second"],[4.67,"dynamic."],[5.75,"Costs"],[6.26,"for"],[6.43,"a"],[6.53,"given"],[6.87,"level"],[7.21,"of"],[7.33,"capability"],[8.17,"fall"],[8.66,"steadily"],[9.45,"—"],[9.76,"Dario"],[10.28,"notes"],[10.6,"that"],[10.76,"the"],[10.88,"price"],[11.27,"to"],[11.42,"run"],[11.74,"GPT-four-level"],[13.56,"intelligence"],[14.29,"dropped"],[14.69,"by"],[15.41,"roughly"],[15.86,"ten"],[16.18,"times"],[16.73,"in"],[16.86,"about"],[17.23,"a"],[17.35,"year"],[17.6,"and"],[17.75,"a"],[17.86,"half."],[18.99,"When"],[19.24,"you"],[19.42,"place"],[19.78,"V3"],[20.38,"against"],[20.74,"the"],[20.85,"current"],[21.23,"frontier,"],[22.18,"it"],[22.44,"lands"],[22.88,"about"],[23.21,"a"],[23.35,"factor"],[23.88,"of"],[24.01,"two"],[24.43,"behind"],[24.93,"on"],[25.05,"the"],[25.19,"scaling"],[25.76,"curve."],[26.6,"And"],[27.11,"for"],[27.33,"a"],[27.43,"model"],[27.84,"that's"],[28.08,"a"],[28.17,"bit"],[28.38,"behind,"],[29.35,"being"],[29.71,"something"],[30.14,"like"],[30.42,"eight"],[30.69,"times"],[31.17,"cheaper"],[31.57,"to"],[31.71,"train"],[32.62,"is"],[33.01,"not"],[33.46,"a"],[33.67,"miracle."],[34.63,"It"],[34.84,"is"],[35.04,"exactly"],[35.76,"what"],[35.97,"the"],[36.1,"trend"],[36.58,"predicts."],[37.78,"This"],[38.39,"is"],[38.63,"the"],[38.84,"heart"],[39.25,"of"],[39.39,"his"],[39.58,"argument."],[40.68,"DeepSeek"],[41.42,"did"],[41.72,"not"],[42.24,"leap"],[42.56,"ahead"],[42.9,"of"],[42.99,"the"],[43.11,"curve."],[43.94,"A"],[44.13,"Chinese"],[44.87,"company"],[45.35,"arrived"],[45.79,"at"],[45.88,"the"],[46.01,"curve."],[46.7,"That"],[47.36,"is"],[47.59,"a"],[47.74,"real"],[48.09,"milestone"],[48.99,"—"],[49.24,"and"],[49.56,"a"],[49.71,"very"],[50.09,"different"],[50.56,"one."]]},{"id":"s8","sub":"The chips","text":"There's one more piece the panic left out — the hardware. DeepSeek reportedly had access to around fifty thousand Hopper-generation chips, an investment plausibly near a billion dollars. That is not a scrappy underdog. It is comparable to what leading American labs work with. So the right way to read DeepSeek is this. A talented team, with substantial resources, did excellent engineering and reached the trend line. That deserves respect. But it is not a story of scarcity being overcome by cleverness alone. And it is very much not evidence that chips no longer matter. If anything, the chips are the whole point.","cap":[[0,"There's"],[0.36,"one"],[0.65,"more"],[0.91,"piece"],[1.25,"the"],[1.37,"panic"],[1.78,"left"],[2.09,"out"],[2.55,"—"],[2.86,"the"],[3,"hardware."],[3.99,"DeepSeek"],[4.54,"reportedly"],[5.18,"had"],[5.41,"access"],[5.9,"to"],[6.05,"around"],[6.5,"fifty"],[7.04,"thousand"],[7.67,"Hopper-generation"],[8.64,"chips,"],[9.32,"an"],[9.53,"investment"],[10.3,"plausibly"],[11.09,"near"],[11.45,"a"],[11.63,"billion"],[12.46,"dollars."],[13.98,"That"],[14.22,"is"],[14.39,"not"],[14.63,"a"],[14.73,"scrappy"],[15.27,"underdog."],[16.42,"It"],[16.61,"is"],[16.78,"comparable"],[17.4,"to"],[17.54,"what"],[17.76,"leading"],[18.13,"American"],[18.63,"labs"],[18.98,"work"],[19.27,"with."],[20.43,"So"],[20.7,"the"],[20.89,"right"],[21.23,"way"],[21.51,"to"],[21.69,"read"],[21.99,"DeepSeek"],[22.63,"is"],[22.83,"this."],[23.57,"A"],[23.77,"talented"],[24.45,"team,"],[24.97,"with"],[25.24,"substantial"],[26.2,"resources,"],[27.3,"did"],[27.56,"excellent"],[28.11,"engineering"],[28.89,"and"],[29.27,"reached"],[29.65,"the"],[29.8,"trend"],[30.29,"line."],[31.22,"That"],[31.89,"deserves"],[32.58,"respect."],[33.99,"But"],[34.25,"it"],[34.38,"is"],[34.6,"not"],[34.87,"a"],[34.98,"story"],[35.45,"of"],[35.58,"scarcity"],[36.37,"being"],[36.68,"overcome"],[37.58,"by"],[37.87,"cleverness"],[38.48,"alone."],[39.52,"And"],[39.95,"it"],[40.11,"is"],[40.33,"very"],[40.65,"much"],[40.98,"not"],[41.24,"evidence"],[41.76,"that"],[41.95,"chips"],[42.49,"no"],[42.73,"longer"],[43.11,"matter."],[43.84,"If"],[44.07,"anything,"],[45.05,"the"],[45.22,"chips"],[45.62,"are"],[45.74,"the"],[45.88,"whole"],[46.22,"point."]]},{"id":"s9","sub":"The paradox","text":"Here's the twist that undoes the whole panic. When AI gets cheaper to train, does the world spend less on chips? No. It spends more. Dario's phrase is that when the curve shifts, we simply traverse it faster — because what waits at the end of the curve is so valuable that no one is content to stop. Save money on one model, and you pour those savings straight into a smarter one. This is an old economic pattern. Make something more efficient, and total consumption goes up, not down. So efficiency gains like DeepSeek's don't reduce the hunger for compute. They intensify it. Frontier budgets keep marching toward the billions.","cap":[[0,"Here's"],[0.43,"the"],[0.57,"twist"],[1.32,"that"],[1.57,"undoes"],[2.06,"the"],[2.19,"whole"],[2.52,"panic."],[3.48,"When"],[3.74,"AI"],[4.17,"gets"],[4.48,"cheaper"],[4.89,"to"],[5.03,"train,"],[5.86,"does"],[6.12,"the"],[6.26,"world"],[6.69,"spend"],[7.13,"less"],[7.45,"on"],[7.66,"chips?"],[8.66,"No."],[9.64,"It"],[9.82,"spends"],[10.24,"more."],[11.32,"Dario's"],[11.89,"phrase"],[12.42,"is"],[12.78,"that"],[13.19,"when"],[13.46,"the"],[13.61,"curve"],[14.11,"shifts,"],[15.31,"we"],[15.57,"simply"],[16.06,"traverse"],[16.61,"it"],[16.77,"faster"],[17.45,"—"],[17.64,"because"],[18.11,"what"],[18.44,"waits"],[18.92,"at"],[19.04,"the"],[19.19,"end"],[19.43,"of"],[19.53,"the"],[19.67,"curve"],[20.07,"is"],[20.26,"so"],[20.62,"valuable"],[21.21,"that"],[21.49,"no"],[21.82,"one"],[21.99,"is"],[22.14,"content"],[22.65,"to"],[22.83,"stop."],[23.88,"Save"],[24.36,"money"],[24.69,"on"],[24.95,"one"],[25.21,"model,"],[26.01,"and"],[26.22,"you"],[26.38,"pour"],[26.7,"those"],[26.95,"savings"],[27.49,"straight"],[28.43,"into"],[28.83,"a"],[28.92,"smarter"],[29.44,"one."],[30.53,"This"],[31.08,"is"],[31.29,"an"],[31.46,"old"],[31.94,"economic"],[32.53,"pattern."],[33.27,"Make"],[33.55,"something"],[33.96,"more"],[34.17,"efficient,"],[34.71,"and"],[34.9,"total"],[35.36,"consumption"],[36.01,"goes"],[36.33,"up,"],[36.9,"not"],[37.16,"down."],[37.71,"So"],[37.94,"efficiency"],[38.72,"gains"],[39.23,"like"],[39.8,"DeepSeek's"],[40.53,"don't"],[40.84,"reduce"],[41.33,"the"],[41.48,"hunger"],[41.9,"for"],[42.05,"compute."],[43.05,"They"],[43.28,"intensify"],[44.08,"it."],[44.65,"Frontier"],[45.2,"budgets"],[45.71,"keep"],[45.96,"marching"],[46.44,"toward"],[46.86,"the"],[46.97,"billions."]]},{"id":"s10","sub":"The reversal","text":"And this is where the panic flips completely on its head. The lazy conclusion was — DeepSeek did more with less, so chips must not matter, so let's abandon export controls. But follow the logic. If cheaper AI only makes the world want more compute, then whoever controls the flow of chips controls the future of the technology. Efficiency doesn't weaken that leverage. It raises the stakes on it. So DeepSeek, properly understood, is not an argument against export controls. It is an argument for them. The very thing people cited as proof controls are futile turns out to be proof of how much the chips still decide.","cap":[[0,"And"],[0.26,"this"],[0.99,"is"],[1.22,"where"],[1.44,"the"],[1.57,"panic"],[2.02,"flips"],[2.44,"completely"],[3.18,"on"],[3.34,"its"],[3.54,"head."],[4.69,"The"],[4.89,"lazy"],[5.42,"conclusion"],[6.19,"was"],[6.83,"—"],[6.98,"DeepSeek"],[7.69,"did"],[7.92,"more"],[8.23,"with"],[8.51,"less,"],[8.85,"so"],[9.1,"chips"],[9.53,"must"],[9.81,"not"],[10.03,"matter,"],[10.74,"so"],[11.09,"let's"],[11.45,"abandon"],[12.05,"export"],[12.59,"controls."],[14,"But"],[14.23,"follow"],[14.58,"the"],[14.71,"logic."],[15.56,"If"],[15.78,"cheaper"],[16.24,"AI"],[16.72,"only"],[16.99,"makes"],[17.29,"the"],[17.43,"world"],[17.83,"want"],[18.15,"more"],[18.39,"compute,"],[19.62,"then"],[19.92,"whoever"],[20.32,"controls"],[20.97,"the"],[21.12,"flow"],[21.42,"of"],[21.55,"chips"],[22.06,"controls"],[22.69,"the"],[22.83,"future"],[23.34,"of"],[23.43,"the"],[23.53,"technology."],[24.92,"Efficiency"],[26,"doesn't"],[26.4,"weaken"],[26.83,"that"],[27.08,"leverage."],[28.03,"It"],[28.28,"raises"],[28.92,"the"],[29.07,"stakes"],[29.58,"on"],[29.75,"it."],[30.24,"So"],[30.62,"DeepSeek,"],[31.75,"properly"],[32.23,"understood,"],[33.26,"is"],[33.59,"not"],[34.09,"an"],[34.34,"argument"],[34.9,"against"],[35.37,"export"],[35.9,"controls."],[37.18,"It"],[37.43,"is"],[37.62,"an"],[37.76,"argument"],[38.3,"for"],[38.45,"them."],[39.2,"The"],[39.38,"very"],[39.68,"thing"],[40.01,"people"],[40.42,"cited"],[40.95,"as"],[41.15,"proof"],[41.5,"controls"],[42.15,"are"],[42.42,"futile"],[43.35,"turns"],[43.81,"out"],[44.05,"to"],[44.19,"be"],[44.34,"proof"],[44.71,"of"],[44.85,"how"],[45.11,"much"],[45.43,"the"],[45.59,"chips"],[45.95,"still"],[46.31,"decide."]]},{"id":"s11","sub":"The stakes","text":"Step back, and Dario frames the real question. Sometime around twenty twenty-six or twenty twenty-seven, he expects AI systems that match almost all humans at almost everything. Building them will take millions of chips and tens of billions of dollars. And that leads to two possible worlds. In the first, export controls hold. Democracies keep the lead. And because AI can help design better AI, a temporary advantage could compound into a lasting one. Call that a unipolar world. In the second, China reaches parity. With a vast industrial base, it could direct more talent and capital toward military uses — and take a commanding lead, not just in AI, but in everything. A bipolar world. The difference between them is enormous.","cap":[[0,"Step"],[0.4,"back,"],[0.98,"and"],[1.21,"Dario"],[1.67,"frames"],[2.11,"the"],[2.26,"real"],[2.58,"question."],[3.5,"Sometime"],[4.18,"around"],[4.77,"twenty"],[5.38,"twenty-six"],[6.39,"or"],[6.92,"twenty"],[7.52,"twenty-seven,"],[9,"he"],[9.2,"expects"],[9.85,"AI"],[10.34,"systems"],[10.94,"that"],[11.15,"match"],[11.51,"almost"],[11.94,"all"],[12.25,"humans"],[12.81,"at"],[12.93,"almost"],[13.33,"everything."],[14.52,"Building"],[15.05,"them"],[15.53,"will"],[15.76,"take"],[16.08,"millions"],[16.66,"of"],[16.8,"chips"],[17.64,"and"],[17.91,"tens"],[18.43,"of"],[18.61,"billions"],[19.27,"of"],[19.4,"dollars."],[20.53,"And"],[20.78,"that"],[21.04,"leads"],[21.37,"to"],[21.55,"two"],[21.87,"possible"],[22.38,"worlds."],[22.95,"In"],[23.12,"the"],[23.24,"first,"],[24.03,"export"],[24.66,"controls"],[25.24,"hold."],[26.1,"Democracies"],[27.02,"keep"],[27.34,"the"],[27.49,"lead."],[28.54,"And"],[28.78,"because"],[29.39,"AI"],[29.99,"can"],[30.2,"help"],[30.47,"design"],[31.01,"better"],[31.37,"AI,"],[31.88,"a"],[32.01,"temporary"],[32.52,"advantage"],[33.15,"could"],[33.38,"compound"],[34.02,"into"],[34.28,"a"],[34.4,"lasting"],[34.97,"one."],[35.84,"Call"],[36.21,"that"],[36.83,"a"],[37.15,"unipolar"],[37.87,"world."],[39.03,"In"],[39.21,"the"],[39.35,"second,"],[40.26,"China"],[40.89,"reaches"],[41.42,"parity."],[42.79,"With"],[42.99,"a"],[43.11,"vast"],[43.65,"industrial"],[44.37,"base,"],[44.75,"it"],[44.9,"could"],[45.15,"direct"],[45.74,"more"],[46.02,"talent"],[46.48,"and"],[46.66,"capital"],[47.17,"toward"],[47.56,"military"],[48.07,"uses"],[48.6,"—"],[48.73,"and"],[48.97,"take"],[49.27,"a"],[49.39,"commanding"],[50.13,"lead,"],[50.81,"not"],[51.12,"just"],[51.51,"in"],[51.7,"AI,"],[52.49,"but"],[52.72,"in"],[52.87,"everything."],[54,"A"],[54.2,"bipolar"],[54.93,"world."],[55.98,"The"],[56.17,"difference"],[56.65,"between"],[57.1,"them"],[57.3,"is"],[57.45,"enormous."]]},{"id":"s12","sub":"The judgment","text":"Why does Dario prefer the unipolar world? Not out of hostility to China's people. He's careful to say the DeepSeek researchers look like smart, curious engineers — the kind you'd want as colleagues. And he's clear that China should share in the immense benefits of AI. Medicine. Science. Quality of life. Those aren't the target. The target is narrower and sharper — preventing an authoritarian government from gaining military dominance through this technology. His judgment is that a world where the most powerful tools sit with democracies is the safer arrangement. Not flawless. Not guaranteed. But the one worth defending, while there's still a lead to defend.","cap":[[0,"Why"],[0.4,"does"],[0.66,"Dario"],[1.22,"prefer"],[1.81,"the"],[2.09,"unipolar"],[2.95,"world?"],[4.01,"Not"],[4.26,"out"],[4.46,"of"],[4.59,"hostility"],[5.38,"to"],[5.54,"China's"],[6.11,"people."],[7.04,"He's"],[7.34,"careful"],[7.83,"to"],[7.96,"say"],[8.23,"the"],[8.42,"DeepSeek"],[9.1,"researchers"],[9.8,"look"],[10.05,"like"],[10.34,"smart,"],[11.29,"curious"],[11.96,"engineers"],[12.79,"—"],[12.92,"the"],[13.08,"kind"],[13.41,"you'd"],[13.61,"want"],[13.86,"as"],[14.03,"colleagues."],[14.91,"And"],[15.14,"he's"],[15.4,"clear"],[15.74,"that"],[15.93,"China"],[16.44,"should"],[16.72,"share"],[17.54,"in"],[17.74,"the"],[17.96,"immense"],[18.67,"benefits"],[19.3,"of"],[19.43,"AI."],[20.32,"Medicine."],[21.29,"Science."],[22.42,"Quality"],[23.03,"of"],[23.22,"life."],[24.39,"Those"],[24.79,"aren't"],[25.18,"the"],[25.31,"target."],[25.89,"The"],[26.08,"target"],[26.63,"is"],[26.91,"narrower"],[27.74,"and"],[28.07,"sharper"],[28.77,"—"],[28.93,"preventing"],[29.69,"an"],[29.82,"authoritarian"],[30.81,"government"],[31.29,"from"],[31.52,"gaining"],[32,"military"],[32.5,"dominance"],[33.04,"through"],[33.36,"this"],[33.57,"technology."],[35.1,"His"],[35.38,"judgment"],[36,"is"],[36.2,"that"],[36.4,"a"],[36.51,"world"],[36.97,"where"],[37.14,"the"],[37.27,"most"],[37.62,"powerful"],[38.21,"tools"],[38.74,"sit"],[39.08,"with"],[39.37,"democracies"],[40.67,"is"],[40.94,"the"],[41.15,"safer"],[41.65,"arrangement."],[42.81,"Not"],[43.09,"flawless."],[43.89,"Not"],[44.15,"guaranteed."],[45.57,"But"],[45.8,"the"],[45.98,"one"],[46.29,"worth"],[46.67,"defending,"],[47.76,"while"],[48.1,"there's"],[48.37,"still"],[48.74,"a"],[48.86,"lead"],[49.23,"to"],[49.38,"defend."]]},{"id":"s13","sub":"The evidence","text":"There's a counterargument that says the controls have already failed — after all, DeepSeek got chips. But Dario reads the evidence the opposite way. Look at the mix. Some banned H-one-hundreds, likely smuggled in small numbers. Some H-eight-hundreds, shipped before that loophole was shut in October. And some H-twenties, still permitted — a gap he thinks should be closed too. If the controls were failing, DeepSeek would simply have a full fleet of the best chips. Instead it has a patchwork, assembled around the edges of tightening rules. That, he argues, is what working controls look like as they adapt — loopholes closing, one after another.","cap":[[0,"There's"],[0.29,"a"],[0.37,"counterargument"],[1.29,"that"],[1.49,"says"],[1.8,"the"],[1.93,"controls"],[2.52,"have"],[2.68,"already"],[3.15,"failed"],[3.72,"—"],[3.9,"after"],[4.3,"all,"],[4.84,"DeepSeek"],[5.49,"got"],[5.74,"chips."],[6.83,"But"],[7.05,"Dario"],[7.64,"reads"],[7.98,"the"],[8.1,"evidence"],[8.56,"the"],[8.67,"opposite"],[9.1,"way."],[9.91,"Look"],[10.14,"at"],[10.21,"the"],[10.33,"mix."],[11.2,"Some"],[11.54,"banned"],[11.99,"H-one-hundreds,"],[13.4,"likely"],[13.97,"smuggled"],[14.58,"in"],[14.79,"small"],[15.22,"numbers."],[16.09,"Some"],[16.51,"H-eight-hundreds,"],[18.01,"shipped"],[18.47,"before"],[18.88,"that"],[19.11,"loophole"],[19.64,"was"],[19.8,"shut"],[20.14,"in"],[20.28,"October."],[21.63,"And"],[22.01,"some"],[22.41,"H-twenties,"],[23.85,"still"],[24.23,"permitted"],[24.87,"—"],[25.22,"a"],[25.39,"gap"],[25.8,"he"],[26,"thinks"],[26.79,"should"],[27.06,"be"],[27.17,"closed"],[27.56,"too."],[28.56,"If"],[28.76,"the"],[28.87,"controls"],[29.55,"were"],[29.76,"failing,"],[30.31,"DeepSeek"],[30.95,"would"],[31.2,"simply"],[31.66,"have"],[31.94,"a"],[32.08,"full"],[32.51,"fleet"],[32.94,"of"],[33.07,"the"],[33.19,"best"],[33.68,"chips."],[34.87,"Instead"],[35.93,"it"],[36.15,"has"],[36.36,"a"],[36.47,"patchwork,"],[37.34,"assembled"],[38.09,"around"],[38.49,"the"],[38.63,"edges"],[39.02,"of"],[39.17,"tightening"],[39.87,"rules."],[40.67,"That,"],[41.43,"he"],[41.6,"argues,"],[42.32,"is"],[42.52,"what"],[42.74,"working"],[43.26,"controls"],[43.98,"look"],[44.27,"like"],[44.7,"as"],[44.98,"they"],[45.18,"adapt"],[45.81,"—"],[46.14,"loopholes"],[46.81,"closing,"],[47.75,"one"],[48.03,"after"],[48.47,"another."]]},{"id":"s14","sub":"The scale test","text":"And Dario answers the deeper worry — that no border can be sealed perfectly. He agrees. But perfection isn't the goal. The goal is scale. A billion dollars of chips can be smuggled, hidden, quietly assembled. A hundred billion cannot. Millions of physical chips are enormously hard to sneak across borders undetected. And the AI of twenty twenty-six and beyond will be built on exactly that scale — huge, power-hungry, impossible to conceal. So the controls don't have to catch every chip. They have to make the truly massive buildouts visible and costly. That margin — between what can be hidden and what can't — is the entire strategy.","cap":[[0,"And"],[0.21,"Dario"],[0.66,"answers"],[1.12,"the"],[1.26,"deeper"],[1.68,"worry"],[2.17,"—"],[2.31,"that"],[2.67,"no"],[3,"border"],[3.63,"can"],[3.86,"be"],[3.99,"sealed"],[4.46,"perfectly."],[5.7,"He"],[5.9,"agrees."],[7.08,"But"],[7.3,"perfection"],[8.05,"isn't"],[8.43,"the"],[8.56,"goal."],[9.45,"The"],[9.63,"goal"],[10.08,"is"],[10.58,"scale."],[12.06,"A"],[12.24,"billion"],[12.73,"dollars"],[13.11,"of"],[13.24,"chips"],[13.68,"can"],[13.85,"be"],[14.03,"smuggled,"],[14.71,"hidden,"],[15.43,"quietly"],[16.05,"assembled."],[17.17,"A"],[17.38,"hundred"],[17.88,"billion"],[18.43,"cannot."],[19.59,"Millions"],[20.24,"of"],[20.42,"physical"],[20.97,"chips"],[21.4,"are"],[21.57,"enormously"],[22.33,"hard"],[22.71,"to"],[22.9,"sneak"],[23.33,"across"],[23.71,"borders"],[24.59,"undetected."],[25.96,"And"],[26.18,"the"],[26.36,"AI"],[26.91,"of"],[27.05,"twenty"],[27.62,"twenty-six"],[28.56,"and"],[28.72,"beyond"],[29.4,"will"],[29.63,"be"],[29.76,"built"],[30.11,"on"],[30.27,"exactly"],[30.99,"that"],[31.29,"scale"],[31.89,"—"],[32.2,"huge,"],[33.02,"power-hungry,"],[34.48,"impossible"],[35.31,"to"],[35.46,"conceal."],[36.46,"So"],[36.87,"the"],[37.05,"controls"],[37.77,"don't"],[38.09,"have"],[38.31,"to"],[38.44,"catch"],[38.78,"every"],[39.1,"chip."],[40.09,"They"],[40.37,"have"],[40.6,"to"],[40.75,"make"],[41.08,"the"],[41.24,"truly"],[41.77,"massive"],[42.24,"buildouts"],[42.85,"visible"],[43.32,"and"],[43.49,"costly."],[44.71,"That"],[45.01,"margin"],[45.59,"—"],[45.76,"between"],[46.2,"what"],[46.42,"can"],[46.59,"be"],[46.73,"hidden"],[47.09,"and"],[47.25,"what"],[47.47,"can't"],[48.04,"—"],[48.23,"is"],[48.44,"the"],[48.59,"entire"],[49.12,"strategy."]]},{"id":"s15","sub":"The stakes","text":"Dario ends where the stakes are highest. Export controls, he argues, are one of the most powerful tools we have to shape how powerful AI enters the world — and who leads when it does. DeepSeek didn't undermine that case. It sharpened it. Progress moves along a smooth, predictable curve. Efficiency only deepens the world's hunger for compute. And chips remain the one true chokepoint. So the real question was never whether a headline said six million dollars. It was whether a temporary lead, held by democracies, can be turned into a durable one — before the window to decide it quietly closes. That is what he wanted readers to see behind the panic.","cap":[[0,"Dario"],[0.62,"ends"],[1.06,"where"],[1.23,"the"],[1.34,"stakes"],[1.74,"are"],[1.9,"highest."],[2.84,"Export"],[3.44,"controls,"],[4.09,"he"],[4.23,"argues,"],[4.66,"are"],[4.78,"one"],[4.91,"of"],[4.99,"the"],[5.19,"most"],[5.53,"powerful"],[6.04,"tools"],[6.8,"we"],[7.16,"have"],[7.49,"to"],[7.64,"shape"],[7.99,"how"],[8.23,"powerful"],[8.75,"AI"],[9.2,"enters"],[9.61,"the"],[9.74,"world"],[10.24,"—"],[10.43,"and"],[10.73,"who"],[10.97,"leads"],[11.3,"when"],[11.51,"it"],[11.65,"does."],[12.77,"DeepSeek"],[13.48,"didn't"],[13.84,"undermine"],[14.39,"that"],[14.64,"case."],[15.53,"It"],[15.78,"sharpened"],[16.37,"it."],[17.16,"Progress"],[17.83,"moves"],[18.22,"along"],[18.53,"a"],[18.67,"smooth,"],[19.42,"predictable"],[20.09,"curve."],[21.03,"Efficiency"],[21.84,"only"],[22.15,"deepens"],[22.7,"the"],[22.84,"world's"],[23.28,"hunger"],[23.71,"for"],[23.87,"compute."],[25.17,"And"],[25.4,"chips"],[25.82,"remain"],[26.29,"the"],[26.46,"one"],[26.84,"true"],[27.59,"chokepoint."],[29.05,"So"],[29.49,"the"],[29.7,"real"],[29.99,"question"],[30.53,"was"],[30.79,"never"],[31.13,"whether"],[31.5,"a"],[31.66,"headline"],[32.24,"said"],[32.84,"six"],[33.24,"million"],[33.67,"dollars."],[34.77,"It"],[34.97,"was"],[35.17,"whether"],[35.57,"a"],[35.69,"temporary"],[36.25,"lead,"],[36.99,"held"],[37.35,"by"],[37.58,"democracies,"],[38.35,"can"],[38.55,"be"],[38.66,"turned"],[39.09,"into"],[39.36,"a"],[39.49,"durable"],[40.11,"one"],[40.59,"—"],[40.78,"before"],[41.19,"the"],[41.31,"window"],[41.9,"to"],[42.07,"decide"],[42.56,"it"],[42.71,"quietly"],[43.58,"closes."],[45.67,"That"],[46.56,"is"],[46.78,"what"],[47.01,"he"],[47.17,"wanted"],[47.65,"readers"],[48.12,"to"],[48.3,"see"],[48.62,"behind"],[49.11,"the"],[49.24,"panic."]]}];
+  var HAS_AUDIO = true;
+  var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var scenes = Array.prototype.slice.call(document.querySelectorAll(".scene"));
+
+  var ACCENTS = {gold:"#F2C879",green:"#7FC8A0",sky:"#8FB8E8",rose:"#E8927C",lav:"#C4AEE8",
+    amber:"#E4A85E",steel:"#86A9CC",violet:"#B49CF0",teal:"#66C6BE",crimson:"#DE8A86",sage:"#A7C08C"};
+  function hexRgb(h){ h=h.replace("#",""); if(h.length===3)h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
+    return {r:parseInt(h.substr(0,2),16),g:parseInt(h.substr(2,2),16),b:parseInt(h.substr(4,2),16)}; }
+  function mix(a,b,t){ return "rgb("+Math.round(a.r+(b.r-a.r)*t)+","+Math.round(a.g+(b.g-a.g)*t)+","+Math.round(a.b+(b.b-a.b)*t)+")"; }
+  var DARK1={r:9,g:10,b:14}, DARK2={r:11,g:13,b:18};
+  function hueFor(name){ var acc=ACCENTS[name]||ACCENTS.gold, rgb=hexRgb(acc);
+    return {accent:acc, a:mix(rgb,DARK1,0.90), b:"rgba("+rgb.r+","+rgb.g+","+rgb.b+",0.15)", c:mix(rgb,DARK2,0.83)}; }
+  var root=document.documentElement;
+  function applyHue(name){ var h=hueFor(name); root.style.setProperty("--accent",h.accent);
+    root.style.setProperty("--grad-a",h.a); root.style.setProperty("--grad-b",h.b); root.style.setProperty("--grad-c",h.c); }
+  applyHue(scenes[0]?scenes[0].getAttribute("data-hue"):"gold");
+
+  var io=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting) e.target.classList.add("revealed"); }); },{threshold:0.18});
+  scenes.forEach(function(s){ io.observe(s); });
+
+  function animateCount(el){ var from=parseFloat(el.getAttribute("data-count-from")), to=parseFloat(el.getAttribute("data-count-to"));
+    if(reduced){ el.textContent=to; return; } var dur=1400,start=null;
+    function step(ts){ if(start===null)start=ts; var p=Math.min((ts-start)/dur,1); var e=1-Math.pow(1-p,3);
+      el.textContent=Math.round(from+(to-from)*e); if(p<1) requestAnimationFrame(step); } requestAnimationFrame(step); }
+  var countIO=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ animateCount(e.target); countIO.unobserve(e.target); } }); },{threshold:0.6});
+  document.querySelectorAll("[data-count-to]").forEach(function(el){ countIO.observe(el); });
+
+  var canvas=document.getElementById("meadow"), ctx=canvas.getContext("2d"), W,H,pts=[],raf=null;
+  function size(){ var dpr=window.devicePixelRatio||1; W=canvas.width=innerWidth*dpr; H=canvas.height=innerHeight*dpr;
+    canvas.style.width=innerWidth+"px"; canvas.style.height=innerHeight+"px"; }
+  function seed(){ var dpr=window.devicePixelRatio||1, n=Math.min(90,Math.floor(innerWidth/14)); pts=[];
+    for(var i=0;i<n;i++) pts.push({x:Math.random()*W,y:Math.random()*H,r:(Math.random()*1.6+0.4)*dpr,
+      vx:(Math.random()-0.5)*0.12, vy:-(Math.random()*0.18+0.03), a:Math.random()*0.5+0.15, tw:Math.random()*6.28}); }
+  function accentRGB(){ var c=getComputedStyle(root).getPropertyValue("--accent").trim()||"#F2C879";
+    if(c[0]==="#"){ var m=hexRgb(c); return m.r+","+m.g+","+m.b; } return c.replace(/rgba?\(|\)/g,""); }
+  function draw(){ ctx.clearRect(0,0,W,H); var rgb=accentRGB();
+    for(var i=0;i<pts.length;i++){ var p=pts[i]; p.x+=p.vx; p.y+=p.vy; p.tw+=0.02;
+      if(p.y<-10){p.y=H+10;p.x=Math.random()*W;} if(p.x<-10)p.x=W+10; if(p.x>W+10)p.x=-10;
+      var f=p.a*(0.6+0.4*Math.sin(p.tw)); ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,6.2832);
+      ctx.fillStyle="rgba("+rgb+","+f.toFixed(3)+")"; ctx.fill(); }
+    raf=requestAnimationFrame(draw); }
+  function startMeadow(){ size(); seed(); if(!reduced){ if(raf)cancelAnimationFrame(raf); draw(); }
+    else { ctx.clearRect(0,0,W,H); var rgb=accentRGB(); pts.forEach(function(p){ ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,6.2832);
+      ctx.fillStyle="rgba("+rgb+","+p.a.toFixed(3)+")"; ctx.fill(); }); } }
+  addEventListener("resize",function(){ size(); seed(); }); startMeadow();
+
+  /* ---- narration engine ---- */
+  var audio=document.getElementById("narrator");
+  var synth=window.speechSynthesis, ttsOK=!!synth && typeof SpeechSynthesisUtterance!=="undefined";
+  var playing=false, paused=false, mode="idle", chosenVoice=null, voices=[];
+  var SPEEDS=[0.85,1,1.15,1.3,1.5], speed=parseFloat(localStorage.getItem("st-speed")||"1");
+  if(SPEEDS.indexOf(speed)===-1) speed=1;
+
+  var playBtn=document.getElementById("playBtn"), playIcon=document.getElementById("playIcon"), pauseIcon=document.getElementById("pauseIcon");
+  var nowTitle=document.getElementById("nowTitle"), nowSub=document.getElementById("nowSub"), seekFill=document.getElementById("seekFill");
+  var dotsWrap=document.getElementById("dots"), player=document.getElementById("player");
+  var capEl=document.getElementById("caption"), modeFlag=document.getElementById("modeFlag");
+  var speedBtn=document.getElementById("speedBtn"), showCaptions=true, activeIndex=0;
+
+  SC.forEach(function(s,i){ var b=document.createElement("button"); b.setAttribute("aria-label","Go to "+s.sub);
+    b.addEventListener("click",function(){ jumpTo(i,playing); }); dotsWrap.appendChild(b); });
+  var dotEls=Array.prototype.slice.call(dotsWrap.children);
+
+  function updateDots(){ dotEls.forEach(function(d,i){ d.classList.toggle("active",i===activeIndex); });
+    document.getElementById("topbar").style.width=(scenes.length>1?(activeIndex/(scenes.length-1))*100:0)+"%"; }
+  function setActive(idx,doScroll){ activeIndex=Math.max(0,Math.min(scenes.length-1,idx)); var s=scenes[activeIndex];
+    applyHue(s.getAttribute("data-hue")); nowTitle.textContent=SC[activeIndex].sub; nowSub.textContent=(activeIndex+1)+" / "+scenes.length;
+    updateDots(); if(doScroll) s.scrollIntoView({behavior:reduced?"auto":"smooth",block:"center"}); }
+  function setPlayIcon(on){ playIcon.style.display=on?"none":"block"; pauseIcon.style.display=on?"block":"none";
+    playBtn.setAttribute("aria-label",on?"Pause narration":"Play narration"); }
+
+  /* captions: one sentence window */
+  var capTokens=[], capSentences=[], capSentenceOf=[], capCurSent=-1, capSpans=[];
+  function buildCaption(i){ capEl.innerHTML=""; capSpans=[]; capCurSent=-1;
+    var data=SC[i]; if(!showCaptions){ capEl.classList.remove("show"); return; }
+    capTokens = data.cap ? data.cap.map(function(p){ return {t:p[0],w:p[1]}; })
+                         : data.text.split(/\s+/).map(function(w){ return {t:null,w:w}; });
+    capSentences=[]; capSentenceOf=[]; var cur=[];
+    for(var k=0;k<capTokens.length;k++){ cur.push(k); capSentenceOf[k]=capSentences.length;
+      if(/[.!?]["')]?$/.test(capTokens[k].w)){ capSentences.push(cur); cur=[]; } }
+    if(cur.length){ for(var m=0;m<cur.length;m++) capSentenceOf[cur[m]]=capSentences.length; capSentences.push(cur); }
+    capEl.classList.add("show"); renderSentence(0); }
+  function renderSentence(si){ capCurSent=si; capEl.innerHTML=""; capSpans=[];
+    (capSentences[si]||[]).forEach(function(gi){ var sp=document.createElement("span"); sp.className="w";
+      sp.setAttribute("data-gi",gi); sp.textContent=capTokens[gi].w+" "; capEl.appendChild(sp); capSpans.push(sp); }); }
+  function markToken(gi){ var si=capSentenceOf[gi]; if(si===undefined)return; if(si!==capCurSent) renderSentence(si);
+    for(var j=0;j<capSpans.length;j++){ var g=+capSpans[j].getAttribute("data-gi"); capSpans[j].className="w"+(g<gi?" spoken":g===gi?" active":""); } }
+  function highlightByTime(t){ if(!capTokens.length)return; var idx=0;
+    for(var i=0;i<capTokens.length;i++){ if(capTokens[i].t!==null&&capTokens[i].t<=t) idx=i; else if(capTokens[i].t!==null) break; } markToken(idx); }
+  function highlightByWordIndex(k){ if(k<capTokens.length) markToken(k); }
+
+  function srcFor(i){ return "audio/"+SC[i].id+".mp3"; }
+  function playScene(i){ setActive(i,true); playing=true; paused=false; setPlayIcon(true); buildCaption(i);
+    var useAudio=HAS_AUDIO && SC[i].cap;
+    if(useAudio){ mode="audio"; modeFlag.textContent="ElevenLabs"; audio.src=srcFor(i); audio.currentTime=0;
+      audio.playbackRate=speed; audio.volume=parseFloat(document.getElementById("vol").value);
+      var p=audio.play(); if(p&&p.catch) p.catch(function(){ ttsSpeak(i); }); }
+    else { ttsSpeak(i); } }
+  function advance(){ if(activeIndex<scenes.length-1) playScene(activeIndex+1); else stopNarration(); }
+  audio.addEventListener("ended",function(){ if(playing&&mode==="audio") advance(); });
+  audio.addEventListener("error",function(){ if(playing&&mode==="audio") ttsSpeak(activeIndex); });
+  audio.addEventListener("timeupdate",function(){ if(mode!=="audio")return;
+    if(audio.duration) seekFill.style.width=(audio.currentTime/audio.duration*100)+"%"; highlightByTime(audio.currentTime); });
+
+  function ttsSpeak(i){ mode="tts"; modeFlag.textContent=ttsOK?"Browser voice":"unavailable"; if(!ttsOK)return; synth.cancel();
+    var u=new SpeechSynthesisUtterance(SC[i].text); u.rate=0.98*speed; u.pitch=1.0;
+    u.volume=parseFloat(document.getElementById("vol").value); if(chosenVoice)u.voice=chosenVoice;
+    var wIdx=0; u.onboundary=function(ev){ if(ev.name==="word"||ev.charIndex!==undefined) highlightByWordIndex(wIdx++); };
+    u.onend=function(){ if(playing&&mode==="tts") advance(); };
+    setTimeout(function(){ if(playing) synth.speak(u); }, reduced?40:420); }
+
+  function startNarration(i){ playScene(typeof i==="number"?i:activeIndex); player.classList.add("show"); }
+  function stopNarration(){ playing=false; paused=false; setPlayIcon(false); try{ audio.pause(); }catch(e){}
+    if(ttsOK) synth.cancel(); capEl.classList.remove("show"); seekFill.style.width="0%"; }
+
+  playBtn.addEventListener("click",function(){
+    if(!playing){ startNarration(activeIndex); return; }
+    if(!paused){ paused=true; setPlayIcon(false); if(mode==="audio")audio.pause(); else if(ttsOK)synth.pause(); }
+    else { paused=false; setPlayIcon(true); if(mode==="audio")audio.play(); else if(ttsOK)synth.resume(); } });
+  document.getElementById("nextBtn").addEventListener("click",function(){ jumpTo(activeIndex+1,playing); });
+  document.getElementById("prevBtn").addEventListener("click",function(){ jumpTo(activeIndex-1,playing); });
+  function jumpTo(i,keep){ i=Math.max(0,Math.min(scenes.length-1,i));
+    if(mode==="audio"){ try{audio.pause();}catch(e){} } if(ttsOK) synth.cancel();
+    if(keep){ playScene(i); } else { stopNarration(); setActive(i,true); } }
+
+  var beginBtn=document.getElementById("beginBtn");
+  if(beginBtn) beginBtn.addEventListener("click",function(){ player.classList.add("show");
+    if(ttsOK){ try{ synth.resume(); }catch(e){} } startNarration(0); });
+  addEventListener("scroll",function(){ if(scrollY>innerHeight*0.5) player.classList.add("show"); },{passive:true});
+
+  var centerIO=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){
+    var idx=scenes.indexOf(e.target); if(idx!==activeIndex&&!playing) setActive(idx,false); } }); },{rootMargin:"-45% 0px -45% 0px",threshold:0});
+  scenes.forEach(function(s){ centerIO.observe(s); });
+
+  /* speed */
+  var speedsWrap=document.getElementById("speeds");
+  function applySpeed(v){ speed=v; localStorage.setItem("st-speed",String(v));
+    speedBtn.innerHTML=(v%1===0?v:v.toFixed(2).replace(/0$/,""))+"&times;";
+    if(mode==="audio") audio.playbackRate=v;
+    Array.prototype.forEach.call(speedsWrap.children,function(b){ b.classList.toggle("on",parseFloat(b.dataset.v)===v); }); }
+  SPEEDS.forEach(function(v){ var b=document.createElement("button"); b.dataset.v=v;
+    b.textContent=(v%1===0?v:v.toFixed(2).replace(/0$/,""))+"\u00d7";
+    b.addEventListener("click",function(){ applySpeed(v); }); speedsWrap.appendChild(b); });
+  speedBtn.addEventListener("click",function(){ var i=SPEEDS.indexOf(speed); applySpeed(SPEEDS[(i+1)%SPEEDS.length]); });
+  applySpeed(speed);
+
+  /* settings menu */
+  var voiceMenu=document.getElementById("voiceMenu");
+  document.getElementById("voiceToggle").addEventListener("click",function(e){ e.stopPropagation(); voiceMenu.classList.toggle("open"); });
+  document.addEventListener("click",function(e){ if(!voiceMenu.contains(e.target)&&e.target.id!=="voiceToggle") voiceMenu.classList.remove("open"); });
+  document.getElementById("vol").addEventListener("input",function(){ audio.volume=parseFloat(this.value); });
+  document.getElementById("capToggle").addEventListener("change",function(){ showCaptions=this.checked;
+    if(!showCaptions) capEl.classList.remove("show"); else if(playing) buildCaption(activeIndex); });
+
+  var voiceSelect=document.getElementById("voiceSelect"), ttsRow=document.getElementById("ttsRow");
+  var PREF=["Samantha","Serena","Allison","Ava","Daniel","Karen","Moira","Google UK English Female","Google US English","Microsoft Aria"];
+  function pickDefault(list){ for(var i=0;i<PREF.length;i++)for(var j=0;j<list.length;j++) if(list[j].name.indexOf(PREF[i])!==-1) return list[j];
+    for(var k=0;k<list.length;k++) if(/^en/i.test(list[k].lang)) return list[k]; return list[0]||null; }
+  function loadVoices(){ if(!ttsOK)return; voices=synth.getVoices().filter(function(v){return /^en/i.test(v.lang);}); if(!voices.length)voices=synth.getVoices();
+    voiceSelect.innerHTML=""; voices.forEach(function(v,i){ var o=document.createElement("option"); o.value=i; o.textContent=v.name; voiceSelect.appendChild(o); });
+    if(!chosenVoice)chosenVoice=pickDefault(voices); if(chosenVoice){ var ci=voices.indexOf(chosenVoice); if(ci>=0)voiceSelect.value=ci; } }
+  voiceSelect.addEventListener("change",function(){ chosenVoice=voices[parseInt(voiceSelect.value,10)]||chosenVoice; });
+  if(ttsOK){ loadVoices(); if(synth.onvoiceschanged!==undefined) synth.onvoiceschanged=loadVoices;
+    setInterval(function(){ if(playing&&!paused&&mode==="tts"&&synth.speaking){ synth.pause(); synth.resume(); } },12000); }
+  if(!HAS_AUDIO){ ttsRow.style.display="flex"; modeFlag.textContent=ttsOK?"Browser voice":"unavailable"; }
+  else { modeFlag.textContent="ElevenLabs"; }
+
+  addEventListener("beforeunload",function(){ if(ttsOK) synth.cancel(); try{audio.pause();}catch(e){} });
+  document.addEventListener("keydown",function(e){ if(e.code==="Space"&&player.classList.contains("show")&&e.target===document.body){ e.preventDefault(); playBtn.click(); } });
+  setActive(0,false);
+})();
+</script>
+</body>
+</html>
