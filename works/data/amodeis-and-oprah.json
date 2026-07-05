@@ -1,0 +1,114 @@
+{
+  "meta": {
+    "id": "amodeis-and-oprah",
+    "order": 6,
+    "title": "Why Anthropic Stood Up to the Pentagon",
+    "subtitle": "Dario and Daniela Amodei, in conversation with Oprah Winfrey",
+    "author": "Ben Sherry · Inc.",
+    "date": "May 2026",
+    "kind": "Interview",
+    "source": "Inc.",
+    "tagline": "Two siblings told the Department of Defense no — and meant it, even if it cost them everything.",
+    "signature": "teal",
+    "url": "https://www.inc.com/ben-sherry/anthropics-dario-and-daniela-amodei-tell-oprah-why-they-stood-up-to-the-pentagon/91348421",
+    "sortDate": "2026-05-19",
+    "shelf": "The People",
+    "hero": {
+      "epigraph": null,
+      "prologueNarration": "Picture two siblings. They left one of the most powerful AI labs in the world to start their own. They named their model Claude. And then, one day, the United States military came knocking — asking them to remove the safety rules built into that model. Fully autonomous weapons. Mass surveillance. The Amodeis said no. In an interview with Oprah Winfrey, Dario and Daniela Amodei opened up about that moment… and about the one problem, they admit, they still haven't solved. This is the story of a company that decided some lines are worth holding — even if holding them might be the end."
+    }
+  },
+  "scenes": [
+    {
+      "hue": "teal",
+      "eyebrow": "The Interview",
+      "title": "A Sit-Down With Oprah",
+      "bodyHtml": "&lt;p class=\"eyebrow\"&gt;&lt;span class=\"dot\"&gt;&lt;/span&gt; THE INTERVIEW&lt;/p&gt;&lt;h2&gt;A sit-down with Oprah&lt;/h2&gt;&lt;p class=\"lede\"&gt;Oprah Winfrey sat down with Anthropic cofounders — and &lt;span class=\"hl\"&gt;siblings&lt;/span&gt; — Dario and Daniela Amodei.&lt;/p&gt;&lt;p&gt;They opened up about why they refused demands from the U.S. military to remove the safety guardrails around Claude, their powerful AI model. And they shared the one major AI problem they &lt;em&gt;haven't&lt;/em&gt; solved yet.&lt;/p&gt;",
+      "narration": "It began as a conversation. Oprah Winfrey, sitting across from Dario and Daniela Amodei — the brother-and-sister team behind Anthropic. They talked about a lot. But at the center was a single, difficult decision. The United States military had asked them to strip the safety guardrails from Claude, their most powerful AI model. And they had said no. Over the course of the interview, they explained why. They also admitted something you don't often hear from the people building this technology. There's one big problem… they haven't figured out yet."
+    },
+    {
+      "hue": "steel",
+      "eyebrow": "The Stand",
+      "title": "“Not Worth Defending”",
+      "bodyHtml": "&lt;p class=\"eyebrow\"&gt;&lt;span class=\"dot\"&gt;&lt;/span&gt; THE STAND&lt;/p&gt;&lt;h2&gt;“Not worth defending”&lt;/h2&gt;&lt;p&gt;Asked about the decision to stand up to the Department of Defense, Dario didn't hesitate.&lt;/p&gt;&lt;p class=\"quote\"&gt;It's &lt;span class=\"grace\"&gt;not worth&lt;/span&gt; defending the country if we do things that go against the values of this country.&lt;/p&gt;",
+      "narration": "Oprah asked Dario the direct question. Why stand up to the Department of Defense? Why take that risk? His answer cut right to the core of it. He and his cofounders felt, in his words, that it's not worth defending the country… if we do things that go against the values of this country. Think about that for a moment. A company built, in part, to serve national security. And its founders deciding that the how matters as much as the whether. That some methods betray the very thing you're trying to protect."
+    },
+    {
+      "hue": "sky",
+      "eyebrow": "The Deal",
+      "title": "The First AI in Classified Rooms",
+      "bodyHtml": "&lt;p class=\"eyebrow\"&gt;&lt;span class=\"dot\"&gt;&lt;/span&gt; THE DEAL&lt;/p&gt;&lt;h2&gt;The first AI in classified rooms&lt;/h2&gt;&lt;p&gt;Anthropic began working with the Pentagon in 2024. Claude became the &lt;span class=\"hl\"&gt;first AI model&lt;/span&gt; used by the military in classified environments.&lt;/p&gt;&lt;p&gt;But the original deal carried carveouts. Claude could not be used to:&lt;/p&gt;&lt;ul class=\"reasons\"&gt;&lt;li&gt;&lt;b&gt;Power lethal autonomy.&lt;/b&gt; No fully-autonomous weapons — Dario's example was a “drone army” commanded by one person.&lt;/li&gt;&lt;li&gt;&lt;b&gt;Surveil citizens.&lt;/b&gt; No mass domestic surveillance on Americans.&lt;/li&gt;&lt;/ul&gt;",
+      "narration": "This partnership was real. In twenty twenty-four, Anthropic began working with the Pentagon. Claude became the first AI model ever used by the military inside classified environments. But the deal came with limits — lines the Amodeis drew from the start. Claude could not be used to power fully autonomous lethal weapons. Dario gave the example that haunts a lot of people in this field: a drone army, commanded by a single person. And Claude could not be used to conduct mass domestic surveillance on American citizens. Reasonable things not to allow, Dario said. Unfortunately… the Pentagon didn't feel that way."
+    },
+    {
+      "hue": "crimson",
+      "eyebrow": "The Pressure",
+      "title": "A Supply Chain Risk",
+      "bodyHtml": "&lt;p class=\"eyebrow\"&gt;&lt;span class=\"dot\"&gt;&lt;/span&gt; THE PRESSURE&lt;/p&gt;&lt;h2&gt;Designated a “supply chain risk”&lt;/h2&gt;&lt;p&gt;Later, the Pentagon reopened negotiations to remove the carveouts — arguing they amounted to Anthropic making &lt;em&gt;military policy&lt;/em&gt; over the American people and government.&lt;/p&gt;&lt;p&gt;Anthropic refused to budge. It was designated a &lt;span class=\"hl\"&gt;supply chain risk&lt;/span&gt; — a label the company still holds today.&lt;/p&gt;",
+      "narration": "Then the Pentagon came back. It reopened the negotiations. And its argument was pointed — those carveouts, the government said, essentially amounted to Anthropic making military policy over the American people and their government. Who was a private company to decide? Anthropic refused to budge. And the consequence was swift. The company was designated a supply chain risk. A formal label. A door quietly closing. And it's a designation Anthropic continues to hold, even now."
+    },
+    {
+      "hue": "amber",
+      "eyebrow": "The Reckoning",
+      "title": "This Could Be the End",
+      "bodyHtml": "&lt;p class=\"eyebrow\"&gt;&lt;span class=\"dot\"&gt;&lt;/span&gt; THE RECKONING&lt;/p&gt;&lt;h2&gt;“This could be the end”&lt;/h2&gt;&lt;p&gt;The Amodeis and their fellow cofounders met before deciding whether to acquiesce. They were &lt;span class=\"hl\"&gt;united&lt;/span&gt; in saying no.&lt;/p&gt;&lt;p&gt;Both siblings told Oprah they truly believed this could have been the end of their company — yet it was still worth sticking to their convictions.&lt;/p&gt;&lt;p class=\"capnote\"&gt;Daniela said they were ready for that hard choice because of three smaller decisions that “laddered up” to it.&lt;/p&gt;",
+      "narration": "Before they answered, the founders met. The Amodeis and their fellow cofounders, in a room, weighing it. And here's what makes the moment land. Both siblings told Oprah they genuinely believed this could have been the end of their company. Not a setback. The end. And they decided it was still worth it. Still worth sticking to their convictions. Daniela explained they didn't arrive at that courage by accident. Three earlier decisions, she said, had laddered up to this one. Smaller tests. Practice, almost — for the moment that mattered most."
+    },
+    {
+      "hue": "rose",
+      "eyebrow": "Decision One",
+      "title": "No Ads on Claude",
+      "bodyHtml": "&lt;p class=\"eyebrow\"&gt;&lt;span class=\"dot\"&gt;&lt;/span&gt; DECISION ONE&lt;/p&gt;&lt;h2&gt;No ads on Claude&lt;/h2&gt;&lt;p&gt;The first choice: no advertising on Claude. Given the sensitive nature of the conversations people have with it, the founders felt they had to &lt;span class=\"hl\"&gt;treat customer data with the utmost privacy and respect&lt;/span&gt; — making ads a non-starter.&lt;/p&gt;&lt;p&gt;Not everyone agreed. There were “quiet forces,” Daniela said — inside the company and among investors — who saw ads as necessary revenue, pointing to Google and Facebook.&lt;/p&gt;&lt;p class=\"quote\"&gt;Sorry, that's just not how we're going to do things. &lt;span class=\"grace\"&gt;We'll find another way.&lt;/span&gt;&lt;/p&gt;",
+      "narration": "The first decision was about advertising. Or rather — the decision not to allow it. Think about what people actually type into an AI. Their fears. Their health. Their most private questions. Because of that, Daniela said, the founders felt they had to treat customer data with the utmost privacy and respect. And that made advertising a non-starter. But not everyone was on board. There were quiet forces, she said — inside the company, and among investors — who saw ad revenue the way Google and Facebook do. Necessary. Obvious. Daniela's answer was simple. Sorry, that's just not how we're going to do things. We'll find another way."
+    },
+    {
+      "hue": "sky",
+      "eyebrow": "Decision Two",
+      "title": "The Bill Voted Down 99 to 1",
+      "bodyHtml": "&lt;p class=\"eyebrow\"&gt;&lt;span class=\"dot\"&gt;&lt;/span&gt; DECISION TWO&lt;/p&gt;&lt;h2&gt;The bill voted down 99 to 1&lt;/h2&gt;&lt;p&gt;A bill in Congress would have banned &lt;em&gt;all&lt;/em&gt; state regulation of AI — without adding any federal regulation either.&lt;/p&gt;&lt;p&gt;People warned Dario: &lt;em&gt;“You'll break all your political relationships. All the other companies will hate you if you speak out.”&lt;/em&gt;&lt;/p&gt;&lt;p&gt;He spoke out anyway — an op-ed in &lt;em&gt;The New York Times&lt;/em&gt;, “Don't Let AI Companies off the Hook.”&lt;/p&gt;&lt;p class=\"quote\"&gt;That bill got voted down in the Senate &lt;span class=\"grace\"&gt;99 to one.&lt;/span&gt;&lt;/p&gt;",
+      "narration": "The second decision came a while later. A bill was moving through Congress. It would have banned all regulation of AI by the states — and put nothing federal in its place. A vacuum. All kinds of people warned Dario to stay quiet. You'll break your political relationships, they said. Every other company will hate you. He spoke out anyway. He wrote an op-ed in The New York Times, titled: Don't Let AI Companies off the Hook. And then came the result he told Oprah with a chuckle. That bill got voted down in the Senate. Ninety-nine to one. So, you know — we were clearly on the right side there."
+    },
+    {
+      "hue": "gold",
+      "eyebrow": "Decision Three",
+      "title": "Backing Real Regulation",
+      "bodyHtml": "&lt;p class=\"eyebrow\"&gt;&lt;span class=\"dot\"&gt;&lt;/span&gt; DECISION THREE&lt;/p&gt;&lt;h2&gt;Backing real regulation&lt;/h2&gt;&lt;p&gt;Anthropic supported California's SB 1047 — a bill Daniela called &lt;span class=\"hl\"&gt;the first attempt to create a regulatory framework&lt;/span&gt; around the very risks Anthropic had been naming since day one.&lt;/p&gt;&lt;p&gt;Not a perfect bill, she said — but “on balance, we think it's better that these regulations exist… so that AI doesn't hurt people.”&lt;/p&gt;&lt;p class=\"capnote\"&gt;Angry calls followed — from former colleagues, investors, and rival tech leaders. The bill passed the legislature, then was vetoed by Governor Gavin Newsom.&lt;/p&gt;",
+      "narration": "The third decision was a bill in California — SB ten forty-seven. Anthropic backed it. Daniela called it the first real attempt to build a regulatory framework around the very risks Anthropic had been warning about since the day it was founded. It wasn't perfect, she admitted. But on balance, she said, it's better that these regulations exist — so that AI doesn't hurt people. The backlash was personal. She and Dario got a lot of angry calls, she said. From people they used to work with. From investors. From leaders of other tech companies. The bill passed the legislature. And then the governor vetoed it."
+    },
+    {
+      "hue": "sage",
+      "eyebrow": "The Lesson",
+      "title": "Sometimes It's Worth the Risk",
+      "bodyHtml": "&lt;p class=\"eyebrow\"&gt;&lt;span class=\"dot\"&gt;&lt;/span&gt; THE LESSON&lt;/p&gt;&lt;h2&gt;Sometimes it's worth the risk&lt;/h2&gt;&lt;p&gt;Taken together, the Amodeis said, these three decisions helped Anthropic's leadership find their &lt;span class=\"hl\"&gt;hardline stances&lt;/span&gt; — and taught them one lesson.&lt;/p&gt;&lt;p&gt;Advocating for a policy — especially one unpopular among peers — is risky. But sometimes, it can be worth the risk.&lt;/p&gt;&lt;p class=\"chips\"&gt;&lt;span&gt;No ads&lt;/span&gt;&lt;span&gt;Speak out&lt;/span&gt;&lt;span&gt;Back real rules&lt;/span&gt;&lt;/p&gt;",
+      "narration": "Taken together, these three moments did something. They helped Anthropic's leaders discover where their true hardlines were. Not in a mission statement — but in practice, under pressure, when saying no had a cost. And they learned a lesson that would carry them into the room with the Pentagon. Advocating for a policy is risky. Especially one your peers hate. You might lose relationships. You might lose money. But sometimes — sometimes — it's worth the risk anyway. By the time the military asked them to cross their lines, they already knew who they were."
+    },
+    {
+      "hue": "violet",
+      "eyebrow": "The Unsolved",
+      "title": "The Problem They Can't Crack",
+      "bodyHtml": "&lt;p class=\"eyebrow\"&gt;&lt;span class=\"dot\"&gt;&lt;/span&gt; THE UNSOLVED&lt;/p&gt;&lt;h2&gt;The problem they can't crack&lt;/h2&gt;&lt;p&gt;There's one thing the Amodeis admit they haven't figured out: &lt;span class=\"hl\"&gt;how to give everyday people a voice at the table&lt;/span&gt; when it comes to AI.&lt;/p&gt;&lt;p&gt;Oprah said she's heard from many who feel powerless — like passengers on a train that's already left the station.&lt;/p&gt;",
+      "narration": "But then came the honest part. The part most CEOs would never say out loud. There's still one thing, the Amodeis admitted, they haven't figured out. How to give everyday people a voice at the table — when it comes to AI. Oprah pushed here. She told them she's heard from so many people who feel powerless against these forces. Like passengers, she said, on a train that's already left the station. Watching the future rush past the window. Unable to stop it, or steer it, or even ask where it's going."
+    },
+    {
+      "hue": "teal",
+      "eyebrow": "The Admission",
+      "title": "Nobody Has Figured It Out",
+      "bodyHtml": "&lt;p class=\"eyebrow\"&gt;&lt;span class=\"dot\"&gt;&lt;/span&gt; THE ADMISSION&lt;/p&gt;&lt;h2&gt;Nobody has figured it out&lt;/h2&gt;&lt;p&gt;Dario agreed with Oprah's worry.&lt;/p&gt;&lt;p class=\"quote\"&gt;We need to find some way for everyone to be an &lt;span class=\"grace\"&gt;active participant&lt;/span&gt; in what is happening.&lt;/p&gt;&lt;p&gt;But he added the uncomfortable truth: nobody — &lt;em&gt;not even Anthropic&lt;/em&gt; — has figured that part out yet.&lt;/p&gt;",
+      "narration": "Dario didn't dodge it. We need to find some way, he said, for everyone to be an active participant in what is happening. Not passengers on that train — but people with a hand on the wheel. And then he said the thing that lingers. Nobody, he admitted, not even Anthropic, has figured that part out quite yet. It's a striking moment. The head of one of the world's leading AI labs, looking at the most important question of all — who gets a say — and answering, honestly: we don't know. Not yet."
+    },
+    {
+      "hue": "green",
+      "eyebrow": "The Future",
+      "title": "It Won't Happen on Its Own",
+      "bodyHtml": "&lt;p class=\"eyebrow\"&gt;&lt;span class=\"dot\"&gt;&lt;/span&gt; THE FUTURE&lt;/p&gt;&lt;h2&gt;It won't happen on its own&lt;/h2&gt;&lt;p&gt;Still, Dario told Oprah, a better future &lt;em&gt;is&lt;/em&gt; possible with AI.&lt;/p&gt;&lt;p class=\"quote\"&gt;But it's not going to happen on its own. It's up to us — the companies, the people, &lt;span class=\"grace\"&gt;the governments&lt;/span&gt; — to work together to bring that future into reality.&lt;/p&gt;",
+      "narration": "And yet he didn't end in despair. A better future is possible with AI, Dario told Oprah. He believes that. But — and it's an important but — it's not going to happen on its own. It won't arrive like weather. It has to be built. It's up to us, he said. The companies. The people. The governments. All of them, working together, to bring that future into reality. It's a quiet challenge, folded into a hopeful sentence. The tools are powerful. The direction… is still a choice. Ours to make."
+    },
+    {
+      "hue": "steel",
+      "eyebrow": "The Portrait",
+      "title": "Two Siblings, One Company",
+      "bodyHtml": "&lt;p class=\"eyebrow\"&gt;&lt;span class=\"dot\"&gt;&lt;/span&gt; THE PORTRAIT&lt;/p&gt;&lt;h2&gt;Two siblings, one company&lt;/h2&gt;&lt;p&gt;What Oprah drew out, more than a news story, was a portrait of two people running a company by conviction.&lt;/p&gt;&lt;ul class=\"reasons two\"&gt;&lt;li&gt;&lt;b&gt;Family.&lt;/b&gt; A brother and sister, plus their cofounders, united in the hard calls.&lt;/li&gt;&lt;li&gt;&lt;b&gt;Pattern.&lt;/b&gt; No ads. An op-ed. A California bill. Then the Pentagon.&lt;/li&gt;&lt;li&gt;&lt;b&gt;Honesty.&lt;/b&gt; Willing to say what they still don't know.&lt;/li&gt;&lt;li&gt;&lt;b&gt;Stakes.&lt;/b&gt; A company they'd risk losing to keep their word.&lt;/li&gt;&lt;/ul&gt;",
+      "narration": "Step back, and a portrait emerges. Not just a news story about a contract dispute — but a picture of how two people run a company. A brother and sister. Their cofounders beside them. United, again and again, in the choices that cost something. And there's a pattern to it. No ads, when ads were the easy money. An op-ed, when silence was safer. A bill they backed, when their peers turned on them. And finally the Pentagon, when saying no might mean the end. What holds it together isn't strategy. It's conviction. And a rare willingness to admit what they still haven't solved."
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+[
+  {
+    "source": "https://www.anthropic.com/research/some-new-post",
+    "title": "A New Work",
+    "shelf": "Reading the Machine",
+    "signature": "violet",
+    "kind": "Paper",
+    "author": "Author et al. · Anthropic",
+    "date": "Month 2026",
+    "sortDate": "2026-03-01",
+    "url": "https://www.anthropic.com/research/some-new-post",
+    "status": "pending"
+  }
+]

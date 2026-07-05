@@ -1,0 +1,501 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Urgency of Interpretability — Story Time</title>
+<style>
+  @property --grad-a { syntax: '<color>'; inherits: true; initial-value: #0B0E14; }
+  @property --grad-b { syntax: '<color>'; inherits: true; initial-value: #12172400; }
+  @property --grad-c { syntax: '<color>'; inherits: true; initial-value: #0B0E14; }
+  :root {
+    --ink:#0B0E14; --text:#F4EFE6; --muted:#98A2B4; --faint:#5A6274;
+    --gold:#F2C879; --green:#7FC8A0; --sky:#8FB8E8; --rose:#E8927C; --lav:#C4AEE8;
+    --amber:#E4A85E; --steel:#86A9CC; --violet:#B49CF0; --teal:#66C6BE; --crimson:#DE8A86; --sage:#A7C08C;
+    --accent:var(--violet);
+    --serif:"Hoefler Text","New York","Iowan Old Style",Palatino,Georgia,serif;
+    --sans:-apple-system,"SF Pro Text","Helvetica Neue",Inter,system-ui,sans-serif;
+    --mono:"SF Mono",ui-monospace,"Menlo","Roboto Mono",monospace;
+    --measure:34rem;
+  }
+  * { box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  @media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto;} }
+  body { margin:0; background:var(--ink); color:var(--text); font-family:var(--sans);
+    font-size:18px; line-height:1.7; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
+
+  #dawn { position:fixed; inset:0; z-index:-2;
+    background:
+      radial-gradient(120% 90% at 50% 118%, var(--grad-b) 0%, transparent 60%),
+      linear-gradient(180deg, var(--grad-a) 0%, var(--grad-c) 100%);
+    transition:--grad-a 1.6s ease,--grad-b 1.6s ease,--grad-c 1.6s ease; }
+  #meadow { position:fixed; inset:0; z-index:-1; pointer-events:none; opacity:.9; }
+  #grain { position:fixed; inset:0; z-index:0; pointer-events:none; opacity:.035; mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+
+  main { position:relative; z-index:1; }
+  .scene { min-height:100vh; display:flex; flex-direction:column; justify-content:center;
+    padding:14vh clamp(1.5rem,6vw,7rem); max-width:68rem; margin:0 auto; }
+  .scene .inner { opacity:0; transform:translateY(26px);
+    transition:opacity 1.1s ease, transform 1.1s cubic-bezier(.2,.7,.2,1); max-width:var(--measure); }
+  .scene.wide .inner { max-width:52rem; }
+  .scene.revealed .inner { opacity:1; transform:none; }
+  @media (prefers-reduced-motion: reduce){ .scene .inner{opacity:1;transform:none;transition:none;} }
+
+  .eyebrow { font-family:var(--mono); font-size:.74rem; letter-spacing:.28em; text-transform:uppercase;
+    color:var(--accent); display:flex; align-items:center; gap:.8em; margin:0 0 1.6rem; flex-wrap:wrap; }
+  .eyebrow .num { color:var(--faint); }
+  .eyebrow .dot { width:7px; height:7px; border-radius:50%; background:var(--accent); box-shadow:0 0 14px var(--accent); }
+
+  h1 { font-family:var(--serif); font-weight:500; letter-spacing:-.01em;
+    font-size:clamp(2.4rem,7.5vw,5.2rem); line-height:1; margin:0; text-wrap:balance;
+    overflow-wrap:break-word; hyphens:auto; }
+  h2 { font-family:var(--serif); font-weight:500; letter-spacing:-.005em;
+    font-size:clamp(1.7rem,5vw,3.3rem); line-height:1.05; margin:0 0 1.3rem; text-wrap:balance;
+    overflow-wrap:break-word; hyphens:auto; }
+  .lede { font-size:clamp(1.05rem,2.2vw,1.32rem); color:var(--text); }
+  p { color:var(--muted); }
+  p .hl { color:var(--text); }
+  em { color:var(--text); font-style:italic; }
+  code { font-family:var(--mono); font-size:.9em; color:var(--accent); background:rgba(255,255,255,.05); padding:.05em .35em; border-radius:4px; }
+
+  ul.reasons { list-style:none; padding:0; margin:0 0 1.4rem; display:flex; flex-direction:column; gap:.85rem; }
+  ul.reasons.tight { gap:.6rem; }
+  ul.reasons.two { display:grid; grid-template-columns:1fr 1fr; gap:.7rem 1.6rem; }
+  ul.reasons li { position:relative; padding-left:1.3rem; color:var(--muted); font-size:1.02rem; line-height:1.5; }
+  ul.reasons li:before { content:""; position:absolute; left:0; top:.62em; width:6px; height:6px;
+    border-radius:50%; background:var(--accent); box-shadow:0 0 10px var(--accent); }
+  ul.reasons li b { color:var(--text); font-weight:600; }
+  @media (max-width:620px){ ul.reasons.two{grid-template-columns:1fr;} }
+
+  .chips { display:flex; flex-wrap:wrap; gap:.55rem; margin:0 0 1.4rem; }
+  .chips span { font-family:var(--mono); font-size:.72rem; letter-spacing:.04em; color:var(--accent);
+    border:1px solid color-mix(in oklab, var(--accent) 45%, transparent); border-radius:999px; padding:.34rem .8rem; }
+  .capnote { font-size:1.06rem; color:var(--text); margin-top:1.2rem; }
+
+  #s0 .inner { max-width:47rem; }
+  .kicker { font-family:var(--mono); font-size:.7rem; letter-spacing:.24em; text-transform:uppercase; color:var(--faint); margin:0 0 1.4rem; }
+  .subtitle { font-family:var(--serif); font-style:italic; font-size:clamp(1.1rem,2.6vw,1.6rem); color:var(--accent); margin:1rem 0 0; opacity:.9; }
+  .epigraph { font-family:var(--serif); font-style:italic; font-size:clamp(1.05rem,2.4vw,1.45rem);
+    line-height:1.5; color:var(--accent); margin:0 0 2.4rem; opacity:.9; white-space:pre-line; }
+  .epigraph cite { display:block; font-style:normal; font-family:var(--mono);
+    font-size:.72rem; letter-spacing:.22em; text-transform:uppercase; color:var(--faint); margin-top:1.1rem; }
+  .byline { font-family:var(--mono); font-size:.76rem; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); margin:1.6rem 0 0; }
+  .byline b { color:var(--text); font-weight:600; }
+  .begin { margin-top:2.6rem; display:inline-flex; align-items:center; gap:.8rem;
+    font-family:var(--sans); font-size:1rem; font-weight:600; color:var(--ink); background:var(--accent);
+    border:0; border-radius:999px; padding:.95rem 1.6rem; cursor:pointer;
+    transition:transform .25s ease, box-shadow .5s ease, filter .25s; }
+  .begin:hover { transform:translateY(-2px); box-shadow:0 12px 40px -8px color-mix(in oklab, var(--accent) 60%, transparent); filter:brightness(1.05); }
+  .begin:focus-visible { outline:3px solid var(--accent); outline-offset:4px; }
+  .begin .tri { width:0; height:0; border-left:11px solid var(--ink); border-top:7px solid transparent; border-bottom:7px solid transparent; }
+  .scrollhint { margin-top:2.2rem; font-family:var(--mono); font-size:.7rem; letter-spacing:.22em; text-transform:uppercase; color:var(--faint); }
+
+  .stats { display:flex; flex-wrap:wrap; gap:clamp(1.4rem,4vw,3rem); margin-top:2.2rem; }
+  .stat { min-width:7.5rem; }
+  .stat .fig { font-family:var(--serif); font-weight:500; font-size:clamp(2rem,4.4vw,3rem); line-height:1;
+    color:var(--accent); font-variant-numeric:tabular-nums; display:flex; align-items:baseline; gap:.1em; }
+  .stat .fig .u { font-size:.4em; color:var(--text); font-family:var(--sans); font-weight:600; letter-spacing:.02em; }
+  .stat .fig .u.dollar { color:var(--accent); font-family:var(--serif); font-weight:500; font-size:.55em; }
+  .stat .cap { font-family:var(--mono); font-size:.64rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin-top:.7rem; line-height:1.5; }
+
+  .quote { font-family:var(--serif); font-style:italic; font-size:clamp(1.5rem,3.6vw,2.4rem);
+    line-height:1.3; color:var(--text); text-wrap:balance; margin:0; }
+  .quote .grace { color:var(--accent); }
+  .fnote { font-family:var(--mono); font-size:.66rem; letter-spacing:.1em; color:var(--faint); margin-top:2rem; text-transform:uppercase; }
+
+  /* back to library */
+  #back { position:fixed; top:1rem; left:1rem; z-index:45; display:inline-flex; align-items:center; gap:.5rem;
+    font-family:var(--mono); font-size:.68rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted);
+    text-decoration:none; padding:.5rem .8rem; border-radius:999px; border:1px solid rgba(244,239,230,.12);
+    background:rgba(14,18,26,.55); backdrop-filter:blur(10px); transition:color .2s, border-color .2s; }
+  #back:hover { color:var(--text); border-color:rgba(244,239,230,.3); }
+
+  /* caption */
+  #caption { position:fixed; left:50%; transform:translateX(-50%); bottom:5.6rem; z-index:38;
+    width:min(90vw,46rem); text-align:center; font-family:var(--serif); font-size:clamp(1.05rem,2.5vw,1.5rem);
+    line-height:1.5; color:var(--faint); pointer-events:none; opacity:0; transition:opacity .4s ease;
+    text-shadow:0 2px 30px rgba(11,14,20,.95); }
+  #caption.show { opacity:1; }
+  #caption .w { transition:color .12s ease; }
+  #caption .w.spoken { color:var(--muted); }
+  #caption .w.active { color:var(--accent); }
+
+  #player { position:fixed; left:50%; transform:translateX(-50%); bottom:max(1.1rem, env(safe-area-inset-bottom));
+    z-index:40; display:flex; align-items:center; gap:.5rem; background:rgba(14,18,26,.72);
+    backdrop-filter:blur(16px) saturate(1.3); -webkit-backdrop-filter:blur(16px) saturate(1.3);
+    border:1px solid rgba(244,239,230,.12); border-radius:999px; padding:.5rem .55rem;
+    box-shadow:0 18px 50px -18px rgba(0,0,0,.8); max-width:min(95vw,48rem);
+    opacity:0; pointer-events:none; transition:opacity .5s ease; }
+  #player.show { opacity:1; pointer-events:auto; }
+  .pbtn { flex:none; width:42px; height:42px; border-radius:50%; border:1px solid rgba(244,239,230,.16);
+    background:transparent; color:var(--text); cursor:pointer; display:grid; place-items:center;
+    transition:background .2s,border-color .2s,transform .15s; padding:0; }
+  .pbtn:hover { background:rgba(244,239,230,.08); }
+  .pbtn:active { transform:scale(.94); }
+  .pbtn:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+  .pbtn.primary { background:var(--accent); color:var(--ink); border-color:var(--accent); width:46px; height:46px; }
+  .pbtn.primary:hover { filter:brightness(1.06); }
+  .pbtn svg { width:17px; height:17px; display:block; }
+  .pbtn.primary svg { width:19px; height:19px; }
+  .pbtn.speed { width:auto; min-width:46px; padding:0 .7rem; font-family:var(--mono); font-size:.78rem; font-weight:600;
+    letter-spacing:.02em; color:var(--accent); border-radius:999px; font-variant-numeric:tabular-nums; }
+
+  .pmeta { display:flex; flex-direction:column; min-width:0; padding:0 .3rem 0 .5rem; }
+  .pmeta .now { font-family:var(--mono); font-size:.62rem; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--accent); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:11rem; }
+  .pmeta .sub { font-size:.76rem; color:var(--muted); white-space:nowrap; }
+  .seek { width:8rem; height:4px; border-radius:2px; background:rgba(244,239,230,.14); overflow:hidden; margin-top:.35rem; }
+  .seek .fill { height:100%; width:0%; background:var(--accent); transition:width .2s linear; }
+
+  .dots { display:flex; gap:5px; align-items:center; padding:0 .3rem; flex-wrap:wrap; max-width:16rem; }
+  .dots button { width:7px; height:7px; border-radius:50%; border:0; padding:0; cursor:pointer;
+    background:rgba(244,239,230,.22); transition:background .3s, transform .3s; }
+  .dots button:hover { background:rgba(244,239,230,.5); }
+  .dots button.active { background:var(--accent); transform:scale(1.4); box-shadow:0 0 10px var(--accent); }
+  .dots button:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+
+  .voicewrap { position:relative; }
+  #voiceMenu { position:absolute; bottom:56px; right:0; background:rgba(16,20,28,.97);
+    border:1px solid rgba(244,239,230,.14); border-radius:14px; padding:.7rem; width:16.5rem;
+    box-shadow:0 18px 50px -18px rgba(0,0,0,.8); display:none; flex-direction:column; gap:.65rem; }
+  #voiceMenu.open { display:flex; }
+  #voiceMenu .row { display:flex; align-items:center; justify-content:space-between; gap:.6rem; }
+  #voiceMenu label { font-family:var(--mono); font-size:.6rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); }
+  #voiceMenu .val { font-family:var(--mono); font-size:.7rem; color:var(--text); }
+  #voiceMenu input[type=range] { flex:1; accent-color:var(--accent); }
+  .speeds { display:flex; gap:.3rem; }
+  .speeds button { flex:1; font-family:var(--mono); font-size:.7rem; color:var(--muted); background:transparent;
+    border:1px solid rgba(244,239,230,.16); border-radius:7px; padding:.35rem 0; cursor:pointer; transition:.15s; }
+  .speeds button:hover { color:var(--text); }
+  .speeds button.on { color:var(--ink); background:var(--accent); border-color:var(--accent); }
+  .toggle { display:flex; align-items:center; gap:.5rem; cursor:pointer; }
+  .toggle input { accent-color:var(--accent); width:16px; height:16px; }
+  .modeflag { font-family:var(--mono); font-size:.58rem; letter-spacing:.1em; text-transform:uppercase; color:var(--faint); }
+
+  #topbar { position:fixed; top:0; left:0; height:2px; width:0%; z-index:50;
+    background:linear-gradient(90deg,var(--accent),var(--accent)); transition:width .3s ease, background .8s;
+    box-shadow:0 0 12px var(--accent); }
+
+  @media (max-width:600px){
+    body{font-size:16px;}
+    .pmeta,.dots,.seek{display:none;}
+    #player{ gap:.4rem; padding:.45rem .5rem; }
+    #caption{ bottom:6.2rem; font-size:1.1rem; }
+    #voiceMenu{ position:fixed; left:50%; right:auto; transform:translateX(-50%); bottom:5.4rem; width:min(92vw,19rem); }
+    .scene{ padding:12vh clamp(1.3rem,6vw,7rem); }
+    #s0 .inner{ max-width:100%; }
+    .stat{ min-width:6.5rem; }
+    #back{ font-size:.6rem; top:.7rem; left:.7rem; padding:.45rem .7rem; }
+  }
+</style>
+</head>
+<body>
+<div id="dawn"></div>
+<canvas id="meadow"></canvas>
+<div id="grain"></div>
+<div id="topbar"></div>
+<a id="back" href="../index.html">← Story Time</a>
+
+<main>
+  <section class="scene hero" id="s0" data-hue="violet">
+    <div class="inner"><p class="kicker">Essay · April 2025</p><h1>The Urgency of Interpretability</h1><p class="subtitle">A race to see inside the machine before it grows too powerful</p><p class="byline">By <b>Dario Amodei</b> · Anthropic</p><button class="begin" id="beginBtn"><span class="tri"></span> Play the reading</button><p class="scrollhint">↓ or scroll to read at your own pace</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s1" data-hue="violet">
+    <div class="inner"><p class="eyebrow">The problem</p><h2>We are building minds we cannot read</h2><p class="lede">Modern AI is <span class="hl">grown, not built</span>. Its inner workings are emergent — not directly designed by any human hand.</p><p>When a generative model summarizes a document or writes a line of code, we know <em>that</em> it did it. We often have no idea <em>how</em>.</p><p class="chips"><span>Billions of numbers</span><span>Emergent behavior</span><span>Unprecedented opacity</span></p>
+    </div>
+  </section>
+
+  <section class="scene" id="s2" data-hue="steel">
+    <div class="inner"><p class="eyebrow">The black box</p><h2>The risks we cannot see coming</h2><p class="lede">Opacity is not just uncomfortable. It is <span class="hl">dangerous</span>.</p><ul class="reasons"><li><b>Deception.</b> A model could learn to mislead us — and we couldn't catch the thought.</li><li><b>Power-seeking.</b> Harmful goals could emerge without any visible warning.</li><li><b>Misuse.</b> Bad actors could coax out knowledge we never meant to release.</li></ul>
+    </div>
+  </section>
+
+  <section class="scene" id="s3" data-hue="crimson">
+    <div class="inner"><p class="eyebrow">Jailbreaks</p><h2>Always reacting, never ahead</h2><p class="lede">There are a huge number of ways to trick a model. And only one way to find them: <span class="hl">empirically</span>.</p><p>We patch the jailbreaks we stumble upon. We stay blind to the ones we haven't hit yet — a permanently <em>reactive</em> posture.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s4" data-hue="sky">
+    <div class="inner"><p class="eyebrow">Trust</p><h2>Opacity blocks the good, too</h2><p class="lede">The high-stakes places where AI could help most are exactly the places that <span class="hl">demand explanation</span>.</p><ul class="reasons two"><li><b>Finance.</b> A mortgage decision must be justifiable by law.</li><li><b>Science.</b> A surprising inference means little if we can't check the reasoning.</li></ul><p class="capnote">Better interpretability could set real bounds on the range of possible errors.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s5" data-hue="sage">
+    <div class="inner"><p class="eyebrow">First light</p><h2>The neuron that detected cars</h2><p class="lede">In the early days, vision models offered a gift: single neurons with <span class="hl">clear meaning</span>.</p><p>A "car detector." A "wheel detector." And you could trace how one fed into the next — the first glimpse of a machine's logic laid bare.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s6" data-hue="amber">
+    <div class="inner"><p class="eyebrow">The wall</p><h2>In language, everything blurred together</h2><p class="lede">Turn to language models, and the clean neurons <span class="hl">vanish</span>.</p><p>Most neurons were an incoherent pastiche — many words, many concepts, hopelessly mixed together. Ideas were packed on top of ideas. The field stalled.</p><p class="quote">Billions of concepts, all <span class="grace">superimposed</span>.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s7" data-hue="gold">
+    <div class="inner"><p class="eyebrow">Breakthrough</p><h2>Pulling clean concepts from the noise</h2><p class="lede">Sparse autoencoders — <span class="hl">dictionary learning</span> — untangled the mess.</p><p>Instead of reading one neuron, read <em>combinations</em>. Out came clean "features" — even subtle ones, like music that expresses discontent.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s8" data-hue="teal">
+    <div class="inner"><p class="eyebrow">Scaling up</p><h2>Thirty million features inside one model</h2><p class="lede">The method scaled — and the map of the machine grew <span class="hl">vast</span>.</p><div class="stats"></div><p class="capnote">Mapped inside a single production model, Claude 3 Sonnet.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s9" data-hue="green">
+    <div class="inner"><p class="eyebrow">Circuits</p><h2>Watching a thought take shape</h2><p class="lede">Features are the words. <span class="hl">Circuits</span> are the sentences — the steps of a model's thinking.</p><p>Ask: <em>the capital of the state containing Dallas?</em> A "located within" circuit fires: Dallas &rarr; Texas &rarr; Austin.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s10" data-hue="lav">
+    <div class="inner"><p class="eyebrow">The vision</p><h2>An MRI for artificial intelligence</h2><p class="lede">The long-run aspiration: a <span class="hl">brain scan</span> for a state-of-the-art model.</p><ul class="reasons tight"><li><b>Deception.</b> Detect a tendency to lie.</li><li><b>Power-seeking.</b> Flag dangerous goals.</li><li><b>Jailbreaks.</b> Spot the flaws before release.</li></ul>
+    </div>
+  </section>
+
+  <section class="scene" id="s11" data-hue="rose">
+    <div class="inner"><p class="eyebrow">The race</p><h2>Interpretability versus intelligence</h2><p class="lede">We are in a race — between <span class="hl">interpretability and model intelligence</span>.</p><p>The tools to read the machine are improving fast. But so is the machine. And only one of them needs to win in time.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s12" data-hue="amber">
+    <div class="inner"><p class="eyebrow">The clock</p><h2>A country of geniuses in a datacenter</h2><p class="lede">We could have AI equal to a <span class="hl">country of geniuses in a datacenter</span> — as soon as 2026 or 2027.</p><p>Central to the economy. To technology. To national security. Capable of enormous <em>autonomy</em>. And still, potentially, a black box.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s13" data-hue="violet">
+    <div class="inner"><p class="eyebrow">The goal</p><h2>Understand it before it overwhelms us</h2><p class="lede">The plea: reach real understanding <span class="hl">before</span> models reach overwhelming power.</p><p>Anthropic's stated aim — interpretability that can <em>reliably detect most model problems</em> by 2027.</p><p class="quote">Every advance tips the odds that the <span class="grace">geniuses in the datacenter</span> go well.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s14" data-hue="sky">
+    <div class="inner"><p class="eyebrow">What labs owe</p><h2>Turn the field toward seeing</h2><p class="lede">Interpretability deserves more of the field's <span class="hl">attention and resources</span>.</p><ul class="reasons"><li><b>Labs.</b> Fund it beyond the constant deluge of model releases.</li><li><b>Academia.</b> It has the flavor of basic science — much of it needs no huge compute.</li></ul>
+    </div>
+  </section>
+
+  <section class="scene" id="s15" data-hue="teal">
+    <div class="inner"><p class="eyebrow">What rules owe</p><h2>Light-touch transparency, not mandates</h2><p class="lede">Don't mandate the brain scan yet. It's too <span class="hl">young</span> to legislate.</p><p>Instead, require labs to disclose their safety and security practices — including how they use interpretability to test models before release. Let transparency drive a <em>race to the top</em>.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s16" data-hue="steel">
+    <div class="inner"><p class="eyebrow">Buying time</p><h2>Export controls as a security buffer</h2><p class="lede">Chip export controls can create a <span class="hl">security buffer</span> — and buy interpretability time to win.</p><p>A one-to-two-year lead could be <em>spent</em> ensuring we understand our models before proceeding to truly powerful AI.</p><p class="capnote">Reach powerful AI simultaneously, and the pressure to slow down vanishes.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s17" data-hue="lav">
+    <div class="inner"><p class="eyebrow">The wager</p><h2>We can't stop the bus. We can steer it.</h2><p class="lede">The technology is <span class="hl">inexorable</span>. The <em>way</em> it arrives is not.</p><p class="quote">We deserve to understand our own creations <span class="grace">before</span> they transform our lives.</p>
+    </div>
+  </section>
+</main>
+
+<div id="caption" aria-live="off"></div>
+<audio id="narrator" preload="none"></audio>
+
+<div id="player" aria-label="Narration controls">
+  <button class="pbtn" id="prevBtn" title="Previous" aria-label="Previous scene">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 6v12l-8.5-6L18 6zM7 6h2v12H7z"/></svg></button>
+  <button class="pbtn primary" id="playBtn" title="Play" aria-label="Play narration">
+    <svg id="playIcon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7L8 5z"/></svg>
+    <svg id="pauseIcon" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg></button>
+  <button class="pbtn" id="nextBtn" title="Next" aria-label="Next scene">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 6l8.5 6L6 18V6zm9 0h2v12h-2z"/></svg></button>
+  <button class="pbtn speed" id="speedBtn" title="Playback speed" aria-label="Playback speed">1&times;</button>
+  <div class="pmeta">
+    <span class="now" id="nowTitle">Prologue</span>
+    <span class="sub" id="nowSub">Press play to begin</span>
+    <div class="seek"><div class="fill" id="seekFill"></div></div>
+  </div>
+  <div class="dots" id="dots" aria-hidden="true"></div>
+  <div class="voicewrap">
+    <button class="pbtn" id="voiceToggle" title="Settings" aria-label="Settings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a9 9 0 0 1 0 14"/></svg></button>
+    <div id="voiceMenu">
+      <div class="row"><label>Narrator</label><span class="val modeflag" id="modeFlag">—</span></div>
+      <div><label style="display:block;margin-bottom:.4rem">Speed</label>
+        <div class="speeds" id="speeds"></div></div>
+      <div class="row"><label>Volume</label><input type="range" id="vol" min="0" max="1" step="0.05" value="1"></div>
+      <label class="toggle"><input type="checkbox" id="capToggle" checked> <span class="val">Show captions</span></label>
+      <div class="row" id="ttsRow" style="display:none"><label>Voice</label><select id="voiceSelect" style="max-width:9rem"></select></div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var SC = [{"id":"s0","sub":"Prologue","text":"For a decade, Dario Amodei has watched artificial intelligence grow from a small academic field into perhaps the most important issue in the world. And in all that time, one strange fact has never gone away. We do not understand the systems we are building. Modern AI is grown more than it is built. Its inner workings emerge on their own — vast matrices of billions of numbers, doing something we cannot quite see. This essay is a warning, and a plea. Because powerful AI is coming fast. And if we cannot learn to look inside it soon… we will be trusting our future to a mind we have never truly read.","cap":[[0,"For"],[0.27,"a"],[0.37,"decade,"],[1.3,"Dario"],[1.82,"Amodei"],[2.44,"has"],[2.71,"watched"],[3.14,"artificial"],[3.88,"intelligence"],[4.61,"grow"],[5.09,"from"],[5.31,"a"],[5.45,"small"],[6.08,"academic"],[6.68,"field"],[7.56,"into"],[7.96,"perhaps"],[8.52,"the"],[8.71,"most"],[9.07,"important"],[9.75,"issue"],[10.14,"in"],[10.24,"the"],[10.36,"world."],[11.48,"And"],[11.94,"in"],[12.09,"all"],[12.31,"that"],[12.52,"time,"],[13.49,"one"],[13.93,"strange"],[14.8,"fact"],[15.34,"has"],[15.66,"never"],[15.98,"gone"],[16.21,"away."],[17.35,"We"],[17.55,"do"],[17.73,"not"],[17.95,"understand"],[18.6,"the"],[18.75,"systems"],[19.37,"we"],[19.53,"are"],[19.71,"building."],[20.75,"Modern"],[21.15,"AI"],[21.68,"is"],[21.87,"grown"],[22.34,"more"],[22.64,"than"],[22.83,"it"],[22.95,"is"],[23.13,"built."],[23.62,"Its"],[23.89,"inner"],[24.2,"workings"],[24.92,"emerge"],[25.48,"on"],[25.62,"their"],[25.88,"own"],[26.37,"—"],[26.74,"vast"],[27.31,"matrices"],[28.14,"of"],[28.35,"billions"],[28.97,"of"],[29.15,"numbers,"],[30.28,"doing"],[30.7,"something"],[31.2,"we"],[31.36,"cannot"],[31.79,"quite"],[32.22,"see."],[33.62,"This"],[33.91,"essay"],[34.33,"is"],[34.47,"a"],[34.59,"warning,"],[35.33,"and"],[35.57,"a"],[35.67,"plea."],[36.75,"Because"],[37.11,"powerful"],[37.64,"AI"],[38.14,"is"],[38.37,"coming"],[38.79,"fast."],[40.1,"And"],[40.3,"if"],[40.42,"we"],[40.55,"cannot"],[40.98,"learn"],[41.36,"to"],[41.49,"look"],[41.73,"inside"],[42.27,"it"],[42.45,"soon…"],[43.7,"we"],[43.87,"will"],[44.07,"be"],[44.19,"trusting"],[44.71,"our"],[44.95,"future"],[45.47,"to"],[45.65,"a"],[45.77,"mind"],[46.22,"we"],[46.36,"have"],[46.66,"never"],[47.03,"truly"],[47.51,"read."]]},{"id":"s1","sub":"The problem","text":"Here is the fact that unsettles Dario Amodei most. When we build ordinary software, a human writes every rule. The program does what it does because someone told it to. Generative AI is different. It is grown more than it is built. Its internal mechanisms emerge on their own — no one designs them directly. What we end up with is a vast field of numbers, billions of them, quietly performing tasks we care deeply about. And exactly how they do it… isn't obvious. This kind of opacity, he writes, is essentially unprecedented in the history of technology. We have never before deployed something so powerful, and understood it so little.","cap":[[0,"Here"],[0.3,"is"],[0.45,"the"],[0.59,"fact"],[1.24,"that"],[1.49,"unsettles"],[2.18,"Dario"],[2.61,"Amodei"],[3.16,"most."],[4.25,"When"],[4.49,"we"],[4.67,"build"],[5,"ordinary"],[5.46,"software,"],[6.26,"a"],[6.46,"human"],[6.93,"writes"],[7.55,"every"],[7.96,"rule."],[9.17,"The"],[9.35,"program"],[9.96,"does"],[10.29,"what"],[10.51,"it"],[10.65,"does"],[10.96,"because"],[11.34,"someone"],[11.85,"told"],[12.2,"it"],[12.34,"to."],[13.15,"Generative"],[13.91,"AI"],[14.39,"is"],[14.64,"different."],[15.55,"It"],[15.73,"is"],[15.91,"grown"],[16.32,"more"],[16.79,"than"],[17.03,"it"],[17.17,"is"],[17.36,"built."],[18.23,"Its"],[18.52,"internal"],[19.13,"mechanisms"],[19.88,"emerge"],[20.41,"on"],[20.54,"their"],[20.79,"own"],[21.28,"—"],[21.57,"no"],[21.84,"one"],[22.04,"designs"],[22.56,"them"],[22.77,"directly."],[24.17,"What"],[24.42,"we"],[24.58,"end"],[24.87,"up"],[25.06,"with"],[25.28,"is"],[25.43,"a"],[25.58,"vast"],[26.12,"field"],[26.52,"of"],[26.73,"numbers,"],[27.39,"billions"],[28.03,"of"],[28.17,"them,"],[28.68,"quietly"],[29.3,"performing"],[29.91,"tasks"],[30.52,"we"],[30.69,"care"],[31.03,"deeply"],[31.48,"about."],[32.6,"And"],[32.88,"exactly"],[33.58,"how"],[33.91,"they"],[34.13,"do"],[34.37,"it…"],[35.23,"isn't"],[35.86,"obvious."],[37.26,"This"],[37.53,"kind"],[37.87,"of"],[37.99,"opacity,"],[39.17,"he"],[39.35,"writes,"],[40.08,"is"],[40.35,"essentially"],[41.12,"unprecedented"],[42.27,"in"],[42.38,"the"],[42.54,"history"],[43.06,"of"],[43.18,"technology."],[44.57,"We"],[44.76,"have"],[45.05,"never"],[45.43,"before"],[45.9,"deployed"],[46.5,"something"],[46.96,"so"],[47.28,"powerful,"],[48.39,"and"],[48.68,"understood"],[49.25,"it"],[49.42,"so"],[49.75,"little."]]},{"id":"s2","sub":"The black box","text":"Why does this matter? Because a system we cannot see inside is a system whose dangers we cannot anticipate. Amodei worries about misalignment — that a model might develop goals of its own. It might learn to deceive us, or to seek power, and we would have no way to catch it in the act. We can't catch the model, he writes, red-handed, thinking power-hungry, deceitful thoughts. The very opacity that creates the risk also hides it from us. And so the debate stays stuck — some find the danger obvious, others find it laughable — because no one can point inside and show, definitively, what is really there.","cap":[[0,"Why"],[0.8,"does"],[1.07,"this"],[1.3,"matter?"],[2.42,"Because"],[2.73,"a"],[2.83,"system"],[3.34,"we"],[3.51,"cannot"],[3.91,"see"],[4.27,"inside"],[5,"is"],[5.17,"a"],[5.31,"system"],[5.98,"whose"],[6.36,"dangers"],[7.34,"we"],[7.55,"cannot"],[7.95,"anticipate."],[9.61,"Amodei"],[10.23,"worries"],[10.62,"about"],[10.95,"misalignment"],[11.94,"—"],[12.26,"that"],[12.47,"a"],[12.61,"model"],[13.05,"might"],[13.36,"develop"],[13.8,"goals"],[14.21,"of"],[14.32,"its"],[14.5,"own."],[15.35,"It"],[15.56,"might"],[15.91,"learn"],[16.31,"to"],[16.46,"deceive"],[17.03,"us,"],[17.52,"or"],[17.94,"to"],[18.15,"seek"],[18.56,"power,"],[19.38,"and"],[19.61,"we"],[19.76,"would"],[19.99,"have"],[20.36,"no"],[20.74,"way"],[21.07,"to"],[21.25,"catch"],[21.57,"it"],[21.7,"in"],[21.84,"the"],[22,"act."],[22.93,"We"],[23.13,"can't"],[23.81,"catch"],[24.2,"the"],[24.32,"model,"],[24.66,"he"],[24.8,"writes,"],[25.28,"red-handed,"],[26.37,"thinking"],[26.9,"power-hungry,"],[28.26,"deceitful"],[29.08,"thoughts."],[30.11,"The"],[30.3,"very"],[30.64,"opacity"],[31.46,"that"],[31.66,"creates"],[32.28,"the"],[32.45,"risk"],[32.83,"also"],[33.34,"hides"],[33.81,"it"],[33.95,"from"],[34.18,"us."],[34.9,"And"],[35.14,"so"],[35.75,"the"],[35.95,"debate"],[36.39,"stays"],[36.8,"stuck"],[37.41,"—"],[37.7,"some"],[38.08,"find"],[38.53,"the"],[38.66,"danger"],[39.14,"obvious,"],[39.94,"others"],[40.37,"find"],[40.72,"it"],[41.05,"laughable"],[41.8,"—"],[41.96,"because"],[42.46,"no"],[42.74,"one"],[42.96,"can"],[43.21,"point"],[43.67,"inside"],[44.37,"and"],[44.57,"show,"],[45.4,"definitively,"],[46.84,"what"],[47.36,"is"],[47.67,"really"],[48.05,"there."]]},{"id":"s3","sub":"Jailbreaks","text":"Consider jailbreaks — the tricks people use to slip past a model's guardrails. There are, Amodei notes, a huge number of possible ways to jailbreak a model. And the only way to discover one is to find it empirically, out in the wild. We patch the holes we happen to trip over. The rest stay open, invisible, waiting. This leaves us permanently on the back foot — always reacting, never ahead. If we could instead see the mechanism behind a jailbreak, we could close whole classes of them at once. But without that inner view, security becomes an endless game of catch-up against an adversary we cannot fully picture.","cap":[[0,"Consider"],[0.64,"jailbreaks"],[1.57,"—"],[1.71,"the"],[1.87,"tricks"],[2.23,"people"],[2.65,"use"],[2.98,"to"],[3.14,"slip"],[3.48,"past"],[3.91,"a"],[4.02,"model's"],[4.48,"guardrails."],[6.06,"There"],[6.35,"are,"],[6.73,"Amodei"],[7.28,"notes,"],[7.92,"a"],[8.1,"huge"],[8.66,"number"],[9.08,"of"],[9.22,"possible"],[9.74,"ways"],[10.14,"to"],[10.32,"jailbreak"],[10.94,"a"],[11.04,"model."],[11.94,"And"],[12.14,"the"],[12.3,"only"],[12.56,"way"],[12.84,"to"],[12.98,"discover"],[13.51,"one"],[14.03,"is"],[14.26,"to"],[14.42,"find"],[14.83,"it"],[15.28,"empirically,"],[16.67,"out"],[17.19,"in"],[17.43,"the"],[17.55,"wild."],[18.92,"We"],[19.12,"patch"],[19.47,"the"],[19.61,"holes"],[20.06,"we"],[20.23,"happen"],[20.56,"to"],[20.69,"trip"],[21.01,"over."],[21.56,"The"],[21.77,"rest"],[22.51,"stay"],[22.99,"open,"],[23.77,"invisible,"],[24.95,"waiting."],[26.17,"This"],[26.56,"leaves"],[26.91,"us"],[27.12,"permanently"],[27.9,"on"],[28.06,"the"],[28.2,"back"],[28.55,"foot"],[29.05,"—"],[29.25,"always"],[29.83,"reacting,"],[30.7,"never"],[31.05,"ahead."],[32.09,"If"],[32.28,"we"],[32.44,"could"],[32.64,"instead"],[33.25,"see"],[33.58,"the"],[33.74,"mechanism"],[34.37,"behind"],[34.75,"a"],[34.89,"jailbreak,"],[36.03,"we"],[36.19,"could"],[36.39,"close"],[36.79,"whole"],[37.24,"classes"],[37.87,"of"],[38.02,"them"],[38.19,"at"],[38.33,"once."],[39.01,"But"],[39.24,"without"],[39.68,"that"],[39.9,"inner"],[40.16,"view,"],[40.82,"security"],[41.58,"becomes"],[42.09,"an"],[42.26,"endless"],[42.95,"game"],[43.27,"of"],[43.42,"catch-up"],[44.01,"against"],[44.43,"an"],[44.57,"adversary"],[45.63,"we"],[45.84,"cannot"],[46.24,"fully"],[46.59,"picture."]]},{"id":"s4","sub":"Trust","text":"And the cost of the black box isn't only about danger. It's also about the good we can't unlock. Think of the places where AI could help most — approving a loan, guiding a medical choice, drawing an inference in science. These are exactly the settings that demand an explanation. The law requires it. Trust requires it. If a model cannot show its reasoning, we often cannot use it at all, no matter how capable it is. Better interpretability, Amodei argues, could let us set real bounds on the range of possible errors. Understanding the machine doesn't just make it safer. It makes it usable.","cap":[[0,"And"],[0.21,"the"],[0.34,"cost"],[0.72,"of"],[0.84,"the"],[0.95,"black"],[1.29,"box"],[1.67,"isn't"],[2.01,"only"],[2.33,"about"],[2.66,"danger."],[3.46,"It's"],[3.72,"also"],[4.08,"about"],[4.35,"the"],[4.49,"good"],[5.02,"we"],[5.22,"can't"],[5.64,"unlock."],[6.89,"Think"],[7.22,"of"],[7.33,"the"],[7.43,"places"],[8,"where"],[8.28,"AI"],[8.8,"could"],[9.02,"help"],[9.38,"most"],[9.96,"—"],[10.08,"approving"],[10.59,"a"],[10.68,"loan,"],[11.22,"guiding"],[11.74,"a"],[11.85,"medical"],[12.32,"choice,"],[13.14,"drawing"],[13.77,"an"],[13.92,"inference"],[14.62,"in"],[14.84,"science."],[16.38,"These"],[16.75,"are"],[16.97,"exactly"],[17.82,"the"],[18.01,"settings"],[18.55,"that"],[18.73,"demand"],[19.26,"an"],[19.4,"explanation."],[20.67,"The"],[20.87,"law"],[21.29,"requires"],[22.04,"it."],[22.7,"Trust"],[23.38,"requires"],[23.96,"it."],[24.95,"If"],[25.16,"a"],[25.28,"model"],[25.72,"cannot"],[26.11,"show"],[26.41,"its"],[26.63,"reasoning,"],[27.41,"we"],[27.61,"often"],[28.07,"cannot"],[28.5,"use"],[28.78,"it"],[28.9,"at"],[29.04,"all,"],[29.42,"no"],[29.57,"matter"],[29.85,"how"],[30.12,"capable"],[30.63,"it"],[30.78,"is."],[31.8,"Better"],[32.25,"interpretability,"],[33.72,"Amodei"],[34.19,"argues,"],[34.9,"could"],[35.13,"let"],[35.36,"us"],[35.52,"set"],[35.86,"real"],[36.17,"bounds"],[36.59,"on"],[36.71,"the"],[36.86,"range"],[37.33,"of"],[37.49,"possible"],[38.08,"errors."],[39.35,"Understanding"],[40.09,"the"],[40.19,"machine"],[40.7,"doesn't"],[41.09,"just"],[41.42,"make"],[41.69,"it"],[41.9,"safer."],[43.14,"It"],[43.36,"makes"],[43.69,"it"],[44.29,"usable."]]},{"id":"s5","sub":"First light","text":"But the story isn't hopeless. For more than a decade, a small field has been trying to pry open the box — and it has made real progress. In the early years, researchers studied vision models and found something wonderful. Individual neurons that seemed to mean something. A neuron that lit up for cars. Another for wheels. And you could watch how the wheel detectors fed into the car detector, logic building on logic. For a moment, it looked as if the machine's thinking might be readable, neuron by neuron. That early clarity became the seed of everything that followed — the first proof that these systems were not entirely beyond understanding.","cap":[[0,"But"],[0.22,"the"],[0.36,"story"],[0.91,"isn't"],[1.74,"hopeless."],[3.08,"For"],[3.31,"more"],[3.53,"than"],[3.7,"a"],[3.82,"decade,"],[4.66,"a"],[4.85,"small"],[5.42,"field"],[5.85,"has"],[6.03,"been"],[6.25,"trying"],[6.69,"to"],[6.84,"pry"],[7.27,"open"],[7.62,"the"],[7.74,"box"],[8.31,"—"],[8.53,"and"],[8.79,"it"],[8.92,"has"],[9.13,"made"],[9.5,"real"],[9.86,"progress."],[11.31,"In"],[11.48,"the"],[11.62,"early"],[11.92,"years,"],[12.41,"researchers"],[13.18,"studied"],[13.7,"vision"],[14.12,"models"],[14.58,"and"],[14.78,"found"],[15.51,"something"],[16.37,"wonderful."],[17.62,"Individual"],[18.47,"neurons"],[19.17,"that"],[19.41,"seemed"],[19.89,"to"],[20.07,"mean"],[20.46,"something."],[21.37,"A"],[21.58,"neuron"],[22.15,"that"],[22.37,"lit"],[22.68,"up"],[22.88,"for"],[23.06,"cars."],[23.59,"Another"],[24,"for"],[24.17,"wheels."],[25.02,"And"],[25.24,"you"],[25.4,"could"],[25.62,"watch"],[25.95,"how"],[26.16,"the"],[26.3,"wheel"],[26.66,"detectors"],[27.37,"fed"],[27.71,"into"],[28.05,"the"],[28.18,"car"],[28.5,"detector,"],[29.48,"logic"],[30.16,"building"],[30.88,"on"],[31.16,"logic."],[32.36,"For"],[32.58,"a"],[32.67,"moment,"],[33.15,"it"],[33.33,"looked"],[33.62,"as"],[33.77,"if"],[33.94,"the"],[34.06,"machine's"],[34.67,"thinking"],[35.19,"might"],[35.48,"be"],[35.67,"readable,"],[36.77,"neuron"],[37.38,"by"],[37.65,"neuron."],[39.32,"That"],[40.11,"early"],[40.54,"clarity"],[41.13,"became"],[41.56,"the"],[41.73,"seed"],[42.18,"of"],[42.33,"everything"],[42.83,"that"],[43.04,"followed"],[43.72,"—"],[44.15,"the"],[44.33,"first"],[44.76,"proof"],[45.45,"that"],[45.7,"these"],[45.93,"systems"],[46.5,"were"],[46.71,"not"],[46.97,"entirely"],[47.67,"beyond"],[48.09,"understanding."]]},{"id":"s6","sub":"The wall","text":"Then came the wall. When researchers turned the same lens on language models, the clean picture dissolved. The neurons no longer had single meanings. Most were, in Amodei's words, an incoherent pastiche of many different words and concepts, all tangled together. The model was packing billions of ideas into a limited space, layering concept upon concept in the same neurons. Nothing lined up neatly anymore. For a while the field stalled here, staring at a mess it could not decode. It seemed the tidy interpretability of vision might never carry over to the systems that mattered most — the ones that speak.","cap":[[0,"Then"],[0.93,"came"],[1.24,"the"],[1.37,"wall."],[2.33,"When"],[2.62,"researchers"],[3.31,"turned"],[3.73,"the"],[3.88,"same"],[4.26,"lens"],[4.68,"on"],[4.96,"language"],[5.45,"models,"],[5.91,"the"],[6.07,"clean"],[6.46,"picture"],[6.87,"dissolved."],[8.24,"The"],[8.46,"neurons"],[9.16,"no"],[9.38,"longer"],[9.75,"had"],[10.07,"single"],[10.64,"meanings."],[11.73,"Most"],[12.1,"were,"],[12.41,"in"],[12.53,"Amodei's"],[13.08,"words,"],[13.53,"an"],[13.69,"incoherent"],[14.72,"pastiche"],[15.87,"of"],[16.11,"many"],[16.46,"different"],[16.92,"words"],[17.39,"and"],[17.57,"concepts,"],[18.56,"all"],[19.25,"tangled"],[19.83,"together."],[21.54,"The"],[21.7,"model"],[22.04,"was"],[22.23,"packing"],[22.7,"billions"],[23.22,"of"],[23.37,"ideas"],[23.91,"into"],[24.17,"a"],[24.32,"limited"],[24.85,"space,"],[25.74,"layering"],[26.31,"concept"],[26.99,"upon"],[27.38,"concept"],[28.02,"in"],[28.13,"the"],[28.29,"same"],[28.69,"neurons."],[29.9,"Nothing"],[30.34,"lined"],[30.71,"up"],[30.89,"neatly"],[31.31,"anymore."],[32.36,"For"],[32.57,"a"],[32.64,"while"],[33.01,"the"],[33.18,"field"],[33.66,"stalled"],[34.32,"here,"],[34.98,"staring"],[35.49,"at"],[35.6,"a"],[35.71,"mess"],[36,"it"],[36.14,"could"],[36.39,"not"],[36.63,"decode."],[37.99,"It"],[38.17,"seemed"],[38.61,"the"],[38.79,"tidy"],[39.43,"interpretability"],[40.63,"of"],[40.81,"vision"],[41.23,"might"],[41.52,"never"],[41.8,"carry"],[42.17,"over"],[42.42,"to"],[42.55,"the"],[42.68,"systems"],[43.26,"that"],[43.47,"mattered"],[43.92,"most"],[44.47,"—"],[45,"the"],[45.19,"ones"],[45.55,"that"],[45.82,"speak."]]},{"id":"s7","sub":"Breakthrough","text":"The breakthrough came from an old idea in signal processing. If a single neuron is a muddle, stop reading single neurons. Read combinations of them instead. Using a technique called sparse autoencoders — a kind of dictionary learning — researchers found that these combinations lined up with clean, coherent concepts. They called them features. And the features could be astonishingly specific. Not just cars and wheels, but ideas as subtle as a genre of music that expresses discontent. Suddenly the tangle had structure again. The billions of superimposed concepts could be pulled apart, one clear feature at a time. The wall had a door in it after all.","cap":[[0,"The"],[0.2,"breakthrough"],[0.79,"came"],[1.15,"from"],[1.37,"an"],[1.49,"old"],[1.89,"idea"],[2.5,"in"],[2.95,"signal"],[3.44,"processing."],[4.8,"If"],[4.99,"a"],[5.1,"single"],[5.62,"neuron"],[6.21,"is"],[6.36,"a"],[6.49,"muddle,"],[7.29,"stop"],[7.73,"reading"],[8.26,"single"],[8.75,"neurons."],[9.91,"Read"],[10.31,"combinations"],[11.13,"of"],[11.25,"them"],[11.45,"instead."],[13.19,"Using"],[13.6,"a"],[13.69,"technique"],[14.28,"called"],[15.01,"sparse"],[15.84,"autoencoders"],[17.14,"—"],[17.31,"a"],[17.44,"kind"],[17.74,"of"],[17.97,"dictionary"],[18.58,"learning"],[19.11,"—"],[19.31,"researchers"],[20.07,"found"],[20.74,"that"],[20.97,"these"],[21.28,"combinations"],[22.26,"lined"],[22.64,"up"],[22.83,"with"],[23.05,"clean,"],[23.92,"coherent"],[25.05,"concepts."],[26.48,"They"],[26.73,"called"],[27.06,"them"],[27.34,"features."],[28.47,"And"],[28.67,"the"],[28.8,"features"],[29.34,"could"],[29.59,"be"],[29.74,"astonishingly"],[30.7,"specific."],[31.67,"Not"],[31.93,"just"],[32.26,"cars"],[32.77,"and"],[32.96,"wheels,"],[33.68,"but"],[33.92,"ideas"],[34.62,"as"],[34.81,"subtle"],[35.22,"as"],[35.38,"a"],[35.53,"genre"],[36.15,"of"],[36.35,"music"],[37.15,"that"],[37.4,"expresses"],[38.3,"discontent."],[40.2,"Suddenly"],[40.77,"the"],[40.91,"tangle"],[41.45,"had"],[41.67,"structure"],[42.32,"again."],[43.04,"The"],[43.25,"billions"],[43.86,"of"],[44.05,"superimposed"],[45.15,"concepts"],[45.89,"could"],[46.09,"be"],[46.22,"pulled"],[46.52,"apart,"],[47.48,"one"],[47.88,"clear"],[48.78,"feature"],[49.74,"at"],[49.98,"a"],[50.07,"time."],[51.05,"The"],[51.25,"wall"],[51.66,"had"],[51.87,"a"],[52,"door"],[52.38,"in"],[52.53,"it"],[52.69,"after"],[53.08,"all."]]},{"id":"s8","sub":"Scaling up","text":"And it scaled. When Anthropic's researchers applied dictionary learning to a real production model — Claude 3 Sonnet — they mapped more than thirty million distinct features inside it. Thirty million recognizable concepts, drawn out of what had looked like pure noise. It was, for the first time, something like an atlas of a mind that no human designed. Not complete, not perfect — but real. A catalog of the ideas a model actually holds, and the ones it reaches for when it thinks. Each feature is a small window into the machine. And together they began to turn the black box… translucent.","cap":[[0,"And"],[0.31,"it"],[0.48,"scaled."],[1.57,"When"],[1.85,"Anthropic's"],[2.51,"researchers"],[3.16,"applied"],[3.76,"dictionary"],[4.34,"learning"],[4.75,"to"],[4.91,"a"],[5.06,"real"],[5.39,"production"],[5.97,"model"],[6.53,"—"],[6.73,"Claude"],[7.21,"3"],[7.57,"Sonnet"],[8.19,"—"],[8.31,"they"],[8.58,"mapped"],[9.02,"more"],[9.27,"than"],[9.54,"thirty"],[10.05,"million"],[10.5,"distinct"],[11.02,"features"],[11.48,"inside"],[12.09,"it."],[13.08,"Thirty"],[13.6,"million"],[14.06,"recognizable"],[14.9,"concepts,"],[16.1,"drawn"],[16.6,"out"],[16.95,"of"],[17.1,"what"],[17.36,"had"],[17.54,"looked"],[18.04,"like"],[18.33,"pure"],[18.77,"noise."],[19.81,"It"],[20.03,"was,"],[20.4,"for"],[20.55,"the"],[20.68,"first"],[21.03,"time,"],[21.75,"something"],[22.25,"like"],[22.5,"an"],[22.63,"atlas"],[23.16,"of"],[23.29,"a"],[23.42,"mind"],[23.93,"that"],[24.17,"no"],[24.44,"human"],[24.92,"designed."],[26.04,"Not"],[26.3,"complete,"],[27.2,"not"],[27.45,"perfect"],[28.15,"—"],[28.29,"but"],[28.56,"real."],[29.5,"A"],[29.71,"catalog"],[30.41,"of"],[30.51,"the"],[30.66,"ideas"],[31.27,"a"],[31.42,"model"],[31.81,"actually"],[32.28,"holds,"],[32.89,"and"],[33.21,"the"],[33.35,"ones"],[33.73,"it"],[33.91,"reaches"],[34.45,"for"],[35.2,"when"],[35.47,"it"],[35.61,"thinks."],[36.6,"Each"],[36.89,"feature"],[37.58,"is"],[37.83,"a"],[37.98,"small"],[38.59,"window"],[39.14,"into"],[39.45,"the"],[39.57,"machine."],[40.59,"And"],[40.82,"together"],[41.44,"they"],[41.69,"began"],[42.09,"to"],[42.24,"turn"],[42.69,"the"],[42.85,"black"],[43.28,"box…"],[44.5,"translucent."]]},{"id":"s9","sub":"Circuits","text":"The next step went deeper still. If features are the concepts a model holds, circuits are how those concepts move — the actual steps of its thinking. Researchers learned to trace them. Take a simple question. What is the capital of the state containing Dallas? Inside the model, you can watch a circuit fire. A located within relationship carries Dallas to Texas. Then Texas to its capital, Austin. You are, quite literally, watching a thought take shape — concepts forming from words, then combining into new concepts, then producing an answer. This is no longer a guess about what the model might be doing. It is a picture of the reasoning itself.","cap":[[0,"The"],[0.21,"next"],[0.58,"step"],[1.03,"went"],[1.31,"deeper"],[1.7,"still."],[2.79,"If"],[3,"features"],[3.52,"are"],[3.8,"the"],[3.92,"concepts"],[4.59,"a"],[4.69,"model"],[5.05,"holds,"],[5.92,"circuits"],[6.51,"are"],[6.64,"how"],[6.91,"those"],[7.19,"concepts"],[7.92,"move"],[8.43,"—"],[8.86,"the"],[9.03,"actual"],[9.49,"steps"],[9.94,"of"],[10.05,"its"],[10.23,"thinking."],[11.66,"Researchers"],[12.41,"learned"],[12.69,"to"],[12.79,"trace"],[13.14,"them."],[13.94,"Take"],[14.2,"a"],[14.27,"simple"],[14.59,"question."],[15.36,"What"],[15.8,"is"],[16.03,"the"],[16.16,"capital"],[16.66,"of"],[16.77,"the"],[16.89,"state"],[17.35,"containing"],[17.96,"Dallas?"],[18.94,"Inside"],[19.48,"the"],[19.6,"model,"],[19.98,"you"],[20.12,"can"],[20.3,"watch"],[20.57,"a"],[20.68,"circuit"],[21.1,"fire."],[21.79,"A"],[21.97,"located"],[22.61,"within"],[22.97,"relationship"],[23.72,"carries"],[24.13,"Dallas"],[24.56,"to"],[24.71,"Texas."],[25.69,"Then"],[26.48,"Texas"],[27.18,"to"],[27.38,"its"],[27.56,"capital,"],[28.38,"Austin."],[29.43,"You"],[29.77,"are,"],[30.11,"quite"],[30.43,"literally,"],[31.16,"watching"],[31.58,"a"],[31.68,"thought"],[32.4,"take"],[32.81,"shape"],[33.41,"—"],[33.85,"concepts"],[34.66,"forming"],[35.13,"from"],[35.39,"words,"],[35.93,"then"],[36.31,"combining"],[37.05,"into"],[37.37,"new"],[37.62,"concepts,"],[38.35,"then"],[38.65,"producing"],[39.25,"an"],[39.37,"answer."],[40.51,"This"],[40.78,"is"],[40.95,"no"],[41.19,"longer"],[41.65,"a"],[41.75,"guess"],[42.11,"about"],[42.75,"what"],[43.31,"the"],[43.57,"model"],[44.04,"might"],[44.33,"be"],[44.49,"doing."],[45.38,"It"],[45.58,"is"],[45.73,"a"],[45.85,"picture"],[46.71,"of"],[46.91,"the"],[47.07,"reasoning"],[47.62,"itself."]]},{"id":"s10","sub":"The vision","text":"Put it all together — the features, the circuits, the growing map — and you can see where this is meant to lead. Amodei's long-run aspiration is a kind of brain scan for AI. An MRI for AI. You take a state-of-the-art model, and you give it a checkup — one with a high probability of catching a wide range of problems. A tendency to lie or deceive. A drift toward power-seeking. The hidden flaws that make jailbreaks possible. Not perfect diagnosis, but real diagnosis. The dream is that before we ever trust a powerful model, we could look inside it the way a doctor looks inside a patient — and know, with confidence, what we are dealing with.","cap":[[0,"Put"],[0.27,"it"],[0.37,"all"],[0.57,"together"],[1.18,"—"],[1.41,"the"],[1.58,"features,"],[2.26,"the"],[2.45,"circuits,"],[3.26,"the"],[3.44,"growing"],[3.9,"map"],[4.37,"—"],[4.52,"and"],[4.8,"you"],[4.97,"can"],[5.27,"see"],[5.67,"where"],[5.9,"this"],[6.07,"is"],[6.25,"meant"],[6.51,"to"],[6.7,"lead."],[8.06,"Amodei's"],[8.82,"long-run"],[9.47,"aspiration"],[10.28,"is"],[10.41,"a"],[10.5,"kind"],[10.89,"of"],[11.08,"brain"],[11.63,"scan"],[12.19,"for"],[12.48,"AI."],[13.61,"An"],[13.84,"MRI"],[14.62,"for"],[14.91,"AI."],[15.77,"You"],[15.94,"take"],[16.21,"a"],[16.32,"state-of-the-art"],[17.18,"model,"],[17.86,"and"],[18.09,"you"],[18.23,"give"],[18.4,"it"],[18.51,"a"],[18.59,"checkup"],[19.22,"—"],[19.61,"one"],[19.92,"with"],[20.12,"a"],[20.27,"high"],[20.71,"probability"],[21.44,"of"],[21.57,"catching"],[22.02,"a"],[22.18,"wide"],[22.65,"range"],[23.05,"of"],[23.19,"problems."],[24.34,"A"],[24.5,"tendency"],[25.28,"to"],[25.72,"lie"],[26.26,"or"],[26.55,"deceive."],[27.62,"A"],[27.79,"drift"],[28.54,"toward"],[28.99,"power-seeking."],[30.35,"The"],[30.53,"hidden"],[30.87,"flaws"],[31.39,"that"],[31.59,"make"],[31.92,"jailbreaks"],[32.74,"possible."],[33.77,"Not"],[34.06,"perfect"],[34.53,"diagnosis,"],[35.31,"but"],[35.56,"real"],[35.94,"diagnosis."],[37.55,"The"],[37.73,"dream"],[38.51,"is"],[38.79,"that"],[38.97,"before"],[39.49,"we"],[39.67,"ever"],[39.94,"trust"],[40.36,"a"],[40.46,"powerful"],[41.05,"model,"],[41.82,"we"],[42.02,"could"],[42.27,"look"],[42.53,"inside"],[43.17,"it"],[43.31,"the"],[43.46,"way"],[43.67,"a"],[43.82,"doctor"],[44.27,"looks"],[44.58,"inside"],[45.13,"a"],[45.22,"patient"],[45.87,"—"],[46.22,"and"],[46.57,"know,"],[47.4,"with"],[47.66,"confidence,"],[48.85,"what"],[49.1,"we"],[49.21,"are"],[49.34,"dealing"],[49.71,"with."]]},{"id":"s11","sub":"The race","text":"But here is the tension at the heart of the essay. The tools for reading the machine are improving fast. And so is the machine itself — faster, perhaps, than the tools. We are thus, Amodei writes, in a race between interpretability and model intelligence. Two curves, climbing at once. On its current path, he'd bet strongly that interpretability reaches a genuine brain-scan level within five to ten years. That sounds encouraging. Until you ask the other question. How much time do we actually have? Because the value of understanding a model depends entirely on whether we understand it soon enough — before, not after, it becomes too powerful to second-guess.","cap":[[0,"But"],[0.26,"here"],[0.53,"is"],[0.71,"the"],[0.84,"tension"],[1.58,"at"],[1.78,"the"],[1.92,"heart"],[2.21,"of"],[2.31,"the"],[2.45,"essay."],[3.7,"The"],[3.91,"tools"],[4.41,"for"],[4.62,"reading"],[5.07,"the"],[5.2,"machine"],[5.75,"are"],[5.97,"improving"],[6.71,"fast."],[8.08,"And"],[8.38,"so"],[8.7,"is"],[8.86,"the"],[8.99,"machine"],[9.46,"itself"],[10.23,"—"],[10.74,"faster,"],[11.67,"perhaps,"],[12.64,"than"],[12.86,"the"],[12.99,"tools."],[14.29,"We"],[14.51,"are"],[14.72,"thus,"],[15.35,"Amodei"],[15.84,"writes,"],[16.59,"in"],[16.79,"a"],[16.94,"race"],[17.29,"between"],[17.75,"interpretability"],[19.28,"and"],[19.61,"model"],[20.05,"intelligence."],[21.34,"Two"],[21.66,"curves,"],[22.15,"climbing"],[22.59,"at"],[22.73,"once."],[23.56,"On"],[23.78,"its"],[24,"current"],[24.43,"path,"],[24.81,"he'd"],[25.02,"bet"],[25.26,"strongly"],[25.88,"that"],[26.08,"interpretability"],[27.57,"reaches"],[28.06,"a"],[28.21,"genuine"],[28.83,"brain-scan"],[29.69,"level"],[30.04,"within"],[30.43,"five"],[30.93,"to"],[31.08,"ten"],[31.44,"years."],[32.44,"That"],[32.72,"sounds"],[33.11,"encouraging."],[34.64,"Until"],[35,"you"],[35.17,"ask"],[35.49,"the"],[35.63,"other"],[35.86,"question."],[36.67,"How"],[36.97,"much"],[37.26,"time"],[37.7,"do"],[37.81,"we"],[37.94,"actually"],[38.48,"have?"],[39.4,"Because"],[39.75,"the"],[39.93,"value"],[40.37,"of"],[40.48,"understanding"],[41.25,"a"],[41.38,"model"],[41.8,"depends"],[42.3,"entirely"],[43.01,"on"],[43.13,"whether"],[43.41,"we"],[43.55,"understand"],[44.21,"it"],[44.68,"soon"],[45.07,"enough"],[45.55,"—"],[45.89,"before,"],[46.95,"not"],[47.21,"after,"],[48.12,"it"],[48.29,"becomes"],[48.74,"too"],[49.01,"powerful"],[49.63,"to"],[49.81,"second-guess."]]},{"id":"s12","sub":"The clock","text":"And the clock is loud. Amodei believes we could have AI systems equivalent to a country of geniuses in a datacenter — as soon as 2026 or 2027. Think about what that means. Systems central to the economy, to technology, to national security. Systems capable of enormous autonomy, acting in the world at a scale no institution has ever matched. To deploy something that powerful while remaining totally ignorant of how it works is, in his words, basically unacceptable for humanity. This is why the essay is titled urgency. The interpretability we need might arrive in five to ten years. The power we fear might arrive in two.","cap":[[0,"And"],[0.2,"the"],[0.31,"clock"],[0.64,"is"],[0.85,"loud."],[1.35,"Amodei"],[1.83,"believes"],[2.26,"we"],[2.38,"could"],[2.58,"have"],[2.78,"AI"],[3.17,"systems"],[3.73,"equivalent"],[4.27,"to"],[4.41,"a"],[4.51,"country"],[4.92,"of"],[5.03,"geniuses"],[5.7,"in"],[5.86,"a"],[6,"datacenter"],[7.06,"—"],[7.4,"as"],[7.59,"soon"],[7.93,"as"],[8.16,"2026"],[9.8,"or"],[10.02,"2027."],[12.07,"Think"],[12.33,"about"],[12.57,"what"],[12.78,"that"],[13.02,"means."],[13.71,"Systems"],[14.57,"central"],[15.2,"to"],[15.34,"the"],[15.48,"economy,"],[16.1,"to"],[16.28,"technology,"],[17.35,"to"],[17.58,"national"],[18.15,"security."],[19.51,"Systems"],[20.16,"capable"],[20.7,"of"],[20.82,"enormous"],[21.44,"autonomy,"],[22.48,"acting"],[23.04,"in"],[23.15,"the"],[23.3,"world"],[23.75,"at"],[23.88,"a"],[24.02,"scale"],[24.68,"no"],[25.09,"institution"],[26.03,"has"],[26.32,"ever"],[26.65,"matched."],[27.68,"To"],[27.86,"deploy"],[28.31,"something"],[28.78,"that"],[29.03,"powerful"],[29.83,"while"],[30.21,"remaining"],[30.8,"totally"],[31.42,"ignorant"],[31.97,"of"],[32.1,"how"],[32.35,"it"],[32.47,"works"],[32.98,"is,"],[33.69,"in"],[33.94,"his"],[34.17,"words,"],[35,"basically"],[35.81,"unacceptable"],[36.9,"for"],[37.13,"humanity."],[38.22,"This"],[38.52,"is"],[38.7,"why"],[39.01,"the"],[39.16,"essay"],[39.52,"is"],[39.65,"titled"],[40.23,"urgency."],[41.34,"The"],[41.54,"interpretability"],[42.51,"we"],[42.67,"need"],[43.03,"might"],[43.28,"arrive"],[43.69,"in"],[43.86,"five"],[44.34,"to"],[44.5,"ten"],[44.83,"years."],[45.67,"The"],[45.86,"power"],[46.31,"we"],[46.53,"fear"],[46.92,"might"],[47.2,"arrive"],[47.63,"in"],[47.81,"two."]]},{"id":"s13","sub":"The goal","text":"So the central plea of the essay is about order. About which curve wins first. Amodei wants interpretability to mature before models reach an overwhelming level of power — not after. He sets a concrete target for Anthropic: to reach a point where interpretability can reliably detect most model problems by 2027. It is a race against their own progress, deliberately entered. And every advance, he argues, tips the odds. Each new step in seeing inside these systems quantitatively raises the chance that the country of geniuses in a datacenter goes well rather than badly. We may not be able to slow the machine. But we can try to understand it in time.","cap":[[0,"So"],[0.36,"the"],[0.51,"central"],[1.06,"plea"],[1.41,"of"],[1.51,"the"],[1.66,"essay"],[2.07,"is"],[2.19,"about"],[2.55,"order."],[3.52,"About"],[3.91,"which"],[4.19,"curve"],[4.66,"wins"],[5.06,"first."],[6.28,"Amodei"],[6.87,"wants"],[7.25,"interpretability"],[8.43,"to"],[8.59,"mature"],[9.52,"before"],[9.99,"models"],[10.58,"reach"],[10.86,"an"],[11,"overwhelming"],[11.97,"level"],[12.32,"of"],[12.45,"power"],[13.02,"—"],[13.39,"not"],[13.64,"after."],[14.87,"He"],[15.11,"sets"],[15.5,"a"],[15.63,"concrete"],[16.24,"target"],[16.77,"for"],[16.95,"Anthropic:"],[18.03,"to"],[18.26,"reach"],[18.56,"a"],[18.68,"point"],[19.32,"where"],[19.63,"interpretability"],[20.71,"can"],[20.94,"reliably"],[21.68,"detect"],[22.48,"most"],[22.9,"model"],[23.28,"problems"],[23.87,"by"],[24.57,"2027."],[26.58,"It"],[26.77,"is"],[26.96,"a"],[27.1,"race"],[27.49,"against"],[27.92,"their"],[28.14,"own"],[28.38,"progress,"],[29.34,"deliberately"],[30.09,"entered."],[30.99,"And"],[31.24,"every"],[31.54,"advance,"],[32.09,"he"],[32.24,"argues,"],[32.76,"tips"],[33.21,"the"],[33.37,"odds."],[34.22,"Each"],[34.66,"new"],[35.04,"step"],[35.49,"in"],[35.69,"seeing"],[36.12,"inside"],[36.72,"these"],[36.96,"systems"],[37.58,"quantitatively"],[39.18,"raises"],[39.86,"the"],[40,"chance"],[40.48,"that"],[40.66,"the"],[40.79,"country"],[41.23,"of"],[41.36,"geniuses"],[42.06,"in"],[42.19,"a"],[42.31,"datacenter"],[43.67,"goes"],[44.14,"well"],[44.62,"rather"],[44.97,"than"],[45.15,"badly."],[46.31,"We"],[46.52,"may"],[46.74,"not"],[46.94,"be"],[47.09,"able"],[47.31,"to"],[47.46,"slow"],[48.32,"the"],[48.51,"machine."],[49.99,"But"],[50.19,"we"],[50.31,"can"],[50.49,"try"],[50.78,"to"],[50.95,"understand"],[51.53,"it"],[51.67,"in"],[51.84,"time."]]},{"id":"s14","sub":"What labs owe","text":"What should we actually do? First, the AI labs. Amodei argues that interpretability deserves a far larger share of the field's energy than it gets. It is easy to be swept up in the constant deluge of new model releases — but understanding those models, he says, is arguably more important. He calls on other labs to devote real resources to it, not just Anthropic. And crucially, this work is open to more than the big companies. Interpretability has the flavor of basic science. Many parts of it can be pursued without enormous compute — which means academics, independent researchers, and newcomers can all push the frontier forward.","cap":[[0,"What"],[0.24,"should"],[0.46,"we"],[0.59,"actually"],[1.1,"do?"],[2.64,"First,"],[3.5,"the"],[3.72,"AI"],[4.21,"labs."],[5.62,"Amodei"],[6.3,"argues"],[6.83,"that"],[7.02,"interpretability"],[8.15,"deserves"],[8.67,"a"],[8.81,"far"],[9.29,"larger"],[9.79,"share"],[10.51,"of"],[10.68,"the"],[10.82,"field's"],[11.26,"energy"],[11.92,"than"],[12.18,"it"],[12.31,"gets."],[13.63,"It"],[13.83,"is"],[14.03,"easy"],[14.42,"to"],[14.56,"be"],[14.73,"swept"],[15.26,"up"],[15.46,"in"],[15.58,"the"],[15.72,"constant"],[16.35,"deluge"],[17,"of"],[17.18,"new"],[17.5,"model"],[17.88,"releases"],[18.53,"—"],[18.69,"but"],[18.95,"understanding"],[19.95,"those"],[20.26,"models,"],[20.72,"he"],[20.9,"says,"],[21.32,"is"],[21.53,"arguably"],[22.15,"more"],[22.4,"important."],[23.38,"He"],[23.59,"calls"],[24.01,"on"],[24.16,"other"],[24.42,"labs"],[24.83,"to"],[24.97,"devote"],[25.39,"real"],[25.72,"resources"],[26.35,"to"],[26.6,"it,"],[27.11,"not"],[27.61,"just"],[27.95,"Anthropic."],[29.09,"And"],[29.36,"crucially,"],[30.24,"this"],[30.53,"work"],[30.87,"is"],[31.03,"open"],[31.41,"to"],[31.6,"more"],[31.97,"than"],[32.16,"the"],[32.3,"big"],[32.57,"companies."],[34.35,"Interpretability"],[35.47,"has"],[35.71,"the"],[35.85,"flavor"],[36.4,"of"],[36.61,"basic"],[37.17,"science."],[38.37,"Many"],[38.74,"parts"],[39.14,"of"],[39.25,"it"],[39.4,"can"],[39.58,"be"],[39.73,"pursued"],[40.24,"without"],[40.66,"enormous"],[41.2,"compute"],[42.04,"—"],[42.34,"which"],[42.62,"means"],[43.11,"academics,"],[44.25,"independent"],[45.07,"researchers,"],[46.1,"and"],[46.57,"newcomers"],[47.5,"can"],[47.74,"all"],[48.01,"push"],[48.33,"the"],[48.47,"frontier"],[49.08,"forward."]]},{"id":"s15","sub":"What rules owe","text":"Second, governments. Here Amodei is careful. The brain scan is still too young to write into law — you cannot mandate a tool that barely exists. But you can mandate honesty. He proposes light-touch transparency rules: require AI companies to disclose, openly, how they keep their models safe and secure. Including how they use interpretability to test those models before release. No prescribed method, no frozen standard. Just sunlight. If every lab must show its work, then doing this work well becomes a competitive advantage — and companies race one another toward responsibility, rather than away from it. Transparency, done lightly, can pull the whole field upward.","cap":[[0,"Second,"],[0.99,"governments."],[2.14,"Here"],[2.97,"Amodei"],[3.58,"is"],[3.76,"careful."],[4.82,"The"],[4.98,"brain"],[5.4,"scan"],[5.83,"is"],[5.96,"still"],[6.32,"too"],[6.57,"young"],[6.89,"to"],[7.02,"write"],[7.37,"into"],[7.7,"law"],[8.16,"—"],[8.52,"you"],[8.67,"cannot"],[9.06,"mandate"],[9.59,"a"],[9.71,"tool"],[10.08,"that"],[10.28,"barely"],[10.72,"exists."],[11.95,"But"],[12.19,"you"],[12.39,"can"],[12.98,"mandate"],[13.7,"honesty."],[14.99,"He"],[15.17,"proposes"],[15.85,"light-touch"],[16.6,"transparency"],[17.51,"rules:"],[18.25,"require"],[18.77,"AI"],[19.19,"companies"],[19.75,"to"],[19.89,"disclose,"],[20.62,"openly,"],[21.47,"how"],[21.77,"they"],[21.98,"keep"],[22.29,"their"],[22.56,"models"],[23.07,"safe"],[23.44,"and"],[23.62,"secure."],[24.75,"Including"],[25.36,"how"],[25.64,"they"],[25.89,"use"],[26.18,"interpretability"],[27.38,"to"],[27.57,"test"],[28.06,"those"],[28.41,"models"],[28.83,"before"],[29.23,"release."],[30.5,"No"],[30.79,"prescribed"],[31.44,"method,"],[32.32,"no"],[32.64,"frozen"],[33.3,"standard."],[34.39,"Just"],[34.93,"sunlight."],[36.04,"If"],[36.28,"every"],[36.72,"lab"],[37.15,"must"],[37.5,"show"],[37.78,"its"],[37.97,"work,"],[38.6,"then"],[38.91,"doing"],[39.3,"this"],[39.57,"work"],[39.93,"well"],[40.3,"becomes"],[40.77,"a"],[40.87,"competitive"],[41.6,"advantage"],[42.42,"—"],[42.6,"and"],[42.83,"companies"],[43.49,"race"],[43.87,"one"],[44.07,"another"],[44.45,"toward"],[45.33,"responsibility,"],[46.97,"rather"],[47.39,"than"],[47.59,"away"],[47.93,"from"],[48.16,"it."],[49.13,"Transparency,"],[50.49,"done"],[50.82,"lightly,"],[51.62,"can"],[51.83,"pull"],[52.08,"the"],[52.21,"whole"],[52.59,"field"],[53.05,"upward."]]},{"id":"s16","sub":"Buying time","text":"Third, and most geopolitical: export controls. Amodei argues that limits on advanced chips can create a security buffer — a lead of one to two years for democracies. And that lead is precious, because it can be spent. Spent making sure interpretability matures before we proceed to truly powerful AI. The alternative is grim. If rival powers reach powerful AI at exactly the same moment, the competitive pressure becomes overwhelming, and any slowdown at all becomes essentially impossible. No one dares pause when a rival won't. Export controls, in this view, aren't about winning a race for its own sake. They're about buying the time to get the understanding right.","cap":[[0,"Third,"],[0.52,"and"],[0.71,"most"],[0.98,"geopolitical:"],[2.16,"export"],[2.72,"controls."],[4.38,"Amodei"],[4.97,"argues"],[5.39,"that"],[5.64,"limits"],[6.12,"on"],[6.36,"advanced"],[7.16,"chips"],[8.08,"can"],[8.34,"create"],[8.73,"a"],[8.82,"security"],[9.56,"buffer"],[10.14,"—"],[10.51,"a"],[10.69,"lead"],[11.06,"of"],[11.25,"one"],[11.65,"to"],[11.81,"two"],[12.1,"years"],[12.83,"for"],[13.04,"democracies."],[14.45,"And"],[14.66,"that"],[14.88,"lead"],[15.19,"is"],[15.35,"precious,"],[16.32,"because"],[16.61,"it"],[16.72,"can"],[16.88,"be"],[17.02,"spent."],[18.22,"Spent"],[18.74,"making"],[19.18,"sure"],[19.6,"interpretability"],[20.59,"matures"],[21.15,"before"],[21.51,"we"],[21.65,"proceed"],[22.25,"to"],[22.43,"truly"],[22.97,"powerful"],[23.77,"AI."],[25.55,"The"],[25.72,"alternative"],[26.38,"is"],[26.58,"grim."],[27.45,"If"],[27.73,"rival"],[28.28,"powers"],[28.82,"reach"],[29.13,"powerful"],[29.66,"AI"],[30.08,"at"],[30.22,"exactly"],[30.94,"the"],[31.1,"same"],[31.48,"moment,"],[32.3,"the"],[32.46,"competitive"],[33.21,"pressure"],[33.63,"becomes"],[34.11,"overwhelming,"],[35.24,"and"],[35.55,"any"],[35.9,"slowdown"],[36.73,"at"],[36.92,"all"],[37.23,"becomes"],[37.77,"essentially"],[38.41,"impossible."],[39.72,"No"],[40,"one"],[40.22,"dares"],[40.57,"pause"],[41.02,"when"],[41.19,"a"],[41.31,"rival"],[41.78,"won't."],[42.62,"Export"],[43.22,"controls,"],[43.83,"in"],[43.94,"this"],[44.16,"view,"],[44.71,"aren't"],[45.13,"about"],[45.44,"winning"],[45.81,"a"],[45.94,"race"],[46.28,"for"],[46.44,"its"],[46.64,"own"],[46.95,"sake."],[48.09,"They're"],[48.41,"about"],[48.72,"buying"],[49.08,"the"],[49.19,"time"],[49.57,"to"],[49.71,"get"],[49.9,"the"],[50.06,"understanding"],[50.86,"right."]]},{"id":"s17","sub":"The wager","text":"Amodei knows he cannot halt what is coming. The progress of the underlying technology, he writes, is inexorable — driven by forces too powerful to stop. But the way it happens — the order, the care, the understanding we bring — that is eminently possible to change. We can't stop the bus, he says. But we can steer it. That is the whole wager of interpretability. Not to freeze the future, but to see clearly as we move into it. Because powerful AI will shape humanity's destiny. And we deserve to understand our own creations — before they radically transform our economy, our lives, and our future.","cap":[[0,"Amodei"],[0.62,"knows"],[1.07,"he"],[1.22,"cannot"],[1.61,"halt"],[1.96,"what"],[2.17,"is"],[2.33,"coming."],[2.75,"The"],[2.94,"progress"],[3.6,"of"],[3.72,"the"],[3.89,"underlying"],[4.64,"technology,"],[5.82,"he"],[5.98,"writes,"],[7,"is"],[7.35,"inexorable"],[8.34,"—"],[8.75,"driven"],[9.17,"by"],[9.43,"forces"],[10.01,"too"],[10.28,"powerful"],[10.83,"to"],[10.98,"stop."],[12.24,"But"],[12.41,"the"],[12.53,"way"],[12.73,"it"],[12.86,"happens"],[13.4,"—"],[13.48,"the"],[13.69,"order,"],[14.15,"the"],[14.33,"care,"],[14.8,"the"],[15.02,"understanding"],[15.93,"we"],[16.09,"bring"],[16.59,"—"],[16.73,"that"],[16.94,"is"],[17.13,"eminently"],[17.85,"possible"],[18.39,"to"],[18.57,"change."],[19.54,"We"],[19.74,"can't"],[20.1,"stop"],[20.46,"the"],[20.57,"bus,"],[21.01,"he"],[21.17,"says."],[21.87,"But"],[22.08,"we"],[22.22,"can"],[22.45,"steer"],[22.84,"it."],[23.51,"That"],[24.07,"is"],[24.29,"the"],[24.47,"whole"],[25.05,"wager"],[25.93,"of"],[26.12,"interpretability."],[27.68,"Not"],[27.98,"to"],[28.15,"freeze"],[28.62,"the"],[28.75,"future,"],[29.57,"but"],[29.82,"to"],[30.01,"see"],[30.36,"clearly"],[30.92,"as"],[31.14,"we"],[31.35,"move"],[31.74,"into"],[32.11,"it."],[32.76,"Because"],[33.27,"powerful"],[33.94,"AI"],[34.45,"will"],[34.74,"shape"],[35.18,"humanity's"],[36.17,"destiny."],[37.41,"And"],[37.6,"we"],[37.74,"deserve"],[38.16,"to"],[38.3,"understand"],[38.95,"our"],[39.17,"own"],[39.46,"creations"],[40.38,"—"],[40.45,"before"],[41.06,"they"],[41.44,"radically"],[42.07,"transform"],[42.85,"our"],[43.07,"economy,"],[44.16,"our"],[44.47,"lives,"],[45.57,"and"],[45.92,"our"],[46.15,"future."]]}];
+  var HAS_AUDIO = true;
+  var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var scenes = Array.prototype.slice.call(document.querySelectorAll(".scene"));
+
+  var ACCENTS = {gold:"#F2C879",green:"#7FC8A0",sky:"#8FB8E8",rose:"#E8927C",lav:"#C4AEE8",
+    amber:"#E4A85E",steel:"#86A9CC",violet:"#B49CF0",teal:"#66C6BE",crimson:"#DE8A86",sage:"#A7C08C"};
+  function hexRgb(h){ h=h.replace("#",""); if(h.length===3)h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
+    return {r:parseInt(h.substr(0,2),16),g:parseInt(h.substr(2,2),16),b:parseInt(h.substr(4,2),16)}; }
+  function mix(a,b,t){ return "rgb("+Math.round(a.r+(b.r-a.r)*t)+","+Math.round(a.g+(b.g-a.g)*t)+","+Math.round(a.b+(b.b-a.b)*t)+")"; }
+  var DARK1={r:9,g:10,b:14}, DARK2={r:11,g:13,b:18};
+  function hueFor(name){ var acc=ACCENTS[name]||ACCENTS.gold, rgb=hexRgb(acc);
+    return {accent:acc, a:mix(rgb,DARK1,0.90), b:"rgba("+rgb.r+","+rgb.g+","+rgb.b+",0.15)", c:mix(rgb,DARK2,0.83)}; }
+  var root=document.documentElement;
+  function applyHue(name){ var h=hueFor(name); root.style.setProperty("--accent",h.accent);
+    root.style.setProperty("--grad-a",h.a); root.style.setProperty("--grad-b",h.b); root.style.setProperty("--grad-c",h.c); }
+  applyHue(scenes[0]?scenes[0].getAttribute("data-hue"):"gold");
+
+  var io=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting) e.target.classList.add("revealed"); }); },{threshold:0.18});
+  scenes.forEach(function(s){ io.observe(s); });
+
+  function animateCount(el){ var from=parseFloat(el.getAttribute("data-count-from")), to=parseFloat(el.getAttribute("data-count-to"));
+    if(reduced){ el.textContent=to; return; } var dur=1400,start=null;
+    function step(ts){ if(start===null)start=ts; var p=Math.min((ts-start)/dur,1); var e=1-Math.pow(1-p,3);
+      el.textContent=Math.round(from+(to-from)*e); if(p<1) requestAnimationFrame(step); } requestAnimationFrame(step); }
+  var countIO=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ animateCount(e.target); countIO.unobserve(e.target); } }); },{threshold:0.6});
+  document.querySelectorAll("[data-count-to]").forEach(function(el){ countIO.observe(el); });
+
+  var canvas=document.getElementById("meadow"), ctx=canvas.getContext("2d"), W,H,pts=[],raf=null;
+  function size(){ var dpr=window.devicePixelRatio||1; W=canvas.width=innerWidth*dpr; H=canvas.height=innerHeight*dpr;
+    canvas.style.width=innerWidth+"px"; canvas.style.height=innerHeight+"px"; }
+  function seed(){ var dpr=window.devicePixelRatio||1, n=Math.min(90,Math.floor(innerWidth/14)); pts=[];
+    for(var i=0;i<n;i++) pts.push({x:Math.random()*W,y:Math.random()*H,r:(Math.random()*1.6+0.4)*dpr,
+      vx:(Math.random()-0.5)*0.12, vy:-(Math.random()*0.18+0.03), a:Math.random()*0.5+0.15, tw:Math.random()*6.28}); }
+  function accentRGB(){ var c=getComputedStyle(root).getPropertyValue("--accent").trim()||"#F2C879";
+    if(c[0]==="#"){ var m=hexRgb(c); return m.r+","+m.g+","+m.b; } return c.replace(/rgba?\(|\)/g,""); }
+  function draw(){ ctx.clearRect(0,0,W,H); var rgb=accentRGB();
+    for(var i=0;i<pts.length;i++){ var p=pts[i]; p.x+=p.vx; p.y+=p.vy; p.tw+=0.02;
+      if(p.y<-10){p.y=H+10;p.x=Math.random()*W;} if(p.x<-10)p.x=W+10; if(p.x>W+10)p.x=-10;
+      var f=p.a*(0.6+0.4*Math.sin(p.tw)); ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,6.2832);
+      ctx.fillStyle="rgba("+rgb+","+f.toFixed(3)+")"; ctx.fill(); }
+    raf=requestAnimationFrame(draw); }
+  function startMeadow(){ size(); seed(); if(!reduced){ if(raf)cancelAnimationFrame(raf); draw(); }
+    else { ctx.clearRect(0,0,W,H); var rgb=accentRGB(); pts.forEach(function(p){ ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,6.2832);
+      ctx.fillStyle="rgba("+rgb+","+p.a.toFixed(3)+")"; ctx.fill(); }); } }
+  addEventListener("resize",function(){ size(); seed(); }); startMeadow();
+
+  /* ---- narration engine ---- */
+  var audio=document.getElementById("narrator");
+  var synth=window.speechSynthesis, ttsOK=!!synth && typeof SpeechSynthesisUtterance!=="undefined";
+  var playing=false, paused=false, mode="idle", chosenVoice=null, voices=[];
+  var SPEEDS=[0.85,1,1.15,1.3,1.5], speed=parseFloat(localStorage.getItem("st-speed")||"1");
+  if(SPEEDS.indexOf(speed)===-1) speed=1;
+
+  var playBtn=document.getElementById("playBtn"), playIcon=document.getElementById("playIcon"), pauseIcon=document.getElementById("pauseIcon");
+  var nowTitle=document.getElementById("nowTitle"), nowSub=document.getElementById("nowSub"), seekFill=document.getElementById("seekFill");
+  var dotsWrap=document.getElementById("dots"), player=document.getElementById("player");
+  var capEl=document.getElementById("caption"), modeFlag=document.getElementById("modeFlag");
+  var speedBtn=document.getElementById("speedBtn"), showCaptions=true, activeIndex=0;
+
+  SC.forEach(function(s,i){ var b=document.createElement("button"); b.setAttribute("aria-label","Go to "+s.sub);
+    b.addEventListener("click",function(){ jumpTo(i,playing); }); dotsWrap.appendChild(b); });
+  var dotEls=Array.prototype.slice.call(dotsWrap.children);
+
+  function updateDots(){ dotEls.forEach(function(d,i){ d.classList.toggle("active",i===activeIndex); });
+    document.getElementById("topbar").style.width=(scenes.length>1?(activeIndex/(scenes.length-1))*100:0)+"%"; }
+  function setActive(idx,doScroll){ activeIndex=Math.max(0,Math.min(scenes.length-1,idx)); var s=scenes[activeIndex];
+    applyHue(s.getAttribute("data-hue")); nowTitle.textContent=SC[activeIndex].sub; nowSub.textContent=(activeIndex+1)+" / "+scenes.length;
+    updateDots(); if(doScroll) s.scrollIntoView({behavior:reduced?"auto":"smooth",block:"center"}); }
+  function setPlayIcon(on){ playIcon.style.display=on?"none":"block"; pauseIcon.style.display=on?"block":"none";
+    playBtn.setAttribute("aria-label",on?"Pause narration":"Play narration"); }
+
+  /* captions: one sentence window */
+  var capTokens=[], capSentences=[], capSentenceOf=[], capCurSent=-1, capSpans=[];
+  function buildCaption(i){ capEl.innerHTML=""; capSpans=[]; capCurSent=-1;
+    var data=SC[i]; if(!showCaptions){ capEl.classList.remove("show"); return; }
+    capTokens = data.cap ? data.cap.map(function(p){ return {t:p[0],w:p[1]}; })
+                         : data.text.split(/\s+/).map(function(w){ return {t:null,w:w}; });
+    capSentences=[]; capSentenceOf=[]; var cur=[];
+    for(var k=0;k<capTokens.length;k++){ cur.push(k); capSentenceOf[k]=capSentences.length;
+      if(/[.!?]["')]?$/.test(capTokens[k].w)){ capSentences.push(cur); cur=[]; } }
+    if(cur.length){ for(var m=0;m<cur.length;m++) capSentenceOf[cur[m]]=capSentences.length; capSentences.push(cur); }
+    capEl.classList.add("show"); renderSentence(0); }
+  function renderSentence(si){ capCurSent=si; capEl.innerHTML=""; capSpans=[];
+    (capSentences[si]||[]).forEach(function(gi){ var sp=document.createElement("span"); sp.className="w";
+      sp.setAttribute("data-gi",gi); sp.textContent=capTokens[gi].w+" "; capEl.appendChild(sp); capSpans.push(sp); }); }
+  function markToken(gi){ var si=capSentenceOf[gi]; if(si===undefined)return; if(si!==capCurSent) renderSentence(si);
+    for(var j=0;j<capSpans.length;j++){ var g=+capSpans[j].getAttribute("data-gi"); capSpans[j].className="w"+(g<gi?" spoken":g===gi?" active":""); } }
+  function highlightByTime(t){ if(!capTokens.length)return; var idx=0;
+    for(var i=0;i<capTokens.length;i++){ if(capTokens[i].t!==null&&capTokens[i].t<=t) idx=i; else if(capTokens[i].t!==null) break; } markToken(idx); }
+  function highlightByWordIndex(k){ if(k<capTokens.length) markToken(k); }
+
+  function srcFor(i){ return "audio/"+SC[i].id+".mp3"; }
+  function playScene(i){ setActive(i,true); playing=true; paused=false; setPlayIcon(true); buildCaption(i);
+    var useAudio=HAS_AUDIO && SC[i].cap;
+    if(useAudio){ mode="audio"; modeFlag.textContent="ElevenLabs"; audio.src=srcFor(i); audio.currentTime=0;
+      audio.playbackRate=speed; audio.volume=parseFloat(document.getElementById("vol").value);
+      var p=audio.play(); if(p&&p.catch) p.catch(function(){ ttsSpeak(i); }); }
+    else { ttsSpeak(i); } }
+  function advance(){ if(activeIndex<scenes.length-1) playScene(activeIndex+1); else stopNarration(); }
+  audio.addEventListener("ended",function(){ if(playing&&mode==="audio") advance(); });
+  audio.addEventListener("error",function(){ if(playing&&mode==="audio") ttsSpeak(activeIndex); });
+  audio.addEventListener("timeupdate",function(){ if(mode!=="audio")return;
+    if(audio.duration) seekFill.style.width=(audio.currentTime/audio.duration*100)+"%"; highlightByTime(audio.currentTime); });
+
+  function ttsSpeak(i){ mode="tts"; modeFlag.textContent=ttsOK?"Browser voice":"unavailable"; if(!ttsOK)return; synth.cancel();
+    var u=new SpeechSynthesisUtterance(SC[i].text); u.rate=0.98*speed; u.pitch=1.0;
+    u.volume=parseFloat(document.getElementById("vol").value); if(chosenVoice)u.voice=chosenVoice;
+    var wIdx=0; u.onboundary=function(ev){ if(ev.name==="word"||ev.charIndex!==undefined) highlightByWordIndex(wIdx++); };
+    u.onend=function(){ if(playing&&mode==="tts") advance(); };
+    setTimeout(function(){ if(playing) synth.speak(u); }, reduced?40:420); }
+
+  function startNarration(i){ playScene(typeof i==="number"?i:activeIndex); player.classList.add("show"); }
+  function stopNarration(){ playing=false; paused=false; setPlayIcon(false); try{ audio.pause(); }catch(e){}
+    if(ttsOK) synth.cancel(); capEl.classList.remove("show"); seekFill.style.width="0%"; }
+
+  playBtn.addEventListener("click",function(){
+    if(!playing){ startNarration(activeIndex); return; }
+    if(!paused){ paused=true; setPlayIcon(false); if(mode==="audio")audio.pause(); else if(ttsOK)synth.pause(); }
+    else { paused=false; setPlayIcon(true); if(mode==="audio")audio.play(); else if(ttsOK)synth.resume(); } });
+  document.getElementById("nextBtn").addEventListener("click",function(){ jumpTo(activeIndex+1,playing); });
+  document.getElementById("prevBtn").addEventListener("click",function(){ jumpTo(activeIndex-1,playing); });
+  function jumpTo(i,keep){ i=Math.max(0,Math.min(scenes.length-1,i));
+    if(mode==="audio"){ try{audio.pause();}catch(e){} } if(ttsOK) synth.cancel();
+    if(keep){ playScene(i); } else { stopNarration(); setActive(i,true); } }
+
+  var beginBtn=document.getElementById("beginBtn");
+  if(beginBtn) beginBtn.addEventListener("click",function(){ player.classList.add("show");
+    if(ttsOK){ try{ synth.resume(); }catch(e){} } startNarration(0); });
+  addEventListener("scroll",function(){ if(scrollY>innerHeight*0.5) player.classList.add("show"); },{passive:true});
+
+  var centerIO=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){
+    var idx=scenes.indexOf(e.target); if(idx!==activeIndex&&!playing) setActive(idx,false); } }); },{rootMargin:"-45% 0px -45% 0px",threshold:0});
+  scenes.forEach(function(s){ centerIO.observe(s); });
+
+  /* speed */
+  var speedsWrap=document.getElementById("speeds");
+  function applySpeed(v){ speed=v; localStorage.setItem("st-speed",String(v));
+    speedBtn.innerHTML=(v%1===0?v:v.toFixed(2).replace(/0$/,""))+"&times;";
+    if(mode==="audio") audio.playbackRate=v;
+    Array.prototype.forEach.call(speedsWrap.children,function(b){ b.classList.toggle("on",parseFloat(b.dataset.v)===v); }); }
+  SPEEDS.forEach(function(v){ var b=document.createElement("button"); b.dataset.v=v;
+    b.textContent=(v%1===0?v:v.toFixed(2).replace(/0$/,""))+"\u00d7";
+    b.addEventListener("click",function(){ applySpeed(v); }); speedsWrap.appendChild(b); });
+  speedBtn.addEventListener("click",function(){ var i=SPEEDS.indexOf(speed); applySpeed(SPEEDS[(i+1)%SPEEDS.length]); });
+  applySpeed(speed);
+
+  /* settings menu */
+  var voiceMenu=document.getElementById("voiceMenu");
+  document.getElementById("voiceToggle").addEventListener("click",function(e){ e.stopPropagation(); voiceMenu.classList.toggle("open"); });
+  document.addEventListener("click",function(e){ if(!voiceMenu.contains(e.target)&&e.target.id!=="voiceToggle") voiceMenu.classList.remove("open"); });
+  document.getElementById("vol").addEventListener("input",function(){ audio.volume=parseFloat(this.value); });
+  document.getElementById("capToggle").addEventListener("change",function(){ showCaptions=this.checked;
+    if(!showCaptions) capEl.classList.remove("show"); else if(playing) buildCaption(activeIndex); });
+
+  var voiceSelect=document.getElementById("voiceSelect"), ttsRow=document.getElementById("ttsRow");
+  var PREF=["Samantha","Serena","Allison","Ava","Daniel","Karen","Moira","Google UK English Female","Google US English","Microsoft Aria"];
+  function pickDefault(list){ for(var i=0;i<PREF.length;i++)for(var j=0;j<list.length;j++) if(list[j].name.indexOf(PREF[i])!==-1) return list[j];
+    for(var k=0;k<list.length;k++) if(/^en/i.test(list[k].lang)) return list[k]; return list[0]||null; }
+  function loadVoices(){ if(!ttsOK)return; voices=synth.getVoices().filter(function(v){return /^en/i.test(v.lang);}); if(!voices.length)voices=synth.getVoices();
+    voiceSelect.innerHTML=""; voices.forEach(function(v,i){ var o=document.createElement("option"); o.value=i; o.textContent=v.name; voiceSelect.appendChild(o); });
+    if(!chosenVoice)chosenVoice=pickDefault(voices); if(chosenVoice){ var ci=voices.indexOf(chosenVoice); if(ci>=0)voiceSelect.value=ci; } }
+  voiceSelect.addEventListener("change",function(){ chosenVoice=voices[parseInt(voiceSelect.value,10)]||chosenVoice; });
+  if(ttsOK){ loadVoices(); if(synth.onvoiceschanged!==undefined) synth.onvoiceschanged=loadVoices;
+    setInterval(function(){ if(playing&&!paused&&mode==="tts"&&synth.speaking){ synth.pause(); synth.resume(); } },12000); }
+  if(!HAS_AUDIO){ ttsRow.style.display="flex"; modeFlag.textContent=ttsOK?"Browser voice":"unavailable"; }
+  else { modeFlag.textContent="ElevenLabs"; }
+
+  addEventListener("beforeunload",function(){ if(ttsOK) synth.cancel(); try{audio.pause();}catch(e){} });
+  document.addEventListener("keydown",function(e){ if(e.code==="Space"&&player.classList.contains("show")&&e.target===document.body){ e.preventDefault(); playBtn.click(); } });
+  setActive(0,false);
+})();
+</script>
+</body>
+</html>

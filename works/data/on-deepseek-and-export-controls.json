@@ -1,0 +1,143 @@
+{
+  "meta": {
+    "id": "on-deepseek-and-export-controls",
+    "order": 15,
+    "title": "On DeepSeek and Export Controls",
+    "subtitle": "What DeepSeek really meant, and why chips are the chokepoint",
+    "author": "Dario Amodei",
+    "date": "January 2025",
+    "kind": "Essay",
+    "source": "Anthropic",
+    "signature": "amber",
+    "tagline": "DeepSeek wasn't a break in the trend. It was proof the export controls matter.",
+    "url": "https://www.darioamodei.com/post/on-deepseek-and-export-controls",
+    "sortDate": "2025-01-28",
+    "shelf": "The Future & The Stakes",
+    "hero": {
+      "epigraph": null,
+      "prologueNarration": "In January of twenty twenty-five, a Chinese company called DeepSeek released a model that rattled markets and headlines. The story people told was simple. China had caught up… on a shoestring… for six million dollars. Dario Amodei thought that story got almost everything wrong. Not because DeepSeek's engineers weren't excellent — they were. But because the numbers were misread, and the lesson drawn from them was backwards. This essay is his correction. It's about how AI progress actually works. And why the moment made the case for export controls stronger, not weaker."
+    }
+  },
+  "scenes": [
+    {
+      "hue": "amber",
+      "num": "01",
+      "eyebrow": "The moment",
+      "title": "A panic built on a misreading",
+      "bodyHtml": "<p class=\"eyebrow\"><span class=\"num\">01</span><span class=\"dot\"></span> THE MOMENT</p><h2>A panic built on a misreading</h2><p class=\"lede\">DeepSeek's release triggered a wave of alarm — and a headline number that <span class=\"hl\">didn't mean what people thought it meant</span>.</p><p>The claim rippling through markets was that a Chinese lab had reached the frontier for roughly six million dollars, a fraction of what American companies spend. If true, it would suggest export controls were pointless and the U.S. lead was gone.</p><p>Dario's argument is that the panic <em>inverted</em> the real lesson. Understanding why requires understanding how AI development actually behaves.</p>",
+      "narration": "When DeepSeek released its models in early twenty twenty-five, the reaction was close to panic. Markets moved. Commentators declared that China had caught up to the American frontier — and done it for almost nothing. Six million dollars, the story went. A rounding error next to what the big labs spend. And if that were true, then export controls looked useless, and the American lead looked gone. Dario Amodei's essay is a patient correction. The headline number was misleading. And the conclusion drawn from it was exactly backwards. To see why, you first have to understand how progress in AI really works."
+    },
+    {
+      "hue": "gold",
+      "num": "02",
+      "eyebrow": "Dynamic one",
+      "title": "Scaling laws",
+      "bodyHtml": "<p class=\"eyebrow\"><span class=\"num\">02</span><span class=\"dot\"></span> DYNAMIC ONE</p><h2>Scaling laws</h2><p class=\"lede\">Spend more on training, and models get predictably, reliably <span class=\"hl\">smarter across the board</span>.</p><p>This isn't a hunch — it's one of the most robust patterns in the field. More compute, more data, more scale yields better performance on nearly every cognitive task.</p><ul class=\"reasons\"><li><b>A million-dollar model</b> might solve twenty percent of coding tasks.</li><li><b>A hundred-million-dollar model</b> might solve sixty percent.</li></ul><p>The gap between those two is the difference between an undergraduate and a PhD.</p>",
+      "narration": "The first dynamic is the one everyone has heard of — scaling laws. Put simply, when you spend more on training a model, it gets better. Not on one narrow task, but across almost every kind of thinking. And the pattern is remarkably smooth. Dario gives a concrete picture. A model that costs a million dollars to train might solve twenty percent of a set of coding problems. A model that costs a hundred million might solve sixty percent. That gap — twenty to sixty — is roughly the distance between an undergraduate and a PhD. More scale, more capability. It's one of the most dependable facts in the whole field."
+    },
+    {
+      "hue": "steel",
+      "num": "03",
+      "eyebrow": "Dynamic two",
+      "title": "Shifting the curve",
+      "bodyHtml": "<p class=\"eyebrow\"><span class=\"num\">03</span><span class=\"dot\"></span> DYNAMIC TWO</p><h2>Shifting the curve</h2><p class=\"lede\">Better ideas make the same result cheaper — they <span class=\"hl\">shift the whole cost curve down</span>.</p><p>Dario calls these <em>compute multipliers</em>. A clever architecture or efficiency trick lets you reach a given capability for less. Small ones are common; large ones are rare.</p><p class=\"chips\"><span>Small ~1.2x</span><span>Medium ~2x</span><span>Large ~10x</span></p><div class=\"stats\"><div class=\"stat\"><div class=\"n\">~4x</div><div class=\"l\">per year — the pace the curve shifts today</div></div><div class=\"stat\"><div class=\"n\">~1.68x</div><div class=\"l\">the estimated pace back in 2020</div></div></div>",
+      "narration": "The second dynamic is the one that matters most for understanding DeepSeek. It's this. Better ideas make the same result cheaper. A smarter architecture, a training trick, a hardware improvement — Dario calls these compute multipliers. Small ones are everywhere, worth maybe twenty percent. Medium ones double your efficiency. Large ones, which are rare, might be worth ten times. Frontier labs discover these constantly. And when you add them up, the entire cost curve slides downward over time. Dario's estimate is that the curve now shifts by roughly four times per year — up from something closer to one-point-seven times a year back in twenty twenty. Getting cheaper is normal. It's the baseline."
+    },
+    {
+      "hue": "sky",
+      "num": "04",
+      "eyebrow": "Dynamic three",
+      "title": "A new paradigm",
+      "bodyHtml": "<p class=\"eyebrow\"><span class=\"num\">04</span><span class=\"dot\"></span> DYNAMIC THREE</p><h2>A new paradigm</h2><p class=\"lede\">Occasionally the <em>method itself</em> changes — a new place to pour scale, <span class=\"hl\">early on its own curve</span>.</p><p>From 2020 to 2023, the game was pretrained models. In 2024, a second stage arrived: reinforcement learning to train chains of reasoning.</p><p>Because this paradigm is young, small amounts of spending still buy large gains — for now.</p>",
+      "narration": "The third dynamic is the rarest. Sometimes the very method of building AI shifts. From twenty twenty to twenty twenty-three, progress came almost entirely from pretraining — feeding models vast amounts of text. Then, in twenty twenty-four, a second stage emerged. Reinforcement learning, used to train models to reason step by step, to think in chains before answering. What matters here is timing. This new paradigm is young. It sits near the bottom of its own scaling curve. And when a curve is that early, modest amounts of money still buy dramatic improvements. That fact — a fresh paradigm, cheap to climb at first — is about to explain what DeepSeek actually did."
+    },
+    {
+      "hue": "teal",
+      "num": "05",
+      "eyebrow": "The models",
+      "title": "What DeepSeek actually shipped",
+      "bodyHtml": "<p class=\"eyebrow\"><span class=\"num\">05</span><span class=\"dot\"></span> THE MODELS</p><h2>What DeepSeek actually shipped</h2><p class=\"lede\">Two releases — and neither one was <span class=\"hl\">a break in the trend</span>.</p><ul class=\"reasons two\"><li><b>V3, December 2024.</b> A strong pretrained model, close to top U.S. models on some tasks, trained for notably less.</li><li><b>R1, January 2025.</b> V3 plus the new reasoning stage — essentially replicating what OpenAI did with o1.</li></ul><p>V3 is the genuine innovation. R1 caught the headlines. But R1 was likely <em>very cheap</em> to make from V3, because reasoning is early on its curve.</p>",
+      "narration": "So what did DeepSeek actually release? Two things. The first was V3, in December of twenty twenty-four — a pretrained model that came close to leading American systems on some important tasks, and cost meaningfully less to train. The second was R1, in January, which took V3 and added the new reasoning stage. R1 got the attention. But Dario points out that R1 was probably cheap to produce, precisely because the reasoning paradigm is so young. The real engineering achievement was V3. And here's the key claim. V3 was impressive — but it was not a break in the trend. It was the trend, arriving roughly on schedule."
+    },
+    {
+      "hue": "crimson",
+      "num": "06",
+      "eyebrow": "The number",
+      "title": "About that six million dollars",
+      "bodyHtml": "<p class=\"eyebrow\"><span class=\"num\">06</span><span class=\"dot\"></span> THE NUMBER</p><h2>About that six million dollars</h2><p class=\"lede\">The famous figure is <span class=\"hl\">one training run — not the cost of the company</span>.</p><p>Six million dollars covers compute for a single model. It excludes research, prior experiments, salaries, and the hardware behind them all.</p><ul class=\"reasons tight\"><li><b>Claude 3.5 Sonnet</b> cost a few tens of millions to train.</li><li><b>It was trained nine to twelve months earlier</b> — and stayed ahead on many evaluations.</li></ul><p>Comparing a headline training cost to a whole company's R&D is comparing <em>different things</em>.</p>",
+      "narration": "Now, the six million dollars. Dario is direct about this. That number is the cost of a single training run — the compute for one model. It is not the cost of the company. It leaves out the research, the failed experiments, the salaries, the accumulated know-how, the hardware behind everything. To make the comparison honest, he offers Anthropic's own model. Claude three-point-five Sonnet cost a few tens of millions of dollars to train. Its training finished nine to twelve months earlier. And it remained ahead on many evaluations. So placing a lone training cost next to a rival's entire research budget isn't a fair fight. It's comparing two completely different things."
+    },
+    {
+      "hue": "gold",
+      "num": "07",
+      "eyebrow": "On trend",
+      "title": "Right where the curve predicts",
+      "bodyHtml": "<p class=\"eyebrow\"><span class=\"num\">07</span><span class=\"dot\"></span> ON TREND</p><h2>Right where the curve predicts</h2><p class=\"lede\">Run the math on the shifting curve, and V3's cost is <span class=\"hl\">totally, boringly normal</span>.</p><p>Costs for a given capability fall over time — inference prices for GPT-4-level quality dropped roughly tenfold in a year and a half.</p><p>V3 sits about a factor of two behind the current frontier on the scaling curve. Being roughly eight times cheaper to train would be exactly on trend.</p><p class=\"capnote\">Not ahead of the curve. On it.</p>",
+      "narration": "So was V3's low cost a shock? Only if you forgot the second dynamic. Costs for a given level of capability fall steadily — Dario notes that the price to run GPT-four-level intelligence dropped by roughly ten times in about a year and a half. When you place V3 against the current frontier, it lands about a factor of two behind on the scaling curve. And for a model that's a bit behind, being something like eight times cheaper to train is not a miracle. It is exactly what the trend predicts. This is the heart of his argument. DeepSeek did not leap ahead of the curve. A Chinese company arrived at the curve. That is a real milestone — and a very different one."
+    },
+    {
+      "hue": "steel",
+      "num": "08",
+      "eyebrow": "The chips",
+      "title": "Not a shoestring operation",
+      "bodyHtml": "<p class=\"eyebrow\"><span class=\"num\">08</span><span class=\"dot\"></span> THE CHIPS</p><h2>Not a shoestring operation</h2><p class=\"lede\">DeepSeek reportedly ran on <span class=\"hl\">tens of thousands of advanced chips</span> — not a garage budget.</p><div class=\"stats\"><div class=\"stat\"><div class=\"n\">~50,000</div><div class=\"l\">Hopper-generation chips, reportedly</div></div><div class=\"stat\"><div class=\"n\">~$1B</div><div class=\"l\">plausible hardware investment</div></div></div><p>That's within a factor of two to three of what major U.S. labs command. DeepSeek's edge was <em>engineering talent</em>, deployed against real resources — not scarcity overcome by magic.</p>",
+      "narration": "There's one more piece the panic left out — the hardware. DeepSeek reportedly had access to around fifty thousand Hopper-generation chips, an investment plausibly near a billion dollars. That is not a scrappy underdog. It is comparable to what leading American labs work with. So the right way to read DeepSeek is this. A talented team, with substantial resources, did excellent engineering and reached the trend line. That deserves respect. But it is not a story of scarcity being overcome by cleverness alone. And it is very much not evidence that chips no longer matter. If anything, the chips are the whole point."
+    },
+    {
+      "hue": "violet",
+      "num": "09",
+      "eyebrow": "The paradox",
+      "title": "Cheaper means we buy more",
+      "bodyHtml": "<p class=\"eyebrow\"><span class=\"num\">09</span><span class=\"dot\"></span> THE PARADOX</p><h2>Cheaper means we buy more</h2><p class=\"lede\">Efficiency doesn't shrink compute demand. It <span class=\"hl\">grows it</span>.</p><p>When training gets cheaper, no one pockets the savings and stops. The prize at the end of the curve is so valuable that everyone simply <em>traverses the curve faster</em> — spending the savings on smarter models.</p><p>This is the old Jevons pattern: greater efficiency, greater total consumption. Budgets keep climbing toward billions.</p>",
+      "narration": "Here's the twist that undoes the whole panic. When AI gets cheaper to train, does the world spend less on chips? No. It spends more. Dario's phrase is that when the curve shifts, we simply traverse it faster — because what waits at the end of the curve is so valuable that no one is content to stop. Save money on one model, and you pour those savings straight into a smarter one. This is an old economic pattern. Make something more efficient, and total consumption goes up, not down. So efficiency gains like DeepSeek's don't reduce the hunger for compute. They intensify it. Frontier budgets keep marching toward the billions."
+    },
+    {
+      "hue": "amber",
+      "num": "10",
+      "eyebrow": "The reversal",
+      "title": "Why controls matter more",
+      "bodyHtml": "<p class=\"eyebrow\"><span class=\"num\">10</span><span class=\"dot\"></span> THE REVERSAL</p><h2>Why controls matter more</h2><p class=\"lede\">If efficiency raises total chip demand, then who <span class=\"hl\">gets the chips still decides everything</span>.</p><p>The naive takeaway was: DeepSeek proves chips don't matter, so drop the controls. The actual logic runs the other way.</p><p>Because the world will keep pouring millions of chips into ever-larger training, control over that supply becomes <em>more</em> decisive, not less. DeepSeek strengthens the case.</p>",
+      "narration": "And this is where the panic flips completely on its head. The lazy conclusion was — DeepSeek did more with less, so chips must not matter, so let's abandon export controls. But follow the logic. If cheaper AI only makes the world want more compute, then whoever controls the flow of chips controls the future of the technology. Efficiency doesn't weaken that leverage. It raises the stakes on it. So DeepSeek, properly understood, is not an argument against export controls. It is an argument for them. The very thing people cited as proof controls are futile turns out to be proof of how much the chips still decide."
+    },
+    {
+      "hue": "sage",
+      "num": "11",
+      "eyebrow": "The stakes",
+      "title": "Two possible worlds",
+      "bodyHtml": "<p class=\"eyebrow\"><span class=\"num\">11</span><span class=\"dot\"></span> THE STAKES</p><h2>Two possible worlds</h2><p class=\"lede\">By 2026 or 2027, powerful AI will need <span class=\"hl\">millions of chips and tens of billions of dollars</span>. Who has them shapes everything.</p><ul class=\"reasons two\"><li><b>Unipolar.</b> Controls hold. Democracies keep the lead — and because AI helps build better AI, a temporary edge could become durable.</li><li><b>Bipolar.</b> China reaches parity. It could pour more talent and capital into military uses, and take a commanding global lead.</li></ul>",
+      "narration": "Step back, and Dario frames the real question. Sometime around twenty twenty-six or twenty twenty-seven, he expects AI systems that match almost all humans at almost everything. Building them will take millions of chips and tens of billions of dollars. And that leads to two possible worlds. In the first, export controls hold. Democracies keep the lead. And because AI can help design better AI, a temporary advantage could compound into a lasting one. Call that a unipolar world. In the second, China reaches parity. With a vast industrial base, it could direct more talent and capital toward military uses — and take a commanding lead, not just in AI, but in everything. A bipolar world. The difference between them is enormous."
+    },
+    {
+      "hue": "rose",
+      "num": "12",
+      "eyebrow": "The judgment",
+      "title": "Why one led by democracies is safer",
+      "bodyHtml": "<p class=\"eyebrow\"><span class=\"num\">12</span><span class=\"dot\"></span> THE JUDGMENT</p><h2>Why one led by democracies is safer</h2><p class=\"lede\">Dario's aim isn't to deny China the <span class=\"hl\">benefits of AI</span> — it's to prevent authoritarian <em>military dominance</em>.</p><p>He's clear the DeepSeek researchers seem like smart, curious people. But they answer to an authoritarian government.</p><p>A world where the most powerful technology sits with democracies is, in his view, the safer bet — not a perfect one, but the one worth defending.</p>",
+      "narration": "Why does Dario prefer the unipolar world? Not out of hostility to China's people. He's careful to say the DeepSeek researchers look like smart, curious engineers — the kind you'd want as colleagues. And he's clear that China should share in the immense benefits of AI. Medicine. Science. Quality of life. Those aren't the target. The target is narrower and sharper — preventing an authoritarian government from gaining military dominance through this technology. His judgment is that a world where the most powerful tools sit with democracies is the safer arrangement. Not flawless. Not guaranteed. But the one worth defending, while there's still a lead to defend."
+    },
+    {
+      "hue": "steel",
+      "num": "13",
+      "eyebrow": "The evidence",
+      "title": "The controls are working",
+      "bodyHtml": "<p class=\"eyebrow\"><span class=\"num\">13</span><span class=\"dot\"></span> THE EVIDENCE</p><h2>The controls are working</h2><p class=\"lede\">DeepSeek's chip mix isn't a failure of controls — it's a snapshot of them <span class=\"hl\">taking hold</span>.</p><ul class=\"reasons tight\"><li><b>H100s.</b> Banned — likely smuggled.</li><li><b>H800s.</b> Shipped before the October ban closed that gap.</li><li><b>H20s.</b> Still allowed — a loophole Dario thinks should close.</li></ul><p>A full fleet of top-line H100s would signal failure. This mix signals <em>loopholes closing, one by one</em>.</p>",
+      "narration": "There's a counterargument that says the controls have already failed — after all, DeepSeek got chips. But Dario reads the evidence the opposite way. Look at the mix. Some banned H-one-hundreds, likely smuggled in small numbers. Some H-eight-hundreds, shipped before that loophole was shut in October. And some H-twenties, still permitted — a gap he thinks should be closed too. If the controls were failing, DeepSeek would simply have a full fleet of the best chips. Instead it has a patchwork, assembled around the edges of tightening rules. That, he argues, is what working controls look like as they adapt — loopholes closing, one after another."
+    },
+    {
+      "hue": "sky",
+      "num": "14",
+      "eyebrow": "The scale test",
+      "title": "You can hide a billion, not a hundred",
+      "bodyHtml": "<p class=\"eyebrow\"><span class=\"num\">14</span><span class=\"dot\"></span> THE SCALE TEST</p><h2>You can hide a billion, not a hundred</h2><p class=\"lede\">The controls don't need to be perfect. They need to make <span class=\"hl\">massive buildouts impossible to conceal</span>.</p><p>A billion dollars of chips can be smuggled and hidden. A hundred billion cannot. Millions of chips are physically hard to sneak across borders.</p><p>The frontier of the future is a <em>giant, visible</em> thing. Controls raise the cost of matching it — and that margin is the whole point.</p>",
+      "narration": "And Dario answers the deeper worry — that no border can be sealed perfectly. He agrees. But perfection isn't the goal. The goal is scale. A billion dollars of chips can be smuggled, hidden, quietly assembled. A hundred billion cannot. Millions of physical chips are enormously hard to sneak across borders undetected. And the AI of twenty twenty-six and beyond will be built on exactly that scale — huge, power-hungry, impossible to conceal. So the controls don't have to catch every chip. They have to make the truly massive buildouts visible and costly. That margin — between what can be hidden and what can't — is the entire strategy."
+    },
+    {
+      "hue": "amber",
+      "num": "15",
+      "eyebrow": "The stakes",
+      "title": "One of our most powerful tools",
+      "bodyHtml": "<p class=\"eyebrow\"><span class=\"num\">15</span><span class=\"dot\"></span> THE STAKES</p><h2>One of our most powerful tools</h2><p class=\"lede\">Export controls are, in Dario's view, <span class=\"hl\">one of the most powerful levers</span> we have over how powerful AI arrives.</p><p>DeepSeek didn't weaken that case. It clarified it. Progress is smooth and predictable; efficiency raises demand; chips are the chokepoint.</p><p class=\"quote\">The question isn't whether China gets AI's benefits. <span class=\"grace\">It's whether a temporary lead becomes a durable, democratic one — before the window closes.</span></p>",
+      "narration": "Dario ends where the stakes are highest. Export controls, he argues, are one of the most powerful tools we have to shape how powerful AI enters the world — and who leads when it does. DeepSeek didn't undermine that case. It sharpened it. Progress moves along a smooth, predictable curve. Efficiency only deepens the world's hunger for compute. And chips remain the one true chokepoint. So the real question was never whether a headline said six million dollars. It was whether a temporary lead, held by democracies, can be turned into a durable one — before the window to decide it quietly closes. That is what he wanted readers to see behind the panic."
+    }
+  ]
+}

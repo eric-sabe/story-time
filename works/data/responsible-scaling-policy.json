@@ -1,0 +1,135 @@
+{
+  "meta": {
+    "id": "responsible-scaling-policy",
+    "order": 14,
+    "title": "The Responsible Scaling Policy",
+    "subtitle": "AI Safety Levels, and a commitment to stop",
+    "author": "Anthropic",
+    "date": "September 2023",
+    "kind": "Policy",
+    "source": "Anthropic",
+    "signature": "steel",
+    "tagline": "If a model gets dangerous enough, and we're not ready — we pause. In writing.",
+    "url": "https://www.anthropic.com/news/anthropics-responsible-scaling-policy",
+    "sortDate": "2023-09-19",
+    "shelf": "The Safety Case",
+    "hero": {
+      "epigraph": null,
+      "prologueNarration": "Most safety promises are vague. Trust us. We'll be careful. This one is different. In September of twenty twenty-three, Anthropic published a document meant to be tested against reality — the Responsible Scaling Policy. At its center is a simple, uncomfortable idea. As their models grow more capable, they must earn the right to keep scaling by proving they can handle the danger. And if they can't prove it — if the capabilities race ahead of the safeguards — they have committed, in advance and in writing, to stop. Not because a regulator forced them. Because they wrote the rule for themselves, and asked the world to hold them to it."
+    }
+  },
+  "scenes": [
+    {
+      "hue": "steel",
+      "num": "01",
+      "eyebrow": "The problem",
+      "title": "A promise you can check",
+      "bodyHtml": "&lt;p class=\"eyebrow\"&gt;&lt;span class=\"num\"&gt;01&lt;/span&gt;&lt;span class=\"dot\"&gt;&lt;/span&gt; The problem&lt;/p&gt;&lt;h2&gt;A promise you can check&lt;/h2&gt;&lt;p class=\"lede\"&gt;The Responsible Scaling Policy targets a specific fear: &lt;span class=\"hl\"&gt;catastrophic risk&lt;/span&gt; — an AI model that directly causes large-scale devastation.&lt;/p&gt;&lt;p&gt;Not everyday harms, but the rare, severe cases — either &lt;em&gt;deliberate misuse&lt;/em&gt; by bad actors, or a model acting harmfully against its designers' intent.&lt;/p&gt;&lt;ul class=\"reasons tight\"&gt;&lt;li&gt;&lt;b&gt;Misuse.&lt;/b&gt; A model helping a state or a terrorist build a weapon.&lt;/li&gt;&lt;li&gt;&lt;b&gt;Autonomy.&lt;/b&gt; A model taking harmful action on its own.&lt;/li&gt;&lt;/ul&gt;",
+      "narration": "Every AI lab says it takes safety seriously. The hard part is proving it. The Responsible Scaling Policy is Anthropic's attempt to turn a feeling into a rule you can actually check. It starts by naming the exact thing it's worried about — catastrophic risk. Not the everyday harms, real as those are, but the rare and severe cases where an AI model could directly cause large-scale devastation. That danger takes two shapes. One — deliberate misuse, a model helping a bad actor build something terrible. Two — a model acting harmfully on its own, against what its designers intended. The policy exists to make sure neither of those becomes possible before the safeguards are ready."
+    },
+    {
+      "hue": "sky",
+      "num": "02",
+      "eyebrow": "The borrowed idea",
+      "title": "Learning from the biosafety labs",
+      "bodyHtml": "&lt;p class=\"eyebrow\"&gt;&lt;span class=\"num\"&gt;02&lt;/span&gt;&lt;span class=\"dot\"&gt;&lt;/span&gt; The borrowed idea&lt;/p&gt;&lt;h2&gt;Learning from the biosafety labs&lt;/h2&gt;&lt;p class=\"lede\"&gt;The framework is modeled loosely on the US government's &lt;span class=\"hl\"&gt;Biosafety Levels&lt;/span&gt; for handling dangerous biological materials.&lt;/p&gt;&lt;p&gt;A lab studying a common cold needs modest precautions. A lab handling a lethal pathogen needs airlocks, sealed suits, and strict protocol. &lt;em&gt;The safeguards scale to the danger.&lt;/em&gt;&lt;/p&gt;&lt;p class=\"capnote\"&gt;Same logic, aimed at AI: AI Safety Levels.&lt;/p&gt;",
+      "narration": "The core idea wasn't invented from scratch. It was borrowed — from the people who handle dangerous germs for a living. For decades, biology labs have used a system called Biosafety Levels. The principle is intuitive. A lab studying a common cold needs only modest precautions. A lab handling a lethal, airborne pathogen needs sealed suits, airlocks, and rigorous protocol. The safeguards scale to the danger. Anthropic asked a simple question. What if we did the same thing for AI? The answer is the heart of this policy — a matching ladder of tiers called AI Safety Levels, or ASL. The more dangerous a model's capabilities, the stricter the standards it has to meet."
+    },
+    {
+      "hue": "sage",
+      "num": "03",
+      "eyebrow": "The ladder",
+      "title": "Four rungs, rising with the risk",
+      "bodyHtml": "&lt;p class=\"eyebrow\"&gt;&lt;span class=\"num\"&gt;03&lt;/span&gt;&lt;span class=\"dot\"&gt;&lt;/span&gt; The ladder&lt;/p&gt;&lt;h2&gt;Four rungs, rising with the risk&lt;/h2&gt;&lt;p class=\"lede\"&gt;AI Safety Levels run from &lt;span class=\"hl\"&gt;ASL-1 to ASL-4 and beyond&lt;/span&gt; — each rung demanding a stricter demonstration of safety than the last.&lt;/p&gt;&lt;p class=\"chips\"&gt;&lt;span&gt;ASL-1&lt;/span&gt;&lt;span&gt;ASL-2&lt;/span&gt;&lt;span&gt;ASL-3&lt;/span&gt;&lt;span&gt;ASL-4+&lt;/span&gt;&lt;/p&gt;&lt;p&gt;The rule binding them is the same all the way up: safety, security, and operational standards &lt;em&gt;appropriate to a model's potential for catastrophic risk&lt;/em&gt;.&lt;/p&gt;",
+      "narration": "So picture a ladder. It runs from ASL-1 at the bottom to ASL-4 and beyond at the top, and each rung you climb demands a stricter demonstration of safety than the one below it. That's the whole shape of the thing. The higher the danger a model can create, the higher its safety level, and the more you have to prove before you're allowed to build or release it. Over the next few scenes we'll walk up the rungs one at a time — where today's models sit, what would push them higher, and what the top of the ladder might hold. The important thing to hold onto is the binding rule that runs through all of it. Standards appropriate to the risk. Always."
+    },
+    {
+      "hue": "green",
+      "num": "04",
+      "eyebrow": "ASL-1",
+      "title": "The bottom rung: no real danger",
+      "bodyHtml": "&lt;p class=\"eyebrow\"&gt;&lt;span class=\"num\"&gt;04&lt;/span&gt;&lt;span class=\"dot\"&gt;&lt;/span&gt; ASL-1&lt;/p&gt;&lt;h2&gt;The bottom rung: no real danger&lt;/h2&gt;&lt;p class=\"lede\"&gt;ASL-1 covers systems that pose &lt;span class=\"hl\"&gt;no meaningful catastrophic risk&lt;/span&gt; at all.&lt;/p&gt;&lt;p&gt;Think of a chess-playing program, or a language model from 2018. Powerful in narrow ways, but nobody's threat model. &lt;em&gt;A baseline, for reference.&lt;/em&gt;&lt;/p&gt;",
+      "narration": "Start at the bottom. ASL-1 is the reference point — systems that pose no meaningful catastrophic risk whatsoever. Think of a program that only plays chess, or a language model from twenty eighteen. These systems can be impressive in their own narrow way, but nobody seriously worries that they'll help build a weapon or slip out of anyone's control. They simply aren't in that category. ASL-1 exists mostly to anchor the scale — to say, here is the floor, here is what genuinely harmless looks like. Everything interesting, and everything that actually matters for this policy, happens on the rungs above it."
+    },
+    {
+      "hue": "teal",
+      "num": "05",
+      "eyebrow": "ASL-2",
+      "title": "Where today's models live",
+      "bodyHtml": "&lt;p class=\"eyebrow\"&gt;&lt;span class=\"num\"&gt;05&lt;/span&gt;&lt;span class=\"dot\"&gt;&lt;/span&gt; ASL-2&lt;/p&gt;&lt;h2&gt;Where today's models live&lt;/h2&gt;&lt;p class=\"lede\"&gt;ASL-2 covers systems that show &lt;span class=\"hl\"&gt;early signs of dangerous capabilities&lt;/span&gt; — but not yet in a reliably useful way.&lt;/p&gt;&lt;p&gt;A model might, for instance, give instructions related to a bioweapon. But the information is unreliable, and no better than what a determined person could already find with a search engine.&lt;/p&gt;&lt;p class=\"capnote\"&gt;Anthropic's current Claude models are classified ASL-2.&lt;/p&gt;",
+      "narration": "One rung up is where we actually are today. ASL-2 covers systems that show early signs of dangerous capabilities — but not yet in a way that meaningfully raises the risk. The distinction is subtle, and it matters. A model at this level might, if you push it, produce something that sounds like instructions related to a bioweapon. But the information is unreliable, incomplete, and no more useful than what a determined person could already dig up with a search engine. It gestures at the danger without delivering it. Anthropic's current Claude models sit here, at ASL-2. Which means the safeguards at this level are meant for a system that hints at risk — but hasn't crossed into really enabling it."
+    },
+    {
+      "hue": "amber",
+      "num": "06",
+      "eyebrow": "ASL-3",
+      "title": "The line that changes everything",
+      "bodyHtml": "&lt;p class=\"eyebrow\"&gt;&lt;span class=\"num\"&gt;06&lt;/span&gt;&lt;span class=\"dot\"&gt;&lt;/span&gt; ASL-3&lt;/p&gt;&lt;h2&gt;The line that changes everything&lt;/h2&gt;&lt;p class=\"lede\"&gt;ASL-3 is where a model &lt;span class=\"hl\"&gt;substantially increases the risk of catastrophic misuse&lt;/span&gt; compared to a world without it — or shows low-level autonomy.&lt;/p&gt;&lt;ul class=\"reasons\"&gt;&lt;li&gt;&lt;b&gt;Real uplift.&lt;/b&gt; Meaningfully helping someone toward a bio or cyber weapon, beyond non-AI tools.&lt;/li&gt;&lt;li&gt;&lt;b&gt;Early autonomy.&lt;/b&gt; The first flickers of a model that can act on its own.&lt;/li&gt;&lt;/ul&gt;",
+      "narration": "Then comes the rung that changes the tone of the whole conversation. ASL-3. This is the level where a model would substantially increase the risk of catastrophic misuse compared to a world without it — or where it starts to show low-level autonomous capabilities. The difference from ASL-2 is not academic. It's the difference between a model that gestures at danger and one that genuinely and substantially increases the risk — meaningfully helping someone move toward a biological or cyber weapon, in a way that ordinary tools and search engines never could. Or, on the autonomy side, the first real flickers of a system that can pursue goals on its own. When a model reaches this line, the casual approach is over. The requirements get serious."
+    },
+    {
+      "hue": "crimson",
+      "num": "07",
+      "eyebrow": "ASL-4+",
+      "title": "The rungs not yet built",
+      "bodyHtml": "&lt;p class=\"eyebrow\"&gt;&lt;span class=\"num\"&gt;07&lt;/span&gt;&lt;span class=\"dot\"&gt;&lt;/span&gt; ASL-4+&lt;/p&gt;&lt;h2&gt;The rungs not yet built&lt;/h2&gt;&lt;p class=\"lede\"&gt;ASL-4 and beyond are &lt;span class=\"hl\"&gt;deliberately left undefined&lt;/span&gt; — anticipated, but not yet specified.&lt;/p&gt;&lt;p&gt;They would involve qualitative escalations in misuse potential and autonomy — dangers speculative enough that pinning them down now would be guesswork. &lt;em&gt;The policy commits to defining them later — but not too late.&lt;/em&gt;&lt;/p&gt;",
+      "narration": "And above ASL-3, the ladder trails off into fog. ASL-4, and whatever lies beyond it, are left deliberately undefined. Anthropic anticipates that these levels would involve qualitative escalations — larger jumps in both misuse potential and autonomy, the kind of dangers that today are still speculative. And they're honest about why they haven't written the rules yet. Pinning down safeguards for a threat you can't clearly see would be guesswork, and probably wrong. But — and this is crucial — leaving it blank forever would be a cop-out. So the policy makes a specific promise about that empty space, which turns out to be one of its cleverest features. We'll come to it."
+    },
+    {
+      "hue": "steel",
+      "num": "08",
+      "eyebrow": "The mechanism",
+      "title": "If-then, all the way up",
+      "bodyHtml": "&lt;p class=\"eyebrow\"&gt;&lt;span class=\"num\"&gt;08&lt;/span&gt;&lt;span class=\"dot\"&gt;&lt;/span&gt; The mechanism&lt;/p&gt;&lt;h2&gt;If-then, all the way up&lt;/h2&gt;&lt;p class=\"lede\"&gt;The engine of the whole policy is a conditional: &lt;span class=\"hl\"&gt;if a model reaches a capability, the matching safeguards must already be in place&lt;/span&gt;.&lt;/p&gt;&lt;p&gt;If a model shows ASL-3 capabilities, then ASL-3 safety and security measures must be ready — or the model cannot proceed. &lt;em&gt;Capability triggers obligation.&lt;/em&gt;&lt;/p&gt;",
+      "narration": "Here's the machinery that makes the ladder do work. It runs on a single conditional — an if-then. If a model reaches the capabilities of a given level, then the safety and security measures for that level must already be in place. Not planned. Not coming soon. In place. So if a model starts showing ASL-3 capabilities, ASL-3 protections have to be ready to receive it — the stronger security, the harder testing. Capability triggers obligation. The moment a system becomes more dangerous, the requirements it must satisfy snap upward to match. It's a deceptively simple rule, but it's the hinge everything else swings on. And it sets up the one commitment that gives the whole document its teeth."
+    },
+    {
+      "hue": "crimson",
+      "num": "09",
+      "eyebrow": "The commitment",
+      "title": "The willingness to stop",
+      "bodyHtml": "&lt;p class=\"eyebrow\"&gt;&lt;span class=\"num\"&gt;09&lt;/span&gt;&lt;span class=\"dot\"&gt;&lt;/span&gt; The commitment&lt;/p&gt;&lt;h2&gt;The willingness to stop&lt;/h2&gt;&lt;p class=\"lede\"&gt;If capabilities outrun the safeguards, the policy &lt;span class=\"hl\"&gt;implicitly requires a pause&lt;/span&gt; — a temporary halt to training more powerful models.&lt;/p&gt;&lt;p&gt;It's the rare corporate promise that can bite its author. Fall behind on safety, and you don't get to keep scaling. &lt;em&gt;You wait until you catch up.&lt;/em&gt;&lt;/p&gt;&lt;p class=\"quote\"&gt;A pause is not the failure of the plan. &lt;span class=\"grace\"&gt;It is the plan working.&lt;/span&gt;&lt;/p&gt;",
+      "narration": "And this is the line that makes people stop and reread it. If Anthropic's ability to scale ever outruns its ability to keep models safe, the policy implicitly requires them to pause — to temporarily halt training of more powerful models until the safeguards catch up. Sit with how unusual that is. This is a company writing down, in advance, a rule that can force it to stop its own most valuable work. Most corporate commitments are shaped to never inconvenience the company that makes them. This one is built to bite. And the framing matters. A pause here isn't the plan breaking down. A pause is the plan working exactly as intended — the safety net doing its job, holding the line until it's safe to move again."
+    },
+    {
+      "hue": "violet",
+      "num": "10",
+      "eyebrow": "Evaluations",
+      "title": "How you know you've crossed a line",
+      "bodyHtml": "&lt;p class=\"eyebrow\"&gt;&lt;span class=\"num\"&gt;10&lt;/span&gt;&lt;span class=\"dot\"&gt;&lt;/span&gt; Evaluations&lt;/p&gt;&lt;h2&gt;How you know you've crossed a line&lt;/h2&gt;&lt;p class=\"lede\"&gt;The whole system depends on &lt;span class=\"hl\"&gt;knowing what a model can actually do&lt;/span&gt; — which means testing it hard.&lt;/p&gt;&lt;p&gt;For ASL-3, the bar is stark: don't deploy a model if it shows &lt;em&gt;any meaningful catastrophic misuse risk under adversarial testing by world-class red-teamers&lt;/em&gt;. Not just running the tests — passing them.&lt;/p&gt;",
+      "narration": "An if-then rule is only as good as your ability to tell whether the if has happened. So the policy leans hard on capability evaluations — deliberately probing a model to find out what it can really do, before it ever reaches the public. And for ASL-3, the standard is stark. The commitment isn't merely to run some red-teaming and check a box. It's a commitment not to deploy a model if it shows any meaningful catastrophic misuse risk under adversarial testing by world-class red-teamers. Read that carefully. The point isn't that testing happened. The point is that the danger wasn't found. You don't get credit for looking. You have to actually come up clean."
+    },
+    {
+      "hue": "gold",
+      "num": "11",
+      "eyebrow": "Define it first",
+      "title": "Writing the next rule before you need it",
+      "bodyHtml": "&lt;p class=\"eyebrow\"&gt;&lt;span class=\"num\"&gt;11&lt;/span&gt;&lt;span class=\"dot\"&gt;&lt;/span&gt; Define it first&lt;/p&gt;&lt;h2&gt;Writing the next rule before you need it&lt;/h2&gt;&lt;p class=\"lede\"&gt;The promise about that fog above the ladder: &lt;span class=\"hl\"&gt;define ASL-4 before reaching ASL-3&lt;/span&gt;.&lt;/p&gt;&lt;p&gt;Always keep one rung of safety defined ahead of where the models actually are. Some of it may require breakthroughs not yet in hand — like using &lt;em&gt;interpretability&lt;/em&gt; to show, mechanistically, that a model won't misbehave.&lt;/p&gt;",
+      "narration": "Now, back to that empty space above the ladder — and the clever promise about it. Anthropic commits to defining the ASL-4 safeguards before it ever reaches ASL-3. Think about what that does. It forces them to always keep at least one rung of safety mapped out ahead of where their models actually stand. You write the rules for the next level of danger while you're still safely below it — not in a panic, after you've already arrived. And they admit some of those future rules may demand things nobody knows how to do yet. Like using interpretability — reading a model's inner workings — to prove, mechanistically, that it won't engage in certain catastrophic behaviors. An unsolved research problem, named honestly, in advance."
+    },
+    {
+      "hue": "rose",
+      "num": "12",
+      "eyebrow": "Accountability",
+      "title": "Not just taking their word for it",
+      "bodyHtml": "&lt;p class=\"eyebrow\"&gt;&lt;span class=\"num\"&gt;12&lt;/span&gt;&lt;span class=\"dot\"&gt;&lt;/span&gt; Accountability&lt;/p&gt;&lt;h2&gt;Not just taking their word for it&lt;/h2&gt;&lt;p class=\"lede\"&gt;A self-imposed rule needs &lt;span class=\"hl\"&gt;structure to keep it honest&lt;/span&gt; — so the policy builds in oversight.&lt;/p&gt;&lt;ul class=\"reasons tight\"&gt;&lt;li&gt;&lt;b&gt;Board-approved.&lt;/b&gt; Changes require board sign-off, after consulting the Long-Term Benefit Trust.&lt;/li&gt;&lt;li&gt;&lt;b&gt;Outside expertise.&lt;/b&gt; Built with help from external evaluators like ARC Evals.&lt;/li&gt;&lt;li&gt;&lt;b&gt;An early draft.&lt;/b&gt; Explicitly a first iteration, to be revised.&lt;/li&gt;&lt;/ul&gt;",
+      "narration": "A rule you write for yourself is easy to quietly rewrite when it becomes inconvenient. So the policy tries to make that hard. It was formally approved by Anthropic's board, and any changes to it must go back through the board — after consulting the Long-Term Benefit Trust, a body designed to weigh the interests of the wider world. The evaluations weren't built in isolation either; outside experts, including the team then known as ARC Evals, helped shape them. And Anthropic is candid that this is an early iteration — their current best guess, not the final word. Given how fast AI moves, they expect to revise it, repeatedly. The honesty is part of the accountability. A living document, held in place by more than one set of hands."
+    },
+    {
+      "hue": "gold",
+      "num": "13",
+      "eyebrow": "Why it matters",
+      "title": "A race to the top",
+      "bodyHtml": "&lt;p class=\"eyebrow\"&gt;&lt;span class=\"num\"&gt;13&lt;/span&gt;&lt;span class=\"dot\"&gt;&lt;/span&gt; Why it matters&lt;/p&gt;&lt;h2&gt;A race to the top&lt;/h2&gt;&lt;p class=\"lede\"&gt;The hope isn't only to make Anthropic safer — it's to &lt;span class=\"hl\"&gt;change what competition rewards&lt;/span&gt;.&lt;/p&gt;&lt;p&gt;A concrete, checkable commitment can be copied. It offers inspiration to other labs, to nonprofits, and to policymakers — a working template for what regulation might one day require.&lt;/p&gt;&lt;p class=\"quote\"&gt;Turn the race away from cutting corners — &lt;span class=\"grace\"&gt;and toward solving the safety problems first.&lt;/span&gt;&lt;/p&gt;",
+      "narration": "So why go to all this trouble, publicly, when no one required it? Because a commitment this concrete can do something a vague promise never could. It can be copied. Anthropic offers the policy as inspiration — to other frontier labs, to nonprofits, and to policymakers looking for a working template of what real regulation might one day demand. And there's a deeper hope underneath. Right now, competition between labs can pressure everyone to cut corners on safety to ship faster. But if a serious safety standard became the thing labs competed to meet, the pressure could flip — into a race to the top. A world where getting ahead means solving the safety problems first. That's the quiet ambition folded into all this careful structure."
+    },
+    {
+      "hue": "steel",
+      "num": "14",
+      "eyebrow": "The wager",
+      "title": "Business as usual, until it can't be",
+      "bodyHtml": "&lt;p class=\"eyebrow\"&gt;&lt;span class=\"num\"&gt;14&lt;/span&gt;&lt;span class=\"dot\"&gt;&lt;/span&gt; The wager&lt;/p&gt;&lt;h2&gt;Business as usual, until it can't be&lt;/h2&gt;&lt;p class=\"lede\"&gt;For now, the policy &lt;span class=\"hl\"&gt;changes nothing you'd notice&lt;/span&gt; — no product disrupted, no availability lost.&lt;/p&gt;&lt;p&gt;It works like pre-market testing in aviation or cars: invisible when all is well, decisive when it isn't. &lt;em&gt;A promise waiting for the day it's needed.&lt;/em&gt;&lt;/p&gt;&lt;p class=\"quote\"&gt;The measure of a safety commitment &lt;span class=\"grace\"&gt;is whether it can ever cost you something.&lt;/span&gt;&lt;/p&gt;",
+      "narration": "And here's the strange, telling thing about it. For now, the Responsible Scaling Policy changes almost nothing you would notice. It doesn't alter how Claude works, or take any product away. It runs quietly in the background, like the pre-market testing behind a new airplane or a new car — invisible when everything is fine, decisive on the day something isn't. That's exactly the point. A safety commitment that could never cost you anything isn't really a commitment. It's decoration. What makes this one worth taking seriously is that it was built to matter on a specific future day — the day a model gets dangerous enough, and the safeguards aren't yet ready. On that day, the policy asks Anthropic to do the hardest thing a company can do. To stop. And to have said so, in writing, long before."
+    }
+  ]
+}

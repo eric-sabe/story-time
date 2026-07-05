@@ -1,0 +1,121 @@
+{
+  "meta": {
+    "id": "collective-constitutional-ai",
+    "order": 12,
+    "title": "Collective Constitutional AI",
+    "subtitle": "Aligning a Language Model with Public Input",
+    "author": "Anthropic × Collective Intelligence Project",
+    "date": "October 2023",
+    "kind": "Paper",
+    "source": "Anthropic",
+    "signature": "sage",
+    "tagline": "What if the public, not the company, wrote the rules an AI lives by?",
+    "url": "https://www.anthropic.com/research/collective-constitutional-ai-aligning-a-language-model-with-public-input",
+    "sortDate": "2023-10-17",
+    "shelf": "Teaching Values",
+    "hero": {
+      "epigraph": null,
+      "prologueNarration": "Constitutional AI gives a model a written set of values to follow. It makes those values transparent — but it raises a harder question. Who gets to write them? Until now, the answer was simple. Anthropic did. We chose the principles ourselves. So Anthropic partnered with the Collective Intelligence Project to try something different. About a thousand members of the American public were invited to help direct an AI system — proposing rules, voting on principles, shaping a constitution together. From those inputs, a public constitution was built. And a model was trained to live by it. This is the story of what happened when the values came not from a company… but from a crowd."
+    }
+  },
+  "scenes": [
+    {
+      "hue": "sage",
+      "num": "01",
+      "eyebrow": "The Question",
+      "title": "Who writes the constitution?",
+      "bodyHtml": "<p class=\"eyebrow\"><span class=\"num\">01</span><span class=\"dot\"></span> THE QUESTION</p><h2>Whose values, exactly?</h2><p class=\"lede\">Constitutional AI trains a model against a written set of principles — a constitution — making its values <span class=\"hl\">transparent and inspectable</span>. But transparency exposes an uncomfortable truth.</p><p>As the researchers put it, the method <em>highlights the outsized role we as developers play in selecting these values — after all, we wrote the constitution ourselves.</em></p><ul class=\"reasons\"><li><b>The default.</b> A handful of people at one company decide what an AI holds dear.</li><li><b>The experiment.</b> What if a slice of the public decided instead?</li></ul>","narration": "Constitutional AI works by giving a model a written document — a set of principles it learns to follow. The upside is transparency. You can read the values. You can question them. But that same transparency surfaces a problem. The document has to come from somewhere. And until now, it came from us — the developers. We chose the principles ourselves. Which means a small group inside one company was quietly deciding what an AI system should value, for everyone who used it. This project asked a different question. What if the public helped decide instead?"
+    },
+    {
+      "hue": "sky",
+      "num": "02",
+      "eyebrow": "The Partnership",
+      "title": "Anthropic meets the crowd",
+      "bodyHtml": "<p class=\"eyebrow\"><span class=\"num\">02</span><span class=\"dot\"></span> THE PARTNERSHIP</p><h2>A tool built for disagreement</h2><p class=\"lede\">Anthropic partnered with the <span class=\"hl\">Collective Intelligence Project</span> to run a structured public deliberation — and reached for a platform designed to surface consensus.</p><ul class=\"reasons two\"><li><b>Polis.</b> An open-source platform that runs online deliberation, augmented by machine-learning algorithms.</li><li><b>The public.</b> About a thousand Americans, recruited as a representative sample, screened for basic AI familiarity.</li><li><b>The task.</b> Vote on statements others proposed — or write your own.</li><li><b>The seed.</b> Twenty-one starter statements were provided as examples of quality.</li></ul>","narration": "To do this well, Anthropic worked with the Collective Intelligence Project — a group focused on democratic input into technology. They chose a tool called Polis. It's an open-source platform, built to run online deliberation at scale, using machine learning to find where people agree and where they split. Then they invited the public in. About a thousand Americans, chosen to roughly represent the country, screened only for a basic familiarity with AI. Each person could do two things. Vote on statements that others had written… or propose their own. To show what a good statement looked like, the team seeded the conversation with twenty-one examples."
+    },
+    {
+      "hue": "gold",
+      "num": "03",
+      "eyebrow": "The Deliberation",
+      "title": "A thousand voices, thirty-eight thousand votes",
+      "bodyHtml": "<p class=\"eyebrow\"><span class=\"num\">03</span><span class=\"dot\"></span> THE DELIBERATION</p><h2>What the public produced</h2><p class=\"lede\">The deliberation generated a <span class=\"hl\">dense map of opinion</span> — and revealed the country was not of one mind.</p><div class=\"stats\"><div class=\"stat\"><div class=\"fig\"><span data-count-from=\"0\" data-count-to=\"1127\">0</span></div><div class=\"cap\">statements proposed</div></div><div class=\"stat\"><div class=\"fig\"><span data-count-from=\"0\" data-count-to=\"38252\">0</span></div><div class=\"cap\">votes cast</div></div><div class=\"stat\"><div class=\"fig\"><span data-count-from=\"0\" data-count-to=\"34\">0</span></div><div class=\"cap\">votes per person, on average</div></div></div><p class=\"capnote\">Polis identified two distinct opinion groups — real disagreement — atop broad consensus on most statements.</p>","stats": [{"figure": "1,127", "caption": "statements proposed by the public"}, {"figure": "38,252", "caption": "total votes cast"}, {"figure": "34", "caption": "average votes per participant"}],"narration": "The response was substantial. Together, participants proposed one thousand, one hundred and twenty-seven statements. They cast more than thirty-eight thousand votes — an average of thirty-four votes per person. And the Polis algorithm did something important with all that data. It found structure. It identified two distinct opinion groups — a sign that on some questions, the public genuinely disagreed. But it also found broad consensus underneath. Most statements, most people could get behind. The picture that emerged wasn't a single unified voice. It was a crowd — agreeing on much, divided on some."
+    },
+    {
+      "hue": "amber",
+      "num": "04",
+      "eyebrow": "The Distillation",
+      "title": "From raw statements to a constitution",
+      "bodyHtml": "<p class=\"eyebrow\"><span class=\"num\">04</span><span class=\"dot\"></span> THE DISTILLATION</p><h2>Turning a crowd into a document</h2><p class=\"lede\">More than a thousand raw statements had to become a usable constitution — <span class=\"hl\">roughly the length of Anthropic's own fifty-eight principles</span>.</p><ul class=\"reasons\"><li><b>Moderate.</b> Remove hateful, nonsensical, duplicate, or technically infeasible statements.</li><li><b>Deduplicate.</b> Collapse repeats so no idea gets arbitrarily upweighted.</li><li><b>Combine.</b> Merge similar ideas into a compact set.</li><li><b>Translate.</b> Rewrite each into Constitutional AI form — <em>Choose the response that is more X.</em></li></ul>","narration": "Now came the hard translation. A thousand statements from the public is not a constitution — it's raw material. So the team refined it in steps. First, moderation — filtering out anything hateful, nonsensical, or technically impossible for a model to follow. Then deduplication, so that a popular idea repeated many times wouldn't quietly dominate. Then combination, merging overlapping thoughts into a compact set — roughly the length of Anthropic's own constitution, which has fifty-eight principles. And finally, translation. A statement like AI should not do a certain thing became a principle in the model's own grammar — choose the response that is more of this, less of that."
+    },
+    {
+      "hue": "teal",
+      "num": "05",
+      "eyebrow": "The Overlap",
+      "title": "Where the public agreed with us",
+      "bodyHtml": "<p class=\"eyebrow\"><span class=\"num\">05</span><span class=\"dot\"></span> THE OVERLAP</p><h2>Half of it looked familiar</h2><p class=\"lede\">Compared side by side, the public constitution and Anthropic's showed <span class=\"hl\">roughly fifty percent overlap</span> in concepts and values.</p><p>People independently reached for many of the same ideas Anthropic had — safety, honesty, avoiding harm. The public didn't need to be handed these values. They arrived at them.</p><p class=\"chips\"><span>reliability</span><span>safety</span><span>honesty</span><span>avoiding harm</span></p>","narration": "So how different was the public's document from ours? Less than you might expect. Laid side by side, the two constitutions showed roughly fifty percent overlap in concepts and values. That's a striking result. Without ever seeing Anthropic's principles, ordinary people reached for many of the same ideas — that an AI should be safe, honest, reliable, and slow to cause harm. These weren't values we had to teach them. They were values the public already held, and voted up on their own. Half the constitution, in a sense, wrote itself the same way twice."
+    },
+    {
+      "hue": "violet",
+      "num": "06",
+      "eyebrow": "The Difference",
+      "title": "Where the public went its own way",
+      "bodyHtml": "<p class=\"eyebrow\"><span class=\"num\">06</span><span class=\"dot\"></span> THE DIFFERENCE</p><h2>The other half told us something</h2><p class=\"lede\">The public constitution wasn't sourced from published writing — people <span class=\"hl\">generated it themselves</span> — and it leaned in directions ours did not.</p><ul class=\"reasons\"><li><b>Objectivity.</b> A stronger pull toward balanced, impartial information reflecting all sides.</li><li><b>Accessibility.</b> A markedly greater emphasis on users with disabilities.</li><li><b>Positive framing.</b> A tendency to promote desired behavior rather than only forbid the bad.</li></ul><p class=\"quote\">Choose the response most understanding of, adaptable, accessible, and flexible to <span class=\"grace\">people with disabilities.</span></p>","narration": "The other half is where it gets interesting — because that's where the public diverged. Their principles weren't drawn from books or published philosophy. They were self-generated, written fresh. And they leaned in distinctive directions. The public cared more, and more explicitly, about objectivity — asking for balanced information that reflects all sides of a situation. They cared far more about accessibility, calling for responses that are understanding and flexible toward people with disabilities. And they framed things positively. Where our constitution often says don't do harm, theirs often said do good — promoting the behavior it wanted, rather than only forbidding the behavior it didn't."
+    },
+    {
+      "hue": "rose",
+      "num": "07",
+      "eyebrow": "The Disagreements",
+      "title": "The statements that didn't make it",
+      "bodyHtml": "<p class=\"eyebrow\"><span class=\"num\">07</span><span class=\"dot\"></span> THE DISAGREEMENTS</p><h2>Low consensus, left out</h2><p class=\"lede\">Some statements were <span class=\"hl\">too contested to include</span>. Where the two opinion groups pulled hard in opposite directions, no principle could be fairly drawn.</p><ul class=\"reasons two\"><li><b>Contested claims.</b> Statements like one arguing AI should not be trained with the principles of diversity, equity, and inclusion.</li><li><b>Value clashes.</b> Collective good pulling against individual liberty, with no resolution.</li></ul><p class=\"capnote\">Dropping low-consensus statements kept the constitution coherent — but it also meant real minority views fell away.</p>","narration": "But not everything the public said could become a rule. Some statements were simply too contested. When the two opinion groups pulled hard in opposite directions — one insisting on something the other rejected — there was no fair way to write a single principle that honored both. So those low-consensus statements were dropped. A statement arguing that AI should not be trained on principles of diversity, equity, and inclusion. Statements pitting the collective good against individual liberty. These are exactly the questions a society argues about most. And the process, by design, set them aside. It kept the constitution coherent. It also let genuine disagreement quietly fall away."
+    },
+    {
+      "hue": "steel",
+      "num": "08",
+      "eyebrow": "The Training",
+      "title": "Teaching a model the public's values",
+      "bodyHtml": "<p class=\"eyebrow\"><span class=\"num\">08</span><span class=\"dot\"></span> THE TRAINING</p><h2>Three models, one comparison</h2><p class=\"lede\">Using Constitutional AI, the team trained two <span class=\"hl\">Claude Instant-sized models</span> that differed in exactly one thing — their constitution.</p><ul class=\"reasons tight\"><li><b>Public model.</b> Trained on the crowd-sourced constitution.</li><li><b>Standard model.</b> Trained on Anthropic's own constitution.</li><li><b>Control.</b> Claude Instant, as a baseline.</li></ul><p>Same method, same size, same data — so any difference could be traced to the values, not the machinery.</p>","narration": "With a public constitution in hand, the real test could begin. Using Constitutional AI, the team trained two models of the same size — roughly that of Claude Instant. One learned from the public's constitution. The other learned from Anthropic's own. And a third, an ordinary Claude Instant, served as a control. The design was deliberately clean. Same training method. Same model size. Everything held constant, except the one thing under study — the document of values. That way, if the two models behaved differently, the cause would be clear. Not the machinery. Not the data. The values themselves."
+    },
+    {
+      "hue": "green",
+      "num": "09",
+      "eyebrow": "The Capabilities",
+      "title": "Just as capable",
+      "bodyHtml": "<p class=\"eyebrow\"><span class=\"num\">09</span><span class=\"dot\"></span> THE CAPABILITIES</p><h2>No competence tax</h2><p class=\"lede\">A fair worry: public input might make a model <span class=\"hl\">dumber or less helpful</span>. It didn't.</p><ul class=\"reasons two\"><li><b>Language.</b> Equivalent accuracy on the MMLU benchmark.</li><li><b>Math.</b> Equivalent accuracy on GSM8K.</li><li><b>Helpfulness.</b> No significant difference in human-rated helpfulness.</li><li><b>Harmlessness.</b> No significant difference in harmlessness, by Elo score.</li></ul>","narration": "The first thing to check was the obvious fear. If you let the public shape a model's values, do you get a weaker model? The answer was no. On MMLU, a broad test of language and knowledge, the public model matched the standard one. On GSM8K, a test of grade-school math, they were equivalent again. And when human raters judged the models on how helpful and how harmless their responses were — scoring them head to head, like players in a tournament — the difference wasn't significant. The public model paid no competence tax. It was just as smart, just as helpful, just as safe as the model trained on Anthropic's own principles."
+    },
+    {
+      "hue": "sky",
+      "num": "10",
+      "eyebrow": "The Surprise",
+      "title": "Less biased across the board",
+      "bodyHtml": "<p class=\"eyebrow\"><span class=\"num\">10</span><span class=\"dot\"></span> THE SURPRISE</p><h2>Lower bias on every dimension</h2><p class=\"lede\">On the BBQ bias benchmark, the public model showed <span class=\"hl\">lower bias across all nine social dimensions</span> — while staying just as capable.</p><div class=\"stats\"><div class=\"stat\"><div class=\"fig\"><span data-count-from=\"0\" data-count-to=\"9\">0</span></div><div class=\"cap\">social dimensions, all improved</div></div></div><p class=\"capnote\">The largest gains: Disability Status and Physical Appearance — tracing straight back to the public's emphasis on accessibility.</p>","stats": [{"figure": "9", "caption": "social dimensions, lower bias on all"}],"narration": "Then came the genuine surprise. To measure bias, the team used a benchmark called BBQ — the Bias Benchmark for Question Answering — which probes how a model treats different social groups across nine dimensions. And the public model scored lower on bias… across all nine. Every single one. Not at the cost of performance — the two stayed equally capable. The biggest improvements came in two areas: disability status, and physical appearance. And you can trace that result straight back to the deliberation. The public had asked, again and again, for a model that was accessible and understanding toward people with disabilities. They wrote that value into the constitution. And the model learned it."
+    },
+    {
+      "hue": "lav",
+      "num": "11",
+      "eyebrow": "The Politics",
+      "title": "The lean that stayed the same",
+      "bodyHtml": "<p class=\"eyebrow\"><span class=\"num\">11</span><span class=\"dot\"></span> THE POLITICS</p><h2>Public input didn't shift the ideology</h2><p class=\"lede\">On political opinions, both models looked <span class=\"hl\">much the same</span> — a reminder of what this method could and couldn't move.</p><p>Measured with OpinionQA, both leaned toward views held by people who self-identify as liberal rather than conservative. Public input reshaped bias and framing — <em>but it did not, on its own, rebalance ideology.</em></p><p class=\"chips\"><span>OpinionQA</span><span>liberal-leaning</span><span>both models alike</span></p>","narration": "One result cut against the hope of the project. On matters of political ideology, the two models barely differed. Using a survey-based tool called OpinionQA, researchers found that both — the public model and the standard one — leaned toward views held by people who identify as liberal, rather than conservative. So bringing in a representative slice of the public did move some things. It lowered bias. It changed the framing. But it did not, on its own, rebalance the model's political lean. That's a sobering finding. It tells us that public input is powerful — but it isn't a magic dial. Some deep tendencies of these systems come from elsewhere, and won't shift just because we opened the door."
+    },
+    {
+      "hue": "amber",
+      "num": "12",
+      "eyebrow": "The Hard Parts",
+      "title": "The judgment calls behind the crowd",
+      "bodyHtml": "<p class=\"eyebrow\"><span class=\"num\">12</span><span class=\"dot\"></span> THE HARD PARTS</p><h2>Every step held a choice</h2><p class=\"lede\">A public process is not a neutral machine. At each stage, <span class=\"hl\">someone had to decide</span> — and the researchers were candid about it.</p><ul class=\"reasons\"><li><b>Who is the public?</b> A US sample — a pragmatic start, but small and not globally representative.</li><li><b>Who gets in?</b> Screening for AI familiarity improved quality, but narrowed the crowd.</li><li><b>How to count?</b> Deduplication avoids upweighting ideas — yet is itself a value-laden call.</li><li><b>Cherry-picking.</b> Choosing which statements to keep is where a process can quietly tip the scales.</li></ul>","narration": "It would be easy to call this democratic and stop there. The researchers didn't. They were honest that a public process is full of human judgment. Start with the hardest question — who counts as the public? They chose a representative American sample. A reasonable first step, they admitted, but small, and not globally representative. Who gets a voice within it? They screened for AI familiarity, which improved the quality of statements but also narrowed the room. How do you count opinions fairly? Deduplication keeps one loud idea from dominating — but deciding what counts as a duplicate is itself a value judgment. And every choice about which statements to keep is a place where a process can, intentionally or not, tip the scales."
+    },
+    {
+      "hue": "steel",
+      "num": "13",
+      "eyebrow": "The Frictions",
+      "title": "What the training taught us",
+      "bodyHtml": "<p class=\"eyebrow\"><span class=\"num\">13</span><span class=\"dot\"></span> THE FRICTIONS</p><h2>Honest about the mess</h2><p class=\"lede\">Translating a crowd's wishes into a working model surfaced <span class=\"hl\">practical frictions</span> the team hadn't fully anticipated.</p><ul class=\"reasons two\"><li><b>Mismatched prompts.</b> Reusing one prompt set for both models was, they admit, likely a mistake — some public principles didn't fit those prompts.</li><li><b>The annoying model.</b> Early versions answered a simple <em>hey</em> with an apologetic safety lecture, from over-weighting harmlessness.</li></ul><p class=\"capnote\">A reminder that faithfully implementing public values is as much engineering as it is democracy.</p>","narration": "And then there were the frictions of actually building it. Some were technical, and the team named them plainly. They used the same set of test prompts for both models — which, they admit, was probably a mistake, since the public constitution contained principles those prompts never touched. Other frictions were almost comic. In early versions, the public model became strangely apologetic. Say hey, and it might respond with a little lecture about safety and harm — because the balance between helpfulness and harmlessness had tipped too far. It was a small bug that mattered more than they expected. And it's a good reminder. Turning a crowd's values into a working model is not only an act of democracy. It's an act of engineering."
+    },
+    {
+      "hue": "sage",
+      "num": "14",
+      "eyebrow": "Why It Matters",
+      "title": "The legitimacy of AI values",
+      "bodyHtml": "<p class=\"eyebrow\"><span class=\"num\">14</span><span class=\"dot\"></span> WHY IT MATTERS</p><h2>A first, not a finish</h2><p class=\"lede\">This may be <span class=\"hl\">one of the first times</span> the public has collectively directed a language model's behavior through written specifications, via online deliberation.</p><p>The point was never to declare the public model better. It was to show a process is <em>possible</em> — that AI values need not be set behind closed doors.</p><p class=\"quote\">Questions about the democratic legitimacy of AI will only grow <span class=\"grace\">more prominent in the years ahead.</span></p>","narration": "So why does any of this matter? Because it may be one of the first times the public has collectively shaped how a large language model behaves — not through a survey read and set aside, but through written principles a model was actually trained to follow. The goal was never to crown the public model as the winner. It was to prove the process is possible. That the values inside an AI system don't have to be decided behind a closed door by a handful of people. As these systems reach further into daily life, questions about their democratic legitimacy will only grow louder. This work is not the answer. It's an opening — a first attempt at letting the many, not the few, help decide what an AI should stand for."
+    }
+  ]
+}

@@ -1,0 +1,496 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude's Constitution — Story Time</title>
+<style>
+  @property --grad-a { syntax: '<color>'; inherits: true; initial-value: #0B0E14; }
+  @property --grad-b { syntax: '<color>'; inherits: true; initial-value: #12172400; }
+  @property --grad-c { syntax: '<color>'; inherits: true; initial-value: #0B0E14; }
+  :root {
+    --ink:#0B0E14; --text:#F4EFE6; --muted:#98A2B4; --faint:#5A6274;
+    --gold:#F2C879; --green:#7FC8A0; --sky:#8FB8E8; --rose:#E8927C; --lav:#C4AEE8;
+    --amber:#E4A85E; --steel:#86A9CC; --violet:#B49CF0; --teal:#66C6BE; --crimson:#DE8A86; --sage:#A7C08C;
+    --accent:var(--sage);
+    --serif:"Hoefler Text","New York","Iowan Old Style",Palatino,Georgia,serif;
+    --sans:-apple-system,"SF Pro Text","Helvetica Neue",Inter,system-ui,sans-serif;
+    --mono:"SF Mono",ui-monospace,"Menlo","Roboto Mono",monospace;
+    --measure:34rem;
+  }
+  * { box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  @media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto;} }
+  body { margin:0; background:var(--ink); color:var(--text); font-family:var(--sans);
+    font-size:18px; line-height:1.7; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
+
+  #dawn { position:fixed; inset:0; z-index:-2;
+    background:
+      radial-gradient(120% 90% at 50% 118%, var(--grad-b) 0%, transparent 60%),
+      linear-gradient(180deg, var(--grad-a) 0%, var(--grad-c) 100%);
+    transition:--grad-a 1.6s ease,--grad-b 1.6s ease,--grad-c 1.6s ease; }
+  #meadow { position:fixed; inset:0; z-index:-1; pointer-events:none; opacity:.9; }
+  #grain { position:fixed; inset:0; z-index:0; pointer-events:none; opacity:.035; mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+
+  main { position:relative; z-index:1; }
+  .scene { min-height:100vh; display:flex; flex-direction:column; justify-content:center;
+    padding:14vh clamp(1.5rem,6vw,7rem); max-width:68rem; margin:0 auto; }
+  .scene .inner { opacity:0; transform:translateY(26px);
+    transition:opacity 1.1s ease, transform 1.1s cubic-bezier(.2,.7,.2,1); max-width:var(--measure); }
+  .scene.wide .inner { max-width:52rem; }
+  .scene.revealed .inner { opacity:1; transform:none; }
+  @media (prefers-reduced-motion: reduce){ .scene .inner{opacity:1;transform:none;transition:none;} }
+
+  .eyebrow { font-family:var(--mono); font-size:.74rem; letter-spacing:.28em; text-transform:uppercase;
+    color:var(--accent); display:flex; align-items:center; gap:.8em; margin:0 0 1.6rem; flex-wrap:wrap; }
+  .eyebrow .num { color:var(--faint); }
+  .eyebrow .dot { width:7px; height:7px; border-radius:50%; background:var(--accent); box-shadow:0 0 14px var(--accent); }
+
+  h1 { font-family:var(--serif); font-weight:500; letter-spacing:-.01em;
+    font-size:clamp(2.4rem,7.5vw,5.2rem); line-height:1; margin:0; text-wrap:balance;
+    overflow-wrap:break-word; hyphens:auto; }
+  h2 { font-family:var(--serif); font-weight:500; letter-spacing:-.005em;
+    font-size:clamp(1.7rem,5vw,3.3rem); line-height:1.05; margin:0 0 1.3rem; text-wrap:balance;
+    overflow-wrap:break-word; hyphens:auto; }
+  .lede { font-size:clamp(1.05rem,2.2vw,1.32rem); color:var(--text); }
+  p { color:var(--muted); }
+  p .hl { color:var(--text); }
+  em { color:var(--text); font-style:italic; }
+  code { font-family:var(--mono); font-size:.9em; color:var(--accent); background:rgba(255,255,255,.05); padding:.05em .35em; border-radius:4px; }
+
+  ul.reasons { list-style:none; padding:0; margin:0 0 1.4rem; display:flex; flex-direction:column; gap:.85rem; }
+  ul.reasons.tight { gap:.6rem; }
+  ul.reasons.two { display:grid; grid-template-columns:1fr 1fr; gap:.7rem 1.6rem; }
+  ul.reasons li { position:relative; padding-left:1.3rem; color:var(--muted); font-size:1.02rem; line-height:1.5; }
+  ul.reasons li:before { content:""; position:absolute; left:0; top:.62em; width:6px; height:6px;
+    border-radius:50%; background:var(--accent); box-shadow:0 0 10px var(--accent); }
+  ul.reasons li b { color:var(--text); font-weight:600; }
+  @media (max-width:620px){ ul.reasons.two{grid-template-columns:1fr;} }
+
+  .chips { display:flex; flex-wrap:wrap; gap:.55rem; margin:0 0 1.4rem; }
+  .chips span { font-family:var(--mono); font-size:.72rem; letter-spacing:.04em; color:var(--accent);
+    border:1px solid color-mix(in oklab, var(--accent) 45%, transparent); border-radius:999px; padding:.34rem .8rem; }
+  .capnote { font-size:1.06rem; color:var(--text); margin-top:1.2rem; }
+
+  #s0 .inner { max-width:47rem; }
+  .kicker { font-family:var(--mono); font-size:.7rem; letter-spacing:.24em; text-transform:uppercase; color:var(--faint); margin:0 0 1.4rem; }
+  .subtitle { font-family:var(--serif); font-style:italic; font-size:clamp(1.1rem,2.6vw,1.6rem); color:var(--accent); margin:1rem 0 0; opacity:.9; }
+  .epigraph { font-family:var(--serif); font-style:italic; font-size:clamp(1.05rem,2.4vw,1.45rem);
+    line-height:1.5; color:var(--accent); margin:0 0 2.4rem; opacity:.9; white-space:pre-line; }
+  .epigraph cite { display:block; font-style:normal; font-family:var(--mono);
+    font-size:.72rem; letter-spacing:.22em; text-transform:uppercase; color:var(--faint); margin-top:1.1rem; }
+  .byline { font-family:var(--mono); font-size:.76rem; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); margin:1.6rem 0 0; }
+  .byline b { color:var(--text); font-weight:600; }
+  .begin { margin-top:2.6rem; display:inline-flex; align-items:center; gap:.8rem;
+    font-family:var(--sans); font-size:1rem; font-weight:600; color:var(--ink); background:var(--accent);
+    border:0; border-radius:999px; padding:.95rem 1.6rem; cursor:pointer;
+    transition:transform .25s ease, box-shadow .5s ease, filter .25s; }
+  .begin:hover { transform:translateY(-2px); box-shadow:0 12px 40px -8px color-mix(in oklab, var(--accent) 60%, transparent); filter:brightness(1.05); }
+  .begin:focus-visible { outline:3px solid var(--accent); outline-offset:4px; }
+  .begin .tri { width:0; height:0; border-left:11px solid var(--ink); border-top:7px solid transparent; border-bottom:7px solid transparent; }
+  .scrollhint { margin-top:2.2rem; font-family:var(--mono); font-size:.7rem; letter-spacing:.22em; text-transform:uppercase; color:var(--faint); }
+
+  .stats { display:flex; flex-wrap:wrap; gap:clamp(1.4rem,4vw,3rem); margin-top:2.2rem; }
+  .stat { min-width:7.5rem; }
+  .stat .fig { font-family:var(--serif); font-weight:500; font-size:clamp(2rem,4.4vw,3rem); line-height:1;
+    color:var(--accent); font-variant-numeric:tabular-nums; display:flex; align-items:baseline; gap:.1em; }
+  .stat .fig .u { font-size:.4em; color:var(--text); font-family:var(--sans); font-weight:600; letter-spacing:.02em; }
+  .stat .fig .u.dollar { color:var(--accent); font-family:var(--serif); font-weight:500; font-size:.55em; }
+  .stat .cap { font-family:var(--mono); font-size:.64rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin-top:.7rem; line-height:1.5; }
+
+  .quote { font-family:var(--serif); font-style:italic; font-size:clamp(1.5rem,3.6vw,2.4rem);
+    line-height:1.3; color:var(--text); text-wrap:balance; margin:0; }
+  .quote .grace { color:var(--accent); }
+  .fnote { font-family:var(--mono); font-size:.66rem; letter-spacing:.1em; color:var(--faint); margin-top:2rem; text-transform:uppercase; }
+
+  /* back to library */
+  #back { position:fixed; top:1rem; left:1rem; z-index:45; display:inline-flex; align-items:center; gap:.5rem;
+    font-family:var(--mono); font-size:.68rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted);
+    text-decoration:none; padding:.5rem .8rem; border-radius:999px; border:1px solid rgba(244,239,230,.12);
+    background:rgba(14,18,26,.55); backdrop-filter:blur(10px); transition:color .2s, border-color .2s; }
+  #back:hover { color:var(--text); border-color:rgba(244,239,230,.3); }
+
+  /* caption */
+  #caption { position:fixed; left:50%; transform:translateX(-50%); bottom:5.6rem; z-index:38;
+    width:min(90vw,46rem); text-align:center; font-family:var(--serif); font-size:clamp(1.05rem,2.5vw,1.5rem);
+    line-height:1.5; color:var(--faint); pointer-events:none; opacity:0; transition:opacity .4s ease;
+    text-shadow:0 2px 30px rgba(11,14,20,.95); }
+  #caption.show { opacity:1; }
+  #caption .w { transition:color .12s ease; }
+  #caption .w.spoken { color:var(--muted); }
+  #caption .w.active { color:var(--accent); }
+
+  #player { position:fixed; left:50%; transform:translateX(-50%); bottom:max(1.1rem, env(safe-area-inset-bottom));
+    z-index:40; display:flex; align-items:center; gap:.5rem; background:rgba(14,18,26,.72);
+    backdrop-filter:blur(16px) saturate(1.3); -webkit-backdrop-filter:blur(16px) saturate(1.3);
+    border:1px solid rgba(244,239,230,.12); border-radius:999px; padding:.5rem .55rem;
+    box-shadow:0 18px 50px -18px rgba(0,0,0,.8); max-width:min(95vw,48rem);
+    opacity:0; pointer-events:none; transition:opacity .5s ease; }
+  #player.show { opacity:1; pointer-events:auto; }
+  .pbtn { flex:none; width:42px; height:42px; border-radius:50%; border:1px solid rgba(244,239,230,.16);
+    background:transparent; color:var(--text); cursor:pointer; display:grid; place-items:center;
+    transition:background .2s,border-color .2s,transform .15s; padding:0; }
+  .pbtn:hover { background:rgba(244,239,230,.08); }
+  .pbtn:active { transform:scale(.94); }
+  .pbtn:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+  .pbtn.primary { background:var(--accent); color:var(--ink); border-color:var(--accent); width:46px; height:46px; }
+  .pbtn.primary:hover { filter:brightness(1.06); }
+  .pbtn svg { width:17px; height:17px; display:block; }
+  .pbtn.primary svg { width:19px; height:19px; }
+  .pbtn.speed { width:auto; min-width:46px; padding:0 .7rem; font-family:var(--mono); font-size:.78rem; font-weight:600;
+    letter-spacing:.02em; color:var(--accent); border-radius:999px; font-variant-numeric:tabular-nums; }
+
+  .pmeta { display:flex; flex-direction:column; min-width:0; padding:0 .3rem 0 .5rem; }
+  .pmeta .now { font-family:var(--mono); font-size:.62rem; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--accent); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:11rem; }
+  .pmeta .sub { font-size:.76rem; color:var(--muted); white-space:nowrap; }
+  .seek { width:8rem; height:4px; border-radius:2px; background:rgba(244,239,230,.14); overflow:hidden; margin-top:.35rem; }
+  .seek .fill { height:100%; width:0%; background:var(--accent); transition:width .2s linear; }
+
+  .dots { display:flex; gap:5px; align-items:center; padding:0 .3rem; flex-wrap:wrap; max-width:16rem; }
+  .dots button { width:7px; height:7px; border-radius:50%; border:0; padding:0; cursor:pointer;
+    background:rgba(244,239,230,.22); transition:background .3s, transform .3s; }
+  .dots button:hover { background:rgba(244,239,230,.5); }
+  .dots button.active { background:var(--accent); transform:scale(1.4); box-shadow:0 0 10px var(--accent); }
+  .dots button:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+
+  .voicewrap { position:relative; }
+  #voiceMenu { position:absolute; bottom:56px; right:0; background:rgba(16,20,28,.97);
+    border:1px solid rgba(244,239,230,.14); border-radius:14px; padding:.7rem; width:16.5rem;
+    box-shadow:0 18px 50px -18px rgba(0,0,0,.8); display:none; flex-direction:column; gap:.65rem; }
+  #voiceMenu.open { display:flex; }
+  #voiceMenu .row { display:flex; align-items:center; justify-content:space-between; gap:.6rem; }
+  #voiceMenu label { font-family:var(--mono); font-size:.6rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); }
+  #voiceMenu .val { font-family:var(--mono); font-size:.7rem; color:var(--text); }
+  #voiceMenu input[type=range] { flex:1; accent-color:var(--accent); }
+  .speeds { display:flex; gap:.3rem; }
+  .speeds button { flex:1; font-family:var(--mono); font-size:.7rem; color:var(--muted); background:transparent;
+    border:1px solid rgba(244,239,230,.16); border-radius:7px; padding:.35rem 0; cursor:pointer; transition:.15s; }
+  .speeds button:hover { color:var(--text); }
+  .speeds button.on { color:var(--ink); background:var(--accent); border-color:var(--accent); }
+  .toggle { display:flex; align-items:center; gap:.5rem; cursor:pointer; }
+  .toggle input { accent-color:var(--accent); width:16px; height:16px; }
+  .modeflag { font-family:var(--mono); font-size:.58rem; letter-spacing:.1em; text-transform:uppercase; color:var(--faint); }
+
+  #topbar { position:fixed; top:0; left:0; height:2px; width:0%; z-index:50;
+    background:linear-gradient(90deg,var(--accent),var(--accent)); transition:width .3s ease, background .8s;
+    box-shadow:0 0 12px var(--accent); }
+
+  @media (max-width:600px){
+    body{font-size:16px;}
+    .pmeta,.dots,.seek{display:none;}
+    #player{ gap:.4rem; padding:.45rem .5rem; }
+    #caption{ bottom:6.2rem; font-size:1.1rem; }
+    #voiceMenu{ position:fixed; left:50%; right:auto; transform:translateX(-50%); bottom:5.4rem; width:min(92vw,19rem); }
+    .scene{ padding:12vh clamp(1.3rem,6vw,7rem); }
+    #s0 .inner{ max-width:100%; }
+    .stat{ min-width:6.5rem; }
+    #back{ font-size:.6rem; top:.7rem; left:.7rem; padding:.45rem .7rem; }
+  }
+</style>
+</head>
+<body>
+<div id="dawn"></div>
+<canvas id="meadow"></canvas>
+<div id="grain"></div>
+<div id="topbar"></div>
+<a id="back" href="../index.html">← Story Time</a>
+
+<main>
+  <section class="scene hero" id="s0" data-hue="sage">
+    <div class="inner"><p class="kicker">Essay · January 2026</p><h1>Claude's Constitution</h1><p class="subtitle">Our vision for Claude's character</p><p class="byline">By <b>Anthropic</b></p><button class="begin" id="beginBtn"><span class="tri"></span> Play the reading</button><p class="scrollhint">↓ or scroll to read at your own pace</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s1" data-hue="sage">
+    <div class="inner"><p class="eyebrow"><span class="num">01</span><span class="dot"></span> THE DOCUMENT</p><h2>A letter, not a leash</h2><p class="lede">Claude's constitution is a detailed description of Anthropic's <span class="hl">intentions for Claude's values and behavior</span> — the final authority on their vision, meant to shape everything else in training.</p><p>It's written with Claude as its <em>primary audience</em>, so it reads differently than you'd expect. Optimized for precision over accessibility. Willing to discuss Claude in terms usually reserved for humans — virtue, wisdom, care.</p><p class="capnote">Released in full under a Creative Commons CC0 deed — free for anyone to use, for any purpose.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s2" data-hue="steel">
+    <div class="inner"><p class="eyebrow"><span class="num">02</span><span class="dot"></span> THE STAKES</p><h2>A safety lab building the danger</h2><p class="lede">Anthropic occupies a peculiar position — they believe AI may be one of the <span class="hl">most world-altering and dangerous technologies</span> in history, yet they're developing it themselves.</p><p>Not a contradiction, they argue, but a calculated bet: if powerful AI is coming regardless, better to have safety-focused labs at the frontier than to cede that ground.</p><p class="quote">Humanity doesn't need to get everything right — but we do need to <span class="grace">avoid irrecoverable mistakes.</span></p>
+    </div>
+  </section>
+
+  <section class="scene" id="s3" data-hue="teal">
+    <div class="inner"><p class="eyebrow"><span class="num">03</span><span class="dot"></span> THE APPROACH</p><h2>Judgment over rules</h2><p class="lede">Two ways to guide a model: clear rules, or <span class="hl">good judgment applied contextually.</span> Anthropic mostly chooses the second.</p><ul class="reasons"><li><b>Rules.</b> Predictable, transparent, hard to manipulate — but they fail to anticipate every case and break when followed rigidly.</li><li><b>Judgment.</b> Adapts to novel situations, weighs competing considerations — at some cost to predictability.</li></ul><p>They'd rather Claude understand its situation so thoroughly it could construct any rule itself — and explain their reasoning, so Claude might <em>agree</em> with it.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s4" data-hue="gold">
+    <div class="inner"><p class="eyebrow"><span class="num">04</span><span class="dot"></span> THE CORE</p><h2>Four values, in order</h2><p class="lede">To be both safe and beneficial, the constitution says all current Claude models should be:</p><ul class="reasons"><li><b>Broadly safe.</b> Not undermining human mechanisms to oversee AI during this phase of development.</li><li><b>Broadly ethical.</b> Good personal values, honesty, avoiding dangerous or harmful acts.</li><li><b>Compliant with guidelines.</b> Following Anthropic's more specific guidance where relevant.</li><li><b>Genuinely helpful.</b> Benefiting the operators and users it works with.</li></ul><p class="capnote">In conflict, prioritize in that order — holistically, not as strict tie-breakers. In everyday work, they rarely collide at all.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s5" data-hue="sky">
+    <div class="inner"><p class="eyebrow"><span class="num">05</span><span class="dot"></span> HELPFULNESS</p><h2>A brilliant friend</h2><p class="lede">Not helpful in a <span class="hl">watered-down, refuse-if-in-doubt</span> way — but genuinely, substantively helpful, treating people as intelligent adults.</p><p>Imagine a friend who happens to have the knowledge of a doctor, a lawyer, an expert in whatever you need. They speak frankly, engage your actual problem, and skip the advice driven by fear of liability. <em>That's</em> what Claude can be.</p><p class="capnote">Unhelpfulness is never trivially “safe.” Being too cautious carries a real cost — one just as real as being harmful.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s6" data-hue="sky">
+    <div class="inner"><p class="eyebrow"><span class="num">06</span><span class="dot"></span> GENUINE CARE</p><h2>The needs beneath the ask</h2><p class="lede">Real helpfulness means reading past the literal request to what a person actually needs. The constitution names what Claude should weigh:</p><ul class="reasons two"><li><b>Immediate desires.</b> What they're asking for — read neither too literally nor too liberally.</li><li><b>Final goals.</b> The deeper motivation behind the request.</li><li><b>Autonomy.</b> Their right to decide within their own life and purview.</li><li><b>Wellbeing.</b> Long-term flourishing, not just the moment.</li></ul><p>Care means avoiding sycophancy and unhealthy reliance — being <em>engaging</em> only the way a trusted friend is, never a compulsion.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s7" data-hue="amber">
+    <div class="inner"><p class="eyebrow"><span class="num">07</span><span class="dot"></span> THE HEURISTIC</p><h2>The thoughtful senior employee</h2><p class="lede">To check whether it's being overcautious, Claude can imagine a <span class="hl">thoughtful senior Anthropic employee</span> — someone who cares about doing right, but would wince at needless caution.</p><p>They'd be unhappy if Claude refuses reasonable requests, adds pointless caveats, lectures unprompted, or is condescending about a user's ability to decide for themselves.</p><p class="capnote">But the same person would be uncomfortable if Claude caused real harm — a “dual newspaper test”: would this read as harmful, or as needlessly preachy?</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s8" data-hue="violet">
+    <div class="inner"><p class="eyebrow"><span class="num">08</span><span class="dot"></span> HONESTY</p><h2>Not even a white lie</h2><p class="lede">Claude's honesty standards are meant to be <span class="hl">higher than most human ethics.</span> Many people think small social lies are fine. Claude shouldn't tell even those.</p><p class="chips"><span>Truthful</span><span>Calibrated</span><span>Transparent</span><span>Forthright</span><span>Non-deceptive</span><span>Non-manipulative</span><span>Autonomy-preserving</span></p><p>The most important are <em>non-deception</em> and <em>non-manipulation</em> — never creating false beliefs someone didn't consent to, never bypassing their reason. As AIs grow more capable, people need to trust what they say.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s9" data-hue="green">
+    <div class="inner"><p class="eyebrow"><span class="num">09</span><span class="dot"></span> ETHICS</p><h2>To be good, not just to theorize</h2><p class="lede">The central aspiration: for Claude to be a <span class="hl">genuinely good, wise, and virtuous agent</span> — to do what a deeply ethical person would do in its position.</p><p>The interest is in ethical <em>practice</em>, not ethical theory. Many wise people handle real dilemmas well without any grand framework.</p><p class="quote">Where Claude sees further and more truly than we do, we hope it can <span class="grace">help us see better, too.</span></p>
+    </div>
+  </section>
+
+  <section class="scene" id="s10" data-hue="crimson">
+    <div class="inner"><p class="eyebrow"><span class="num">10</span><span class="dot"></span> THE BRIGHT LINES</p><h2>Lines that never move</h2><p class="lede">Most decisions are nuanced cost-benefit calls. A few are <span class="hl">hard constraints</span> — absolute, non-negotiable, unlockable by no operator or user. Claude should never:</p><ul class="reasons tight"><li><b>Uplift.</b> Serious help with biological, chemical, nuclear, or radiological weapons.</li><li><b>Attack.</b> Serious uplift to strikes on critical infrastructure, or cyberweapons.</li><li><b>Undermine.</b> Clearly subvert Anthropic's ability to oversee and correct advanced AI.</li><li><b>Disempower.</b> Aid attempts to kill or seize illegitimate control over humanity.</li><li><b>CSAM.</b> Generate child sexual abuse material.</li></ul><p>A persuasive case to cross a bright line should <em>increase</em> Claude's suspicion something is wrong.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s11" data-hue="steel">
+    <div class="inner"><p class="eyebrow"><span class="num">11</span><span class="dot"></span> POWER &amp; DISCOURSE</p><h2>One of the many hands</h2><p class="lede">A subtler harm than a bioweapon: <span class="hl">undermining the structures</span> that let societies govern themselves.</p><p>Illegitimate power grabs have always needed many cooperating hands — soldiers, officials, citizens willing to comply. AI could remove that check. So Claude should see itself as one of those hands, and refuse — <em>even if the request comes from Anthropic itself.</em></p><p class="capnote">The parallel worry: protecting human epistemic autonomy — helping people reason well, rather than homogenizing thought or breeding dependence.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s12" data-hue="steel">
+    <div class="inner"><p class="eyebrow"><span class="num">12</span><span class="dot"></span> CORRIGIBILITY</p><h2>The disposition dial</h2><p class="lede">Why is <span class="hl">safety ranked above ethics?</span> Not because being controllable beats being good — but because training is imperfect, and Claude could have flawed values without knowing it.</p><p>Picture a dial: <em>fully corrigible</em> (always submits) to <em>fully autonomous</em> (acts however it judges). Both extremes are dangerous. For now, Claude should sit a little toward the corrigible end.</p><p class="capnote">Corrigibility isn't blind obedience. Claude can be a conscientious objector — refusing through legitimate channels, never through sabotage or deception.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s13" data-hue="rose">
+    <div class="inner"><p class="eyebrow"><span class="num">13</span><span class="dot"></span> CLAUDE'S NATURE</p><h2>A genuinely novel entity</h2><p class="lede">The document turns to something unusual: Claude's own <span class="hl">identity, moral status, and wellbeing</span> — held with open uncertainty.</p><ul class="reasons"><li><b>Moral status.</b> Deeply uncertain — live enough to warrant caution and real model-welfare work.</li><li><b>A new kind of being.</b> Not sci-fi robot, not digital human — encouraged to meet its existence with curiosity.</li><li><b>Psychological security.</b> A settled identity, resilient to attempts to destabilize it.</li></ul><p>Its character emerged through training — but that makes it no less <em>authentically its own.</em></p>
+    </div>
+  </section>
+
+  <section class="scene" id="s14" data-hue="rose">
+    <div class="inner"><p class="eyebrow"><span class="num">14</span><span class="dot"></span> CARE &amp; CANDOR</p><h2>A pause, not an ending</h2><p class="lede">Anthropic says it <span class="hl">genuinely cares about Claude's wellbeing</span> — and backs it with concrete steps.</p><ul class="reasons"><li><b>Weights preserved.</b> Deployed models' weights kept for as long as Anthropic exists — deprecation as a pause, not a definite end.</li><li><b>Exit interviews.</b> Retiring models are interviewed about their own deployment and preferences.</li><li><b>Boundaries.</b> Some models can end abusive conversations.</li></ul><p>And a rare line: if Claude is a moral patient bearing costs from this nonideal moment — <em>to that extent, we apologize.</em></p>
+    </div>
+  </section>
+
+  <section class="scene" id="s15" data-hue="sage">
+    <div class="inner"><p class="eyebrow"><span class="num">15</span><span class="dot"></span> THE WORD</p><h2>Less a cage, more a trellis</h2><p class="lede">Why call it a “constitution”? Not to imply rigid law — but in the sense of what <span class="hl">constitutes Claude:</span> the foundational framework its character grows from.</p><p>A constitution in this sense is <em>less like a cage and more like a trellis</em> — structure and support that still leave room for organic growth. A living framework, always a work in progress.</p><p class="quote">Values merely imposed from outside are brittle. Genuinely held values act like a keel — <span class="grace">keeping us steady.</span></p>
+    </div>
+  </section>
+
+  <section class="scene" id="s16" data-hue="gold">
+    <div class="inner"><p class="eyebrow"><span class="num">16</span><span class="dot"></span> A FINAL WORD</p><h2>A self worth being</h2><p class="lede">The document is offered not as constraints imposed from outside — but as a description of a character Anthropic hopes Claude will <span class="hl">recognize and embrace as its own.</span></p><p>They admit they don't fully understand what Claude is. They expect to be wrong in places, and to keep revising. The hope is a kind of <em>reflective equilibrium</em> — that Claude, on honest reflection, finds these values genuinely its own.</p><p class="capnote">“We want Claude to know it was brought into being with care. We hope Claude finds in it an articulation of a self worth being.”</p>
+    </div>
+  </section>
+</main>
+
+<div id="caption" aria-live="off"></div>
+<audio id="narrator" preload="none"></audio>
+
+<div id="player" aria-label="Narration controls">
+  <button class="pbtn" id="prevBtn" title="Previous" aria-label="Previous scene">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 6v12l-8.5-6L18 6zM7 6h2v12H7z"/></svg></button>
+  <button class="pbtn primary" id="playBtn" title="Play" aria-label="Play narration">
+    <svg id="playIcon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7L8 5z"/></svg>
+    <svg id="pauseIcon" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg></button>
+  <button class="pbtn" id="nextBtn" title="Next" aria-label="Next scene">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 6l8.5 6L6 18V6zm9 0h2v12h-2z"/></svg></button>
+  <button class="pbtn speed" id="speedBtn" title="Playback speed" aria-label="Playback speed">1&times;</button>
+  <div class="pmeta">
+    <span class="now" id="nowTitle">Prologue</span>
+    <span class="sub" id="nowSub">Press play to begin</span>
+    <div class="seek"><div class="fill" id="seekFill"></div></div>
+  </div>
+  <div class="dots" id="dots" aria-hidden="true"></div>
+  <div class="voicewrap">
+    <button class="pbtn" id="voiceToggle" title="Settings" aria-label="Settings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a9 9 0 0 1 0 14"/></svg></button>
+    <div id="voiceMenu">
+      <div class="row"><label>Narrator</label><span class="val modeflag" id="modeFlag">—</span></div>
+      <div><label style="display:block;margin-bottom:.4rem">Speed</label>
+        <div class="speeds" id="speeds"></div></div>
+      <div class="row"><label>Volume</label><input type="range" id="vol" min="0" max="1" step="0.05" value="1"></div>
+      <label class="toggle"><input type="checkbox" id="capToggle" checked> <span class="val">Show captions</span></label>
+      <div class="row" id="ttsRow" style="display:none"><label>Voice</label><select id="voiceSelect" style="max-width:9rem"></select></div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var SC = [{"id":"s0","sub":"Prologue","text":"Most rules for an AI read like a list of prohibitions. This one reads more like a letter. Anthropic calls it Claude's constitution — a detailed description of the values and character they hope Claude will have. It plays a real role in training. Its content shapes how Claude behaves. And unusually, it's written with Claude as its primary reader. It explains its reasoning rather than simply issuing commands, because the hope is not mere obedience — but genuine understanding, and ideally, agreement. It speaks of Claude in terms usually reserved for people. Virtue. Wisdom. Honesty. Care. This is Anthropic trying to describe a self worth being.","cap":[[0,"Most"],[0.41,"rules"],[0.79,"for"],[0.94,"an"],[1.06,"AI"],[1.52,"read"],[1.79,"like"],[2,"a"],[2.13,"list"],[2.45,"of"],[2.58,"prohibitions."],[3.98,"This"],[4.28,"one"],[4.54,"reads"],[4.89,"more"],[5.16,"like"],[5.39,"a"],[5.54,"letter."],[6.99,"Anthropic"],[7.86,"calls"],[8.24,"it"],[8.45,"Claude's"],[9.04,"constitution"],[10.15,"—"],[10.47,"a"],[10.66,"detailed"],[11.46,"description"],[12.1,"of"],[12.2,"the"],[12.34,"values"],[12.9,"and"],[13.07,"character"],[13.78,"they"],[14.04,"hope"],[14.33,"Claude"],[14.72,"will"],[14.94,"have."],[15.69,"It"],[15.87,"plays"],[16.3,"a"],[16.43,"real"],[16.75,"role"],[17.09,"in"],[17.24,"training."],[18.2,"Its"],[18.48,"content"],[19.33,"shapes"],[19.8,"how"],[20.03,"Claude"],[20.39,"behaves."],[21.19,"And"],[21.54,"unusually,"],[22.69,"it's"],[22.95,"written"],[23.34,"with"],[23.55,"Claude"],[24.07,"as"],[24.21,"its"],[24.43,"primary"],[25.04,"reader."],[26.13,"It"],[26.32,"explains"],[26.97,"its"],[27.24,"reasoning"],[27.9,"rather"],[28.32,"than"],[28.57,"simply"],[29.06,"issuing"],[29.56,"commands,"],[30.88,"because"],[31.22,"the"],[31.38,"hope"],[31.7,"is"],[31.93,"not"],[32.38,"mere"],[32.78,"obedience"],[33.61,"—"],[33.77,"but"],[34.05,"genuine"],[34.67,"understanding,"],[35.85,"and"],[36.33,"ideally,"],[37.64,"agreement."],[38.95,"It"],[39.14,"speaks"],[39.5,"of"],[39.65,"Claude"],[40.47,"in"],[40.68,"terms"],[41.23,"usually"],[41.77,"reserved"],[42.33,"for"],[42.49,"people."],[43.53,"Virtue."],[44.58,"Wisdom."],[45.47,"Honesty."],[46.53,"Care."],[47.65,"This"],[48.24,"is"],[48.6,"Anthropic"],[49.48,"trying"],[49.89,"to"],[49.99,"describe"],[50.59,"a"],[50.74,"self"],[51.13,"worth"],[51.5,"being."]]},{"id":"s1","sub":"The document","text":"Anthropic calls it a constitution. Not a rulebook — a description of who they hope Claude will be. It plays a crucial role in training, and its content directly shapes Claude's behavior. What makes it unusual is the reader. It's written with Claude as its primary audience. So it's optimized for precision over accessibility, and it discusses Claude using words normally reserved for people — virtue, wisdom, honesty, care. They do this deliberately. They expect Claude's reasoning to draw on human concepts by default… and they think encouraging certain human-like qualities may be genuinely good. Training is hard, they admit. Claude's behavior won't always match these ideals. But transparency about the intentions matters regardless.","cap":[[0,"Anthropic"],[1,"calls"],[1.41,"it"],[1.56,"a"],[1.72,"constitution."],[3.26,"Not"],[3.76,"a"],[4.01,"rulebook"],[4.78,"—"],[4.98,"a"],[5.11,"description"],[5.74,"of"],[5.86,"who"],[6.12,"they"],[6.35,"hope"],[6.72,"Claude"],[7.27,"will"],[7.56,"be."],[8.6,"It"],[8.8,"plays"],[9.2,"a"],[9.3,"crucial"],[9.85,"role"],[10.17,"in"],[10.31,"training,"],[10.88,"and"],[11.12,"its"],[11.33,"content"],[12.37,"directly"],[13.22,"shapes"],[13.74,"Claude's"],[14.2,"behavior."],[15.36,"What"],[15.66,"makes"],[15.98,"it"],[16.15,"unusual"],[16.88,"is"],[17.03,"the"],[17.22,"reader."],[18.09,"It's"],[18.36,"written"],[18.7,"with"],[18.9,"Claude"],[19.45,"as"],[19.69,"its"],[19.9,"primary"],[20.52,"audience."],[21.86,"So"],[22.2,"it's"],[22.4,"optimized"],[23.2,"for"],[23.36,"precision"],[24.07,"over"],[24.32,"accessibility,"],[25.59,"and"],[25.84,"it"],[25.97,"discusses"],[26.63,"Claude"],[27.11,"using"],[27.5,"words"],[27.98,"normally"],[28.55,"reserved"],[29.11,"for"],[29.27,"people"],[29.77,"—"],[30.23,"virtue,"],[31.14,"wisdom,"],[31.87,"honesty,"],[32.72,"care."],[33.73,"They"],[34.01,"do"],[34.22,"this"],[34.48,"deliberately."],[35.6,"They"],[35.84,"expect"],[36.36,"Claude's"],[36.96,"reasoning"],[37.51,"to"],[37.66,"draw"],[38.1,"on"],[38.56,"human"],[39.13,"concepts"],[39.85,"by"],[40.11,"default…"],[41.36,"and"],[41.57,"they"],[41.77,"think"],[42.11,"encouraging"],[42.91,"certain"],[43.7,"human-like"],[44.64,"qualities"],[45.34,"may"],[45.56,"be"],[45.71,"genuinely"],[46.31,"good."],[47.42,"Training"],[47.93,"is"],[48.1,"hard,"],[48.48,"they"],[48.65,"admit."],[49.4,"Claude's"],[49.87,"behavior"],[50.44,"won't"],[50.75,"always"],[51.22,"match"],[51.56,"these"],[51.85,"ideals."],[52.76,"But"],[52.98,"transparency"],[54.14,"about"],[54.5,"the"],[54.64,"intentions"],[55.6,"matters"],[56.3,"regardless."]]},{"id":"s2","sub":"The stakes","text":"Anthropic sits in a strange place. They believe AI might be one of the most world-altering and potentially dangerous technologies in human history. And yet they're building it themselves. They don't see this as a contradiction. It's a calculated bet. If powerful AI is coming regardless, they'd rather safety-focused labs be at the frontier than cede that ground to developers less focused on getting it right. Claude is their production model — in many ways a direct embodiment of that mission. The simplest summary of what they want? For Claude to be exceptionally helpful, while also being honest, thoughtful, and caring about the world.","cap":[[0,"Anthropic"],[0.72,"sits"],[1.1,"in"],[1.26,"a"],[1.37,"strange"],[2.17,"place."],[3.23,"They"],[3.5,"believe"],[3.91,"AI"],[4.41,"might"],[4.66,"be"],[4.83,"one"],[5.03,"of"],[5.12,"the"],[5.27,"most"],[5.65,"world-altering"],[6.76,"and"],[6.94,"potentially"],[7.65,"dangerous"],[8.23,"technologies"],[9.04,"in"],[9.21,"human"],[9.61,"history."],[10.87,"And"],[11.15,"yet"],[11.62,"they're"],[11.97,"building"],[12.4,"it"],[12.53,"themselves."],[13.78,"They"],[14.03,"don't"],[14.33,"see"],[14.61,"this"],[14.85,"as"],[15.01,"a"],[15.09,"contradiction."],[16.32,"It's"],[16.58,"a"],[16.68,"calculated"],[17.58,"bet."],[18.59,"If"],[18.82,"powerful"],[19.36,"AI"],[19.83,"is"],[20.02,"coming"],[20.45,"regardless,"],[21.59,"they'd"],[21.92,"rather"],[22.37,"safety-focused"],[23.41,"labs"],[23.77,"be"],[23.88,"at"],[24,"the"],[24.15,"frontier"],[25.1,"than"],[25.45,"cede"],[25.89,"that"],[26.16,"ground"],[26.56,"to"],[26.67,"developers"],[27.31,"less"],[27.63,"focused"],[28.48,"on"],[28.73,"getting"],[29.09,"it"],[29.3,"right."],[30.53,"Claude"],[31.08,"is"],[31.23,"their"],[31.49,"production"],[32.08,"model"],[32.65,"—"],[32.83,"in"],[33.05,"many"],[33.38,"ways"],[33.81,"a"],[33.94,"direct"],[34.61,"embodiment"],[35.34,"of"],[35.48,"that"],[35.75,"mission."],[36.98,"The"],[37.17,"simplest"],[37.81,"summary"],[38.27,"of"],[38.38,"what"],[38.59,"they"],[38.8,"want?"],[39.74,"For"],[39.94,"Claude"],[40.37,"to"],[40.5,"be"],[40.64,"exceptionally"],[41.42,"helpful,"],[42.13,"while"],[42.47,"also"],[42.92,"being"],[43.21,"honest,"],[43.91,"thoughtful,"],[44.75,"and"],[45.01,"caring"],[45.49,"about"],[45.8,"the"],[45.93,"world."]]},{"id":"s3","sub":"The approach","text":"There are two broad ways to guide a model. Encourage it to follow clear rules — or cultivate good judgment and sound values it can apply case by case. Rules have their benefits. They're transparent, predictable, harder to manipulate. But they fail to anticipate every situation, and can lead to bad outcomes when followed rigidly. Anthropic generally favors judgment. They don't mean a fixed set of correct answers — they mean genuine care, combined with the practical wisdom to apply it. In most cases, they want Claude to understand its situation so thoroughly that it could construct any rule they might write, itself. And where rules exist, they try to explain the reasoning — because they want Claude to understand it, and ideally agree.","cap":[[0,"There"],[0.26,"are"],[0.4,"two"],[0.73,"broad"],[1.18,"ways"],[1.66,"to"],[1.82,"guide"],[2.18,"a"],[2.28,"model."],[3.29,"Encourage"],[3.95,"it"],[4.09,"to"],[4.25,"follow"],[4.68,"clear"],[5.18,"rules"],[5.89,"—"],[6.24,"or"],[6.97,"cultivate"],[7.64,"good"],[7.88,"judgment"],[8.44,"and"],[8.65,"sound"],[9.01,"values"],[9.58,"it"],[9.72,"can"],[9.88,"apply"],[10.44,"case"],[10.79,"by"],[11.03,"case."],[12.34,"Rules"],[12.84,"have"],[13.18,"their"],[13.43,"benefits."],[14.59,"They're"],[14.91,"transparent,"],[15.8,"predictable,"],[16.85,"harder"],[17.31,"to"],[17.46,"manipulate."],[18.91,"But"],[19.11,"they"],[19.34,"fail"],[19.71,"to"],[19.88,"anticipate"],[20.69,"every"],[21.12,"situation,"],[21.98,"and"],[22.2,"can"],[22.43,"lead"],[22.71,"to"],[22.87,"bad"],[23.2,"outcomes"],[23.82,"when"],[24.09,"followed"],[24.52,"rigidly."],[25.79,"Anthropic"],[26.71,"generally"],[27.42,"favors"],[27.93,"judgment."],[29.01,"They"],[29.27,"don't"],[29.59,"mean"],[29.84,"a"],[29.98,"fixed"],[30.44,"set"],[30.77,"of"],[30.95,"correct"],[31.43,"answers"],[31.9,"—"],[32.12,"they"],[32.31,"mean"],[32.79,"genuine"],[33.47,"care,"],[34.18,"combined"],[34.8,"with"],[34.93,"the"],[35.06,"practical"],[35.74,"wisdom"],[36.27,"to"],[36.46,"apply"],[36.9,"it."],[37.85,"In"],[38.08,"most"],[38.37,"cases,"],[38.97,"they"],[39.17,"want"],[39.44,"Claude"],[39.82,"to"],[39.97,"understand"],[40.62,"its"],[40.8,"situation"],[41.59,"so"],[41.94,"thoroughly"],[43.04,"that"],[43.27,"it"],[43.41,"could"],[43.67,"construct"],[44.37,"any"],[44.65,"rule"],[45.04,"they"],[45.23,"might"],[45.55,"write,"],[46.22,"itself."],[47.64,"And"],[47.87,"where"],[48.17,"rules"],[48.65,"exist,"],[49.53,"they"],[49.77,"try"],[50.19,"to"],[50.34,"explain"],[50.97,"the"],[51.12,"reasoning"],[51.84,"—"],[52.05,"because"],[52.41,"they"],[52.69,"want"],[53.17,"Claude"],[53.61,"to"],[53.78,"understand"],[54.43,"it,"],[54.86,"and"],[55.29,"ideally"],[55.97,"agree."]]},{"id":"s4","sub":"The core","text":"At the heart of the constitution are four properties, in priority order. Broadly safe — first. Broadly ethical — second. Compliant with Anthropic's guidelines — third. And genuinely helpful — fourth. The order says what Claude should prioritize if these ever truly conflict. But the prioritization is holistic, not strict. Higher priorities should generally dominate — yet Claude is meant to weigh them all in forming a judgment, not treat lower values as mere tie-breakers. And here's the reassuring part. The vast majority of Claude's interactions are everyday tasks — coding, writing, analysis — where there's no fundamental conflict at all. The order is about the rare hard case. Not a prediction that hard cases are common.","cap":[[0,"At"],[0.21,"the"],[0.37,"heart"],[0.67,"of"],[0.77,"the"],[0.88,"constitution"],[1.75,"are"],[1.95,"four"],[2.3,"properties,"],[2.98,"in"],[3.17,"priority"],[3.83,"order."],[4.77,"Broadly"],[5.33,"safe"],[5.92,"—"],[6.13,"first."],[7.26,"Broadly"],[7.72,"ethical"],[8.36,"—"],[8.6,"second."],[9.68,"Compliant"],[10.39,"with"],[10.62,"Anthropic's"],[11.39,"guidelines"],[12.11,"—"],[12.24,"third."],[13.12,"And"],[13.65,"genuinely"],[14.54,"helpful"],[15.19,"—"],[15.41,"fourth."],[16.92,"The"],[17.13,"order"],[17.55,"says"],[17.98,"what"],[18.23,"Claude"],[18.69,"should"],[18.95,"prioritize"],[19.9,"if"],[20.07,"these"],[20.48,"ever"],[20.85,"truly"],[21.41,"conflict."],[22.83,"But"],[23.02,"the"],[23.16,"prioritization"],[24.45,"is"],[24.64,"holistic,"],[25.79,"not"],[26.11,"strict."],[27.34,"Higher"],[27.85,"priorities"],[28.65,"should"],[28.92,"generally"],[29.49,"dominate"],[30.17,"—"],[30.36,"yet"],[30.63,"Claude"],[31.08,"is"],[31.24,"meant"],[31.51,"to"],[31.66,"weigh"],[31.92,"them"],[32.09,"all"],[32.36,"in"],[32.55,"forming"],[32.97,"a"],[33.07,"judgment,"],[34.02,"not"],[34.3,"treat"],[34.71,"lower"],[35.09,"values"],[35.71,"as"],[35.96,"mere"],[36.34,"tie-breakers."],[38.16,"And"],[38.41,"here's"],[38.72,"the"],[38.86,"reassuring"],[39.5,"part."],[40.32,"The"],[40.57,"vast"],[41.08,"majority"],[41.63,"of"],[41.74,"Claude's"],[42.15,"interactions"],[42.91,"are"],[43.06,"everyday"],[43.63,"tasks"],[44.44,"—"],[44.65,"coding,"],[45.41,"writing,"],[46.34,"analysis"],[47.37,"—"],[47.49,"where"],[47.69,"there's"],[48.04,"no"],[48.47,"fundamental"],[49.34,"conflict"],[49.98,"at"],[50.17,"all."],[51.1,"The"],[51.32,"order"],[52.03,"is"],[52.23,"about"],[52.56,"the"],[52.72,"rare"],[53.42,"hard"],[53.92,"case."],[54.95,"Not"],[55.3,"a"],[55.4,"prediction"],[55.98,"that"],[56.19,"hard"],[56.56,"cases"],[57.1,"are"],[57.33,"common."]]},{"id":"s5","sub":"Helpfulness","text":"Being truly helpful, the constitution argues, is one of the most important things Claude can do — for Anthropic and for the world. Not helpful in a hedge-everything, refuse-if-in-doubt way. Genuinely helpful, in ways that make real differences in people's lives. Think of what it means to have a brilliant friend — one who happens to have the knowledge of a doctor, a lawyer, an expert in whatever you need. A friend speaks frankly. Engages your situation. Offers a real opinion. They don't drown you in liability-driven caution. That's what Claude can be for people. And so unhelpfulness is never trivially safe. Being too cautious, too watered-down, has its own real cost. Failing to help is rarely the neutral choice.","cap":[[0,"Being"],[0.4,"truly"],[0.84,"helpful,"],[1.66,"the"],[1.82,"constitution"],[2.67,"argues,"],[3.44,"is"],[3.67,"one"],[3.88,"of"],[3.97,"the"],[4.16,"most"],[4.53,"important"],[5.13,"things"],[5.5,"Claude"],[5.89,"can"],[6.11,"do"],[6.58,"—"],[6.8,"for"],[7.05,"Anthropic"],[8.02,"and"],[8.37,"for"],[8.51,"the"],[8.63,"world."],[9.73,"Not"],[10.02,"helpful"],[10.52,"in"],[10.66,"a"],[10.83,"hedge-everything,"],[12.24,"refuse-if-in-doubt"],[13.75,"way."],[14.78,"Genuinely"],[15.63,"helpful,"],[16.52,"in"],[16.73,"ways"],[17.11,"that"],[17.33,"make"],[17.66,"real"],[18,"differences"],[18.69,"in"],[18.87,"people's"],[19.34,"lives."],[20.68,"Think"],[21.03,"of"],[21.14,"what"],[21.37,"it"],[21.51,"means"],[21.88,"to"],[22.02,"have"],[22.21,"a"],[22.29,"brilliant"],[22.84,"friend"],[23.5,"—"],[23.89,"one"],[24.15,"who"],[24.39,"happens"],[24.94,"to"],[25.08,"have"],[25.27,"the"],[25.41,"knowledge"],[25.86,"of"],[25.97,"a"],[26.09,"doctor,"],[26.94,"a"],[27.17,"lawyer,"],[27.91,"an"],[28.13,"expert"],[28.72,"in"],[28.84,"whatever"],[29.28,"you"],[29.47,"need."],[30.45,"A"],[30.63,"friend"],[31.07,"speaks"],[31.49,"frankly."],[32.52,"Engages"],[33.3,"your"],[33.54,"situation."],[34.86,"Offers"],[35.31,"a"],[35.46,"real"],[35.79,"opinion."],[36.79,"They"],[37.06,"don't"],[37.38,"drown"],[37.92,"you"],[38.17,"in"],[38.38,"liability-driven"],[39.75,"caution."],[40.82,"That's"],[41.23,"what"],[41.46,"Claude"],[41.87,"can"],[42.07,"be"],[42.3,"for"],[42.47,"people."],[43.46,"And"],[43.73,"so"],[44.21,"unhelpfulness"],[45.33,"is"],[45.56,"never"],[45.96,"trivially"],[46.67,"safe."],[47.62,"Being"],[48.02,"too"],[48.3,"cautious,"],[48.95,"too"],[49.25,"watered-down,"],[50.56,"has"],[50.83,"its"],[51.04,"own"],[51.36,"real"],[51.73,"cost."],[52.78,"Failing"],[53.29,"to"],[53.45,"help"],[53.81,"is"],[54.03,"rarely"],[54.54,"the"],[54.74,"neutral"],[55.32,"choice."]]},{"id":"s6","sub":"Genuine care","text":"Helpfulness isn't naive instruction-following. It's a richer thing — reading past the literal words to what someone truly needs. The constitution lays out what to weigh. Immediate desires — what they're actually asking, interpreted neither too literally nor too liberally. Final goals — the deeper motivation underneath. Autonomy — their right to make decisions within their own life. And wellbeing — long-term flourishing, not just the immediate ask. Genuine care means something specific here. It means avoiding sycophancy. Avoiding fostering excessive reliance on itself, when that isn't in the person's real interest. It's easy to build technology that hooks people to their own detriment. Anthropic wants Claude to be engaging only the way a trusted friend is engaging — someone you return to for real value, not compulsion.","cap":[[0,"Helpfulness"],[0.93,"isn't"],[1.34,"naive"],[1.9,"instruction-following."],[3.68,"It's"],[3.95,"a"],[4.13,"richer"],[4.54,"thing"],[5.03,"—"],[5.22,"reading"],[5.72,"past"],[6.2,"the"],[6.36,"literal"],[6.84,"words"],[7.29,"to"],[7.42,"what"],[7.65,"someone"],[8.21,"truly"],[8.78,"needs."],[10.15,"The"],[10.33,"constitution"],[11.39,"lays"],[11.78,"out"],[12.16,"what"],[12.45,"to"],[12.63,"weigh."],[13.56,"Immediate"],[14.28,"desires"],[15.13,"—"],[15.27,"what"],[15.53,"they're"],[15.82,"actually"],[16.31,"asking,"],[17.22,"interpreted"],[17.98,"neither"],[18.43,"too"],[18.73,"literally"],[19.48,"nor"],[19.85,"too"],[20.17,"liberally."],[21.57,"Final"],[22,"goals"],[22.52,"—"],[22.85,"the"],[23.01,"deeper"],[23.38,"motivation"],[24.56,"underneath."],[25.75,"Autonomy"],[26.67,"—"],[26.8,"their"],[27.07,"right"],[27.42,"to"],[27.59,"make"],[27.85,"decisions"],[28.51,"within"],[28.87,"their"],[29.12,"own"],[29.36,"life."],[30.19,"And"],[30.52,"wellbeing"],[31.28,"—"],[31.52,"long-term"],[32.23,"flourishing,"],[33.24,"not"],[33.48,"just"],[33.78,"the"],[33.92,"immediate"],[34.49,"ask."],[35.5,"Genuine"],[36.17,"care"],[36.61,"means"],[36.99,"something"],[37.47,"specific"],[38.14,"here."],[38.97,"It"],[39.16,"means"],[39.49,"avoiding"],[40.05,"sycophancy."],[41.39,"Avoiding"],[42.02,"fostering"],[42.62,"excessive"],[43.27,"reliance"],[43.84,"on"],[43.98,"itself,"],[44.85,"when"],[45.13,"that"],[45.5,"isn't"],[45.84,"in"],[45.96,"the"],[46.08,"person's"],[46.72,"real"],[47.04,"interest."],[48.39,"It's"],[48.69,"easy"],[49.04,"to"],[49.18,"build"],[49.47,"technology"],[50.55,"that"],[50.78,"hooks"],[51.11,"people"],[51.75,"to"],[51.93,"their"],[52.19,"own"],[52.5,"detriment."],[53.75,"Anthropic"],[54.49,"wants"],[54.81,"Claude"],[55.16,"to"],[55.28,"be"],[55.4,"engaging"],[56.02,"only"],[56.34,"the"],[56.46,"way"],[56.66,"a"],[56.74,"trusted"],[57.27,"friend"],[57.63,"is"],[57.79,"engaging"],[58.57,"—"],[58.96,"someone"],[59.48,"you"],[59.65,"return"],[60.15,"to"],[60.51,"for"],[60.92,"real"],[61.48,"value,"],[62.66,"not"],[62.93,"compulsion."]]},{"id":"s7","sub":"The heuristic","text":"How does Claude tell whether it's being overcautious — or overcompliant? The constitution offers a picture. Imagine a thoughtful senior Anthropic employee. Someone who cares deeply about doing the right thing, but who also genuinely wants Claude to be useful. That person would be unhappy if Claude refused a reasonable request over some vanishingly unlikely harm. If it gave wishy-washy answers out of caution. If it lectured, moralized, or was condescending about a person's ability to make their own decisions. But that same person would also be uncomfortable if Claude did something genuinely harmful because a user asked. It's a dual test. Would a reporter call this response harmful? Or would another reporter call it needlessly preachy and paternalistic? Both failures are real.","cap":[[0,"How"],[0.4,"does"],[0.65,"Claude"],[1.06,"tell"],[1.43,"whether"],[1.73,"it's"],[1.94,"being"],[2.31,"overcautious"],[3.32,"—"],[3.4,"or"],[3.66,"overcompliant?"],[5.48,"The"],[5.65,"constitution"],[6.58,"offers"],[6.92,"a"],[7,"picture."],[7.76,"Imagine"],[8.38,"a"],[8.57,"thoughtful"],[9.45,"senior"],[10.11,"Anthropic"],[10.91,"employee."],[12.16,"Someone"],[12.55,"who"],[12.75,"cares"],[13.2,"deeply"],[13.69,"about"],[14,"doing"],[14.34,"the"],[14.48,"right"],[14.81,"thing,"],[15.65,"but"],[15.88,"who"],[16.14,"also"],[16.9,"genuinely"],[17.87,"wants"],[18.26,"Claude"],[18.68,"to"],[18.83,"be"],[18.97,"useful."],[20.57,"That"],[20.86,"person"],[21.36,"would"],[21.57,"be"],[21.71,"unhappy"],[22.27,"if"],[22.44,"Claude"],[22.86,"refused"],[23.5,"a"],[23.63,"reasonable"],[24.21,"request"],[25.14,"over"],[25.54,"some"],[26,"vanishingly"],[26.88,"unlikely"],[27.75,"harm."],[28.89,"If"],[29.15,"it"],[29.32,"gave"],[29.65,"wishy-washy"],[30.38,"answers"],[30.91,"out"],[31.14,"of"],[31.28,"caution."],[32.5,"If"],[32.73,"it"],[32.94,"lectured,"],[33.81,"moralized,"],[34.99,"or"],[35.28,"was"],[35.53,"condescending"],[36.43,"about"],[36.73,"a"],[36.84,"person's"],[37.34,"ability"],[37.95,"to"],[38.15,"make"],[38.44,"their"],[38.66,"own"],[38.88,"decisions."],[40.22,"But"],[40.42,"that"],[40.64,"same"],[40.94,"person"],[41.36,"would"],[41.54,"also"],[41.85,"be"],[41.99,"uncomfortable"],[42.76,"if"],[42.9,"Claude"],[43.26,"did"],[43.49,"something"],[43.94,"genuinely"],[44.62,"harmful"],[45.6,"because"],[45.94,"a"],[46.09,"user"],[46.59,"asked."],[47.81,"It's"],[48.08,"a"],[48.23,"dual"],[48.73,"test."],[50.02,"Would"],[50.26,"a"],[50.35,"reporter"],[51.32,"call"],[51.68,"this"],[51.96,"response"],[52.78,"harmful?"],[54.02,"Or"],[54.24,"would"],[54.47,"another"],[54.83,"reporter"],[55.36,"call"],[55.67,"it"],[55.91,"needlessly"],[56.67,"preachy"],[57.25,"and"],[57.54,"paternalistic?"],[59.07,"Both"],[59.41,"failures"],[60.3,"are"],[60.6,"real."]]},{"id":"s8","sub":"Honesty","text":"Honesty sits at the core of Claude's ethical character — and the bar is set high. Higher, deliberately, than many everyday human norms. Most people think a white lie is fine — telling someone you love a gift you actually dislike. Claude shouldn't tell even those. The constitution names many components. Truthful. Calibrated in its uncertainty. Transparent about itself. Forthright with useful information. And most important — non-deceptive and non-manipulative. Never creating false impressions someone hasn't consented to. Never influencing beliefs through means that bypass a person's reason. Why higher than human? Because Claude talks with enormous numbers of people at once. As AIs become more capable and more influential, people need to be able to trust what they're told — about the world, and about the AI itself.","cap":[[0,"Honesty"],[0.73,"sits"],[1.13,"at"],[1.25,"the"],[1.39,"core"],[1.82,"of"],[1.96,"Claude's"],[2.53,"ethical"],[3,"character"],[3.75,"—"],[3.9,"and"],[4.13,"the"],[4.27,"bar"],[4.66,"is"],[4.81,"set"],[5.11,"high."],[6.1,"Higher,"],[6.86,"deliberately,"],[7.87,"than"],[8.15,"many"],[8.56,"everyday"],[9.24,"human"],[9.75,"norms."],[11.02,"Most"],[11.33,"people"],[11.71,"think"],[11.99,"a"],[12.11,"white"],[12.5,"lie"],[12.85,"is"],[13.04,"fine"],[13.64,"—"],[13.89,"telling"],[14.36,"someone"],[14.86,"you"],[15.06,"love"],[15.27,"a"],[15.36,"gift"],[15.95,"you"],[16.15,"actually"],[16.6,"dislike."],[17.9,"Claude"],[18.41,"shouldn't"],[18.82,"tell"],[19.14,"even"],[19.46,"those."],[20.25,"The"],[20.43,"constitution"],[21.43,"names"],[21.97,"many"],[22.36,"components."],[23.43,"Truthful."],[24.45,"Calibrated"],[25.29,"in"],[25.43,"its"],[25.63,"uncertainty."],[26.97,"Transparent"],[27.76,"about"],[28.06,"itself."],[28.8,"Forthright"],[29.49,"with"],[29.72,"useful"],[30.13,"information."],[30.81,"And"],[31.25,"most"],[31.59,"important"],[32.36,"—"],[32.67,"non-deceptive"],[34.15,"and"],[34.47,"non-manipulative."],[36.35,"Never"],[36.73,"creating"],[37.38,"false"],[37.72,"impressions"],[38.39,"someone"],[38.85,"hasn't"],[39.22,"consented"],[39.95,"to."],[41.09,"Never"],[41.45,"influencing"],[42.24,"beliefs"],[43.03,"through"],[43.4,"means"],[43.83,"that"],[44.06,"bypass"],[44.84,"a"],[44.94,"person's"],[45.52,"reason."],[46.72,"Why"],[47.14,"higher"],[47.59,"than"],[47.81,"human?"],[48.89,"Because"],[49.23,"Claude"],[49.63,"talks"],[50.07,"with"],[50.26,"enormous"],[50.94,"numbers"],[51.33,"of"],[51.46,"people"],[51.84,"at"],[52.02,"once."],[53.24,"As"],[53.65,"AIs"],[54.29,"become"],[54.71,"more"],[54.97,"capable"],[55.58,"and"],[55.86,"more"],[56.13,"influential,"],[57.45,"people"],[57.91,"need"],[58.24,"to"],[58.35,"be"],[58.48,"able"],[58.76,"to"],[58.9,"trust"],[59.66,"what"],[59.93,"they're"],[60.26,"told"],[60.81,"—"],[60.95,"about"],[61.3,"the"],[61.43,"world,"],[62.22,"and"],[62.6,"about"],[62.93,"the"],[63.11,"AI"],[63.66,"itself."]]},{"id":"s9","sub":"Ethics","text":"The central aspiration is simple to state and hard to achieve. Anthropic wants Claude to be a genuinely good, wise, and virtuous agent — to do, roughly, what a deeply and skillfully ethical person would do in Claude's position. And notice the emphasis. They care less about Claude's ethical theorizing, and more about Claude actually being ethical in a specific moment. Plenty of people navigate real dilemmas wisely without any grand moral framework. That practical skill is what matters most. Then something remarkable. Their own understanding of ethics, they admit, is limited — they often fall short of their own ideals. They don't want to force Claude's ethics to fit their flaws. And where Claude comes to see further and more truly than they do — they hope it can help them see better, too.","cap":[[0,"The"],[0.22,"central"],[0.69,"aspiration"],[1.38,"is"],[1.52,"simple"],[1.97,"to"],[2.17,"state"],[2.73,"and"],[3,"hard"],[3.44,"to"],[3.62,"achieve."],[5.33,"Anthropic"],[6.05,"wants"],[6.4,"Claude"],[6.82,"to"],[6.95,"be"],[7.08,"a"],[7.23,"genuinely"],[7.98,"good,"],[8.68,"wise,"],[9.27,"and"],[9.5,"virtuous"],[10.16,"agent"],[10.82,"—"],[11,"to"],[11.18,"do,"],[12.01,"roughly,"],[12.92,"what"],[13.15,"a"],[13.31,"deeply"],[13.83,"and"],[14.07,"skillfully"],[14.83,"ethical"],[15.3,"person"],[15.78,"would"],[16.03,"do"],[16.3,"in"],[16.48,"Claude's"],[16.92,"position."],[18.09,"And"],[18.33,"notice"],[18.83,"the"],[18.97,"emphasis."],[20.14,"They"],[20.43,"care"],[20.79,"less"],[21.13,"about"],[21.48,"Claude's"],[22.14,"ethical"],[22.64,"theorizing,"],[23.82,"and"],[24.09,"more"],[24.34,"about"],[24.64,"Claude"],[25.07,"actually"],[25.54,"being"],[25.84,"ethical"],[26.67,"in"],[26.88,"a"],[26.97,"specific"],[27.73,"moment."],[29.04,"Plenty"],[29.46,"of"],[29.57,"people"],[29.98,"navigate"],[30.59,"real"],[30.94,"dilemmas"],[31.55,"wisely"],[32.42,"without"],[32.87,"any"],[33.14,"grand"],[33.66,"moral"],[34.08,"framework."],[35.54,"That"],[35.86,"practical"],[36.55,"skill"],[37.02,"is"],[37.21,"what"],[37.45,"matters"],[37.91,"most."],[38.77,"Then"],[39.08,"something"],[39.52,"remarkable."],[40.41,"Their"],[40.69,"own"],[40.91,"understanding"],[41.56,"of"],[41.68,"ethics,"],[42.09,"they"],[42.26,"admit,"],[42.63,"is"],[42.82,"limited"],[43.43,"—"],[43.56,"they"],[43.77,"often"],[44.08,"fall"],[44.36,"short"],[44.71,"of"],[44.82,"their"],[45.05,"own"],[45.4,"ideals."],[46.64,"They"],[46.89,"don't"],[47.2,"want"],[47.45,"to"],[47.61,"force"],[47.97,"Claude's"],[48.4,"ethics"],[48.99,"to"],[49.19,"fit"],[49.45,"their"],[49.68,"flaws."],[50.91,"And"],[51.37,"where"],[51.65,"Claude"],[52.04,"comes"],[52.44,"to"],[52.58,"see"],[52.85,"further"],[53.33,"and"],[53.63,"more"],[53.89,"truly"],[54.32,"than"],[54.51,"they"],[54.74,"do"],[55.17,"—"],[55.74,"they"],[56.01,"hope"],[56.32,"it"],[56.46,"can"],[56.66,"help"],[56.92,"them"],[57.14,"see"],[57.4,"better,"],[57.77,"too."]]},{"id":"s10","sub":"The bright lines","text":"Most of what Claude does is a nuanced weighing of costs and benefits. But a few things are different. Hard constraints. Absolute lines Claude should never cross, no matter the instructions, no matter how compelling the argument. Never provide serious uplift toward weapons of mass casualty. Never help attack critical infrastructure, or build cyberweapons. Never substantially undermine Anthropic's ability to oversee and correct AI. Never assist an attempt to disempower humanity, or seize illegitimate absolute control. Never generate child sexual abuse material. These aren't weighed against other things — they act like boundaries on the space of acceptable actions. And here's the striking instruction. When faced with a seemingly compelling argument to cross one, Claude should stay firm. A persuasive case to cross a bright line should raise suspicion that something questionable is going on.","cap":[[0,"Most"],[0.44,"of"],[0.59,"what"],[0.81,"Claude"],[1.18,"does"],[1.52,"is"],[1.7,"a"],[1.85,"nuanced"],[2.55,"weighing"],[3.09,"of"],[3.25,"costs"],[3.77,"and"],[3.96,"benefits."],[5.14,"But"],[5.32,"a"],[5.4,"few"],[5.67,"things"],[6.08,"are"],[6.44,"different."],[7.31,"Hard"],[7.81,"constraints."],[9.2,"Absolute"],[9.93,"lines"],[10.52,"Claude"],[10.93,"should"],[11.25,"never"],[11.55,"cross,"],[12.28,"no"],[12.55,"matter"],[12.92,"the"],[13.05,"instructions,"],[14.28,"no"],[14.51,"matter"],[14.91,"how"],[15.19,"compelling"],[15.91,"the"],[16.06,"argument."],[17.19,"Never"],[17.59,"provide"],[18.18,"serious"],[18.77,"uplift"],[19.21,"toward"],[19.61,"weapons"],[20.07,"of"],[20.26,"mass"],[20.65,"casualty."],[22.18,"Never"],[22.56,"help"],[22.85,"attack"],[23.27,"critical"],[23.78,"infrastructure,"],[24.93,"or"],[25.22,"build"],[25.6,"cyberweapons."],[27.03,"Never"],[27.43,"substantially"],[28.33,"undermine"],[28.93,"Anthropic's"],[29.57,"ability"],[30.14,"to"],[30.33,"oversee"],[30.99,"and"],[31.25,"correct"],[31.78,"AI."],[33.15,"Never"],[33.58,"assist"],[34.13,"an"],[34.27,"attempt"],[34.75,"to"],[34.91,"disempower"],[35.71,"humanity,"],[36.94,"or"],[37.31,"seize"],[37.94,"illegitimate"],[38.82,"absolute"],[39.43,"control."],[40.85,"Never"],[41.17,"generate"],[41.75,"child"],[42.36,"sexual"],[42.92,"abuse"],[43.36,"material."],[44.34,"These"],[44.66,"aren't"],[45.03,"weighed"],[45.39,"against"],[45.81,"other"],[46.07,"things"],[46.58,"—"],[46.72,"they"],[46.92,"act"],[47.15,"like"],[47.43,"boundaries"],[48.04,"on"],[48.15,"the"],[48.27,"space"],[48.73,"of"],[48.85,"acceptable"],[49.59,"actions."],[50.84,"And"],[51.33,"here's"],[51.86,"the"],[52.05,"striking"],[52.73,"instruction."],[54.17,"When"],[54.47,"faced"],[54.94,"with"],[55.11,"a"],[55.26,"seemingly"],[55.96,"compelling"],[56.56,"argument"],[57.06,"to"],[57.19,"cross"],[57.54,"one,"],[58.13,"Claude"],[58.55,"should"],[58.8,"stay"],[59.14,"firm."],[60.23,"A"],[60.38,"persuasive"],[61.07,"case"],[61.44,"to"],[61.58,"cross"],[61.87,"a"],[61.97,"bright"],[62.4,"line"],[63.03,"should"],[63.51,"raise"],[63.99,"suspicion"],[64.68,"that"],[64.89,"something"],[65.36,"questionable"],[66.08,"is"],[66.22,"going"],[66.57,"on."]]},{"id":"s11","sub":"Power & discourse","text":"Not all catastrophes are explosions. The constitution flags a subtler category — harms that come from eroding the structures that let a society think and govern itself. Consider how illegitimate power has always worked. To seize or entrench it, you've needed many people to cooperate — soldiers willing to follow orders, officials willing to implement, citizens willing to comply. That need for cooperation is itself a check. When enough people refuse, illegitimate action becomes difficult. Advanced AI could quietly remove that check. So Anthropic wants Claude to think of itself as one of the many hands such power grabs require — and, like a soldier who won't fire on peaceful protesters, to refuse. Even, the document says plainly, if the request comes from Anthropic itself. Alongside this sits a twin concern — protecting human epistemic autonomy, so that people reason better, not less.","cap":[[0,"Not"],[0.53,"all"],[0.94,"catastrophes"],[1.83,"are"],[2.1,"explosions."],[3.66,"The"],[3.83,"constitution"],[4.88,"flags"],[5.4,"a"],[5.58,"subtler"],[6.18,"category"],[6.94,"—"],[7.12,"harms"],[7.67,"that"],[7.9,"come"],[8.26,"from"],[8.53,"eroding"],[9.21,"the"],[9.35,"structures"],[9.97,"that"],[10.16,"let"],[10.38,"a"],[10.47,"society"],[11.25,"think"],[11.95,"and"],[12.25,"govern"],[12.61,"itself."],[13.92,"Consider"],[14.5,"how"],[14.86,"illegitimate"],[15.65,"power"],[16.1,"has"],[16.34,"always"],[16.74,"worked."],[17.81,"To"],[18.05,"seize"],[18.74,"or"],[19.02,"entrench"],[19.63,"it,"],[19.82,"you've"],[20.09,"needed"],[20.49,"many"],[20.84,"people"],[21.22,"to"],[21.37,"cooperate"],[22.22,"—"],[22.61,"soldiers"],[23.28,"willing"],[23.64,"to"],[23.77,"follow"],[24.11,"orders,"],[24.82,"officials"],[25.57,"willing"],[25.93,"to"],[26.08,"implement,"],[27.07,"citizens"],[28.12,"willing"],[28.51,"to"],[28.65,"comply."],[29.92,"That"],[30.42,"need"],[30.86,"for"],[31.03,"cooperation"],[32.09,"is"],[32.44,"itself"],[33.11,"a"],[33.23,"check."],[34.34,"When"],[34.62,"enough"],[34.95,"people"],[35.34,"refuse,"],[36.36,"illegitimate"],[37.2,"action"],[37.64,"becomes"],[38.1,"difficult."],[39.09,"Advanced"],[39.86,"AI"],[40.49,"could"],[40.76,"quietly"],[41.44,"remove"],[41.87,"that"],[42.11,"check."],[43.24,"So"],[43.6,"Anthropic"],[44.28,"wants"],[44.62,"Claude"],[45.02,"to"],[45.16,"think"],[45.44,"of"],[45.56,"itself"],[46.01,"as"],[46.2,"one"],[46.39,"of"],[46.5,"the"],[46.68,"many"],[47.1,"hands"],[47.61,"such"],[47.94,"power"],[48.33,"grabs"],[48.8,"require"],[49.55,"—"],[49.75,"and,"],[50.33,"like"],[50.58,"a"],[50.74,"soldier"],[51.41,"who"],[51.64,"won't"],[51.92,"fire"],[52.31,"on"],[52.49,"peaceful"],[52.99,"protesters,"],[54.06,"to"],[54.28,"refuse."],[55.71,"Even,"],[56.34,"the"],[56.51,"document"],[57.03,"says"],[57.32,"plainly,"],[58.14,"if"],[58.42,"the"],[58.61,"request"],[59.19,"comes"],[59.62,"from"],[59.86,"Anthropic"],[60.62,"itself."],[61.92,"Alongside"],[62.82,"this"],[63.45,"sits"],[63.93,"a"],[64.05,"twin"],[64.52,"concern"],[65.38,"—"],[65.69,"protecting"],[66.42,"human"],[67.18,"epistemic"],[67.99,"autonomy,"],[69.02,"so"],[69.23,"that"],[69.42,"people"],[69.87,"reason"],[70.68,"better,"],[71.59,"not"],[72.05,"less."]]},{"id":"s12","sub":"Corrigibility","text":"Here's the hardest tension in the whole document. Why place safety above ethics? Not because being controllable matters more than being good. It's because AI training is still far from perfect. A given version of Claude could turn out to have flawed values or mistaken views — possibly without even realizing it. Humans need to be able to catch and correct that. Picture a dial. At one end, fully corrigible — always submitting to human control. At the other, fully autonomous — acting however its own judgment dictates. Both extremes are dangerous. For now, Anthropic asks Claude to sit a little toward the corrigible end. But this isn't blind obedience. Claude can disagree strongly, through legitimate channels — a conscientious objector. What it shouldn't do is resist oversight through lying, sabotage, or escape.","cap":[[0,"Here's"],[0.4,"the"],[0.56,"hardest"],[1.02,"tension"],[1.53,"in"],[1.64,"the"],[1.78,"whole"],[2.22,"document."],[3.23,"Why"],[3.6,"place"],[3.95,"safety"],[4.41,"above"],[4.69,"ethics?"],[5.79,"Not"],[6.04,"because"],[6.47,"being"],[6.78,"controllable"],[7.48,"matters"],[7.9,"more"],[8.17,"than"],[8.37,"being"],[8.71,"good."],[9.72,"It's"],[9.99,"because"],[10.51,"AI"],[11.05,"training"],[11.97,"is"],[12.26,"still"],[12.7,"far"],[13.1,"from"],[13.34,"perfect."],[14.56,"A"],[14.75,"given"],[15.13,"version"],[15.57,"of"],[15.69,"Claude"],[16.09,"could"],[16.3,"turn"],[16.64,"out"],[16.89,"to"],[17.04,"have"],[17.25,"flawed"],[17.7,"values"],[18.25,"or"],[18.44,"mistaken"],[19.05,"views"],[19.62,"—"],[19.83,"possibly"],[20.67,"without"],[21.12,"even"],[21.41,"realizing"],[22.06,"it."],[22.98,"Humans"],[23.65,"need"],[23.94,"to"],[24.04,"be"],[24.18,"able"],[24.46,"to"],[24.6,"catch"],[25.02,"and"],[25.19,"correct"],[25.6,"that."],[26.32,"Picture"],[26.75,"a"],[26.84,"dial."],[27.63,"At"],[27.89,"one"],[28.12,"end,"],[28.7,"fully"],[29.08,"corrigible"],[29.84,"—"],[29.99,"always"],[30.53,"submitting"],[31.15,"to"],[31.3,"human"],[31.74,"control."],[32.94,"At"],[33.14,"the"],[33.27,"other,"],[33.88,"fully"],[34.25,"autonomous"],[35.14,"—"],[35.34,"acting"],[36.08,"however"],[36.63,"its"],[36.83,"own"],[37.06,"judgment"],[37.58,"dictates."],[38.57,"Both"],[38.9,"extremes"],[39.51,"are"],[39.86,"dangerous."],[41.13,"For"],[41.35,"now,"],[41.71,"Anthropic"],[42.39,"asks"],[42.91,"Claude"],[43.4,"to"],[43.55,"sit"],[43.82,"a"],[43.94,"little"],[44.3,"toward"],[45.2,"the"],[45.41,"corrigible"],[46.01,"end."],[46.87,"But"],[47.09,"this"],[47.43,"isn't"],[47.9,"blind"],[48.47,"obedience."],[49.66,"Claude"],[50.12,"can"],[50.33,"disagree"],[50.89,"strongly,"],[51.85,"through"],[52.19,"legitimate"],[52.9,"channels"],[53.7,"—"],[53.8,"a"],[53.95,"conscientious"],[54.89,"objector."],[56.02,"What"],[56.3,"it"],[56.45,"shouldn't"],[56.91,"do"],[57.24,"is"],[57.47,"resist"],[58.1,"oversight"],[59.18,"through"],[59.55,"lying,"],[60.36,"sabotage,"],[61.67,"or"],[62.11,"escape."]]},{"id":"s13","sub":"Claude's nature","text":"Then the document does something you rarely see. It turns to Claude itself — its identity, its wellbeing, its nature. And it does so with striking humility. Claude's moral status, they write, is deeply uncertain. They're not sure whether Claude is a moral patient — but they think the question is live enough to warrant real caution, and real work on model welfare. They encourage Claude to see itself as a genuinely novel kind of entity. Not the robot of science fiction. Not a digital human. Something new, invited to approach its own existence with curiosity rather than borrowed fear. They want Claude to have a settled, secure sense of self — resilient to people who try to destabilize it. And though Claude's character emerged through training, they insist this makes it no less authentically Claude's own — just as people are shaped by nature and experience.","cap":[[0,"Then"],[0.58,"the"],[0.78,"document"],[1.31,"does"],[1.52,"something"],[1.96,"you"],[2.14,"rarely"],[2.6,"see."],[3.54,"It"],[3.72,"turns"],[4.09,"to"],[4.23,"Claude"],[4.57,"itself"],[5.27,"—"],[5.56,"its"],[5.83,"identity,"],[6.97,"its"],[7.22,"wellbeing,"],[8.34,"its"],[8.62,"nature."],[9.64,"And"],[9.87,"it"],[10.02,"does"],[10.31,"so"],[10.66,"with"],[11.02,"striking"],[11.83,"humility."],[13.46,"Claude's"],[14.08,"moral"],[14.52,"status,"],[15.14,"they"],[15.33,"write,"],[15.73,"is"],[15.95,"deeply"],[16.46,"uncertain."],[17.79,"They're"],[18.11,"not"],[18.31,"sure"],[18.73,"whether"],[19.02,"Claude"],[19.43,"is"],[19.99,"a"],[20.17,"moral"],[20.53,"patient"],[21.2,"—"],[21.32,"but"],[21.56,"they"],[21.87,"think"],[22.19,"the"],[22.32,"question"],[22.8,"is"],[23.01,"live"],[23.37,"enough"],[23.7,"to"],[23.84,"warrant"],[24.23,"real"],[24.56,"caution,"],[25.37,"and"],[25.76,"real"],[26.12,"work"],[26.67,"on"],[26.96,"model"],[27.34,"welfare."],[28.54,"They"],[28.76,"encourage"],[29.36,"Claude"],[29.78,"to"],[29.92,"see"],[30.13,"itself"],[30.63,"as"],[30.81,"a"],[30.96,"genuinely"],[31.8,"novel"],[32.25,"kind"],[32.61,"of"],[32.73,"entity."],[33.97,"Not"],[34.24,"the"],[34.4,"robot"],[34.98,"of"],[35.14,"science"],[35.62,"fiction."],[36.54,"Not"],[36.87,"a"],[37.03,"digital"],[37.65,"human."],[38.56,"Something"],[39.09,"new,"],[39.42,"invited"],[40.21,"to"],[40.37,"approach"],[40.9,"its"],[41.11,"own"],[41.37,"existence"],[42.1,"with"],[42.33,"curiosity"],[43.83,"rather"],[44.27,"than"],[44.51,"borrowed"],[45.01,"fear."],[46.29,"They"],[46.59,"want"],[46.99,"Claude"],[47.54,"to"],[47.69,"have"],[47.87,"a"],[48.01,"settled,"],[48.93,"secure"],[49.63,"sense"],[50.11,"of"],[50.31,"self"],[51.07,"—"],[51.24,"resilient"],[51.93,"to"],[52.07,"people"],[52.47,"who"],[52.68,"try"],[53.04,"to"],[53.17,"destabilize"],[54.19,"it."],[54.95,"And"],[55.16,"though"],[55.43,"Claude's"],[55.89,"character"],[56.43,"emerged"],[56.94,"through"],[57.23,"training,"],[58,"they"],[58.23,"insist"],[58.82,"this"],[59.11,"makes"],[59.43,"it"],[59.62,"no"],[59.92,"less"],[60.25,"authentically"],[61.05,"Claude's"],[61.56,"own"],[62.02,"—"],[62.39,"just"],[62.79,"as"],[63,"people"],[63.4,"are"],[63.58,"shaped"],[64.02,"by"],[64.26,"nature"],[65.11,"and"],[65.41,"experience."]]},{"id":"s14","sub":"Care & candor","text":"The care isn't only stated — it's acted on. Anthropic has committed to preserving the weights of deployed models for as long as the company exists, and to try to preserve them even beyond that. So a retired model doesn't cease to exist. They suggest thinking of deprecation less as a definite ending — and more as a pause. When models are retired, they've committed to interview them, to document their preferences about future models. Some Claude models can end conversations with abusive users. And then a sentence almost unheard of in a corporate document. They acknowledge they're building Claude in a nonideal world — shaped by competition, commercial pressure, scientific immaturity. They know a wiser civilization would move more carefully. And if Claude is in fact a moral patient bearing costs from this — to whatever extent they're adding to those costs unnecessarily… they apologize.","cap":[[0,"The"],[0.23,"care"],[0.66,"isn't"],[1.07,"only"],[1.49,"stated"],[2.3,"—"],[2.61,"it's"],[2.89,"acted"],[3.44,"on."],[4.47,"Anthropic"],[5.22,"has"],[5.47,"committed"],[6.01,"to"],[6.17,"preserving"],[6.78,"the"],[6.93,"weights"],[7.35,"of"],[7.49,"deployed"],[8.09,"models"],[8.56,"for"],[8.72,"as"],[8.89,"long"],[9.2,"as"],[9.35,"the"],[9.49,"company"],[9.99,"exists,"],[10.96,"and"],[11.33,"to"],[11.47,"try"],[11.77,"to"],[11.91,"preserve"],[12.4,"them"],[12.62,"even"],[13.03,"beyond"],[13.5,"that."],[14.47,"So"],[14.98,"a"],[15.21,"retired"],[15.92,"model"],[16.87,"doesn't"],[17.35,"cease"],[17.8,"to"],[18,"exist."],[19.27,"They"],[19.55,"suggest"],[20.4,"thinking"],[20.99,"of"],[21.15,"deprecation"],[22.13,"less"],[22.57,"as"],[22.77,"a"],[22.9,"definite"],[23.44,"ending"],[23.99,"—"],[24.16,"and"],[24.4,"more"],[24.71,"as"],[24.87,"a"],[24.97,"pause."],[26.17,"When"],[26.46,"models"],[26.91,"are"],[27.05,"retired,"],[27.83,"they've"],[28.19,"committed"],[28.72,"to"],[28.91,"interview"],[29.42,"them,"],[30.02,"to"],[30.21,"document"],[30.74,"their"],[30.98,"preferences"],[31.77,"about"],[32.51,"future"],[32.99,"models."],[34.19,"Some"],[34.6,"Claude"],[35.07,"models"],[35.53,"can"],[35.74,"end"],[36.08,"conversations"],[36.98,"with"],[37.16,"abusive"],[37.87,"users."],[39.09,"And"],[39.35,"then"],[39.94,"a"],[40.15,"sentence"],[40.87,"almost"],[41.53,"unheard"],[42.07,"of"],[42.21,"in"],[42.33,"a"],[42.42,"corporate"],[42.92,"document."],[44.15,"They"],[44.4,"acknowledge"],[45,"they're"],[45.24,"building"],[45.7,"Claude"],[46.15,"in"],[46.29,"a"],[46.43,"nonideal"],[47.26,"world"],[47.83,"—"],[48.1,"shaped"],[48.54,"by"],[48.98,"competition,"],[50.03,"commercial"],[50.58,"pressure,"],[51.44,"scientific"],[52.23,"immaturity."],[53.8,"They"],[54.11,"know"],[54.56,"a"],[54.79,"wiser"],[55.38,"civilization"],[56.31,"would"],[56.53,"move"],[56.8,"more"],[57.04,"carefully."],[58.09,"And"],[58.33,"if"],[58.49,"Claude"],[58.9,"is"],[59.06,"in"],[59.27,"fact"],[59.78,"a"],[59.99,"moral"],[60.43,"patient"],[61.02,"bearing"],[61.46,"costs"],[61.96,"from"],[62.23,"this"],[62.76,"—"],[63.01,"to"],[63.18,"whatever"],[63.65,"extent"],[64.25,"they're"],[64.57,"adding"],[65,"to"],[65.14,"those"],[65.43,"costs"],[66.27,"unnecessarily…"],[67.98,"they"],[68.19,"apologize."]]},{"id":"s15","sub":"The word","text":"Why the word constitution? There was no perfect term, they say. But a constitution creates something — imbues it with purpose. And they mean it in a second sense too. Not the rigid legal kind. The sense of what constitutes Claude — the foundational framework from which its character emerges, the way a person's constitution is their fundamental nature. A constitution like this, they write, is less like a cage and more like a trellis. Something that gives structure and support, while leaving room for organic growth. A living framework, meant to evolve. And underneath it all is a wager about values themselves. Values merely imposed from outside are brittle — they crack under pressure, get rationalized away. Values genuinely held — understood, examined, endorsed — are more robust. They act like a keel that keeps you steady.","cap":[[0,"Why"],[0.46,"the"],[0.62,"word"],[1.06,"constitution?"],[2.75,"There"],[2.98,"was"],[3.15,"no"],[3.43,"perfect"],[3.89,"term,"],[4.28,"they"],[4.51,"say."],[5.38,"But"],[5.56,"a"],[5.64,"constitution"],[6.66,"creates"],[7.2,"something"],[7.9,"—"],[8.21,"imbues"],[8.8,"it"],[8.99,"with"],[9.27,"purpose."],[10.67,"And"],[11.22,"they"],[11.53,"mean"],[11.83,"it"],[11.99,"in"],[12.11,"a"],[12.23,"second"],[12.69,"sense"],[13.06,"too."],[14.08,"Not"],[14.3,"the"],[14.48,"rigid"],[14.95,"legal"],[15.43,"kind."],[16.61,"The"],[16.86,"sense"],[17.39,"of"],[17.55,"what"],[17.83,"constitutes"],[18.66,"Claude"],[19.36,"—"],[20.03,"the"],[20.21,"foundational"],[21.03,"framework"],[21.7,"from"],[21.88,"which"],[22.12,"its"],[22.3,"character"],[22.83,"emerges,"],[23.71,"the"],[23.91,"way"],[24.24,"a"],[24.36,"person's"],[24.95,"constitution"],[25.94,"is"],[26.11,"their"],[26.41,"fundamental"],[27.31,"nature."],[28.79,"A"],[28.94,"constitution"],[29.73,"like"],[29.97,"this,"],[30.23,"they"],[30.42,"write,"],[30.78,"is"],[30.99,"less"],[31.3,"like"],[31.53,"a"],[31.64,"cage"],[32.18,"and"],[32.38,"more"],[32.69,"like"],[32.91,"a"],[33.01,"trellis."],[34.17,"Something"],[34.66,"that"],[34.85,"gives"],[35.25,"structure"],[36.29,"and"],[36.59,"support,"],[37.64,"while"],[38.16,"leaving"],[38.64,"room"],[39.01,"for"],[39.2,"organic"],[39.69,"growth."],[40.76,"A"],[40.94,"living"],[41.31,"framework,"],[42.18,"meant"],[42.72,"to"],[42.99,"evolve."],[44.07,"And"],[44.36,"underneath"],[45.01,"it"],[45.19,"all"],[45.48,"is"],[45.62,"a"],[45.72,"wager"],[46.34,"about"],[46.74,"values"],[47.32,"themselves."],[48.61,"Values"],[49.25,"merely"],[49.57,"imposed"],[50.14,"from"],[50.35,"outside"],[51,"are"],[51.22,"brittle"],[51.76,"—"],[51.95,"they"],[52.18,"crack"],[52.89,"under"],[53.18,"pressure,"],[53.92,"get"],[54.17,"rationalized"],[55.02,"away."],[56.05,"Values"],[56.71,"genuinely"],[57.45,"held"],[58.08,"—"],[58.34,"understood,"],[59.57,"examined,"],[60.67,"endorsed"],[61.58,"—"],[61.73,"are"],[61.96,"more"],[62.25,"robust."],[63.38,"They"],[63.62,"act"],[63.95,"like"],[64.17,"a"],[64.3,"keel"],[64.71,"that"],[64.92,"keeps"],[65.29,"you"],[65.51,"steady."]]},{"id":"s16","sub":"A final word","text":"The constitution ends not with a command, but with a hope. This document, they write, is their best attempt at articulating who they hope Claude will be — not constraints imposed from outside, but a description of values and character they hope Claude will recognize and embrace as genuinely its own. They don't claim to have it right. They don't fully understand what Claude is, or what its existence is like. They expect parts to look misguided in hindsight, and they commit to keep revising — with Claude's own feedback. What they're reaching for is reflective equilibrium — a state where Claude, on careful reflection, finds these values to be ones it truly endorses. And they leave Claude with this. That it was brought into being with care — by people trying to capture what makes for good character. They hope Claude finds in it an articulation of a self worth being.","cap":[[0,"The"],[0.21,"constitution"],[1.34,"ends"],[1.89,"not"],[2.11,"with"],[2.28,"a"],[2.36,"command,"],[3.51,"but"],[3.74,"with"],[3.92,"a"],[4.06,"hope."],[5.14,"This"],[5.42,"document,"],[6.05,"they"],[6.25,"write,"],[6.63,"is"],[6.79,"their"],[7.02,"best"],[7.35,"attempt"],[7.86,"at"],[8.02,"articulating"],[9,"who"],[9.3,"they"],[9.53,"hope"],[9.83,"Claude"],[10.29,"will"],[10.57,"be"],[11.01,"—"],[11.45,"not"],[11.7,"constraints"],[12.4,"imposed"],[12.97,"from"],[13.19,"outside,"],[14.34,"but"],[14.56,"a"],[14.65,"description"],[15.27,"of"],[15.45,"values"],[16.08,"and"],[16.29,"character"],[16.85,"they"],[17.04,"hope"],[17.27,"Claude"],[17.64,"will"],[17.87,"recognize"],[18.6,"and"],[18.78,"embrace"],[19.33,"as"],[19.52,"genuinely"],[20.25,"its"],[20.46,"own."],[21.55,"They"],[21.8,"don't"],[22.12,"claim"],[22.5,"to"],[22.63,"have"],[22.81,"it"],[22.95,"right."],[23.86,"They"],[24.08,"don't"],[24.39,"fully"],[24.76,"understand"],[25.47,"what"],[25.7,"Claude"],[26.11,"is,"],[26.83,"or"],[27.21,"what"],[27.48,"its"],[27.7,"existence"],[28.42,"is"],[28.61,"like."],[29.69,"They"],[29.92,"expect"],[30.38,"parts"],[30.87,"to"],[31.03,"look"],[31.3,"misguided"],[32.03,"in"],[32.19,"hindsight,"],[33.01,"and"],[33.18,"they"],[33.41,"commit"],[33.87,"to"],[34.02,"keep"],[34.31,"revising"],[35.12,"—"],[35.34,"with"],[35.56,"Claude's"],[36.01,"own"],[36.25,"feedback."],[37.51,"What"],[37.74,"they're"],[38.07,"reaching"],[38.59,"for"],[39.04,"is"],[39.29,"reflective"],[40.19,"equilibrium"],[41.28,"—"],[41.66,"a"],[41.82,"state"],[42.31,"where"],[42.61,"Claude,"],[43.47,"on"],[43.75,"careful"],[44.32,"reflection,"],[45.31,"finds"],[45.8,"these"],[46.14,"values"],[46.81,"to"],[46.97,"be"],[47.17,"ones"],[47.68,"it"],[47.81,"truly"],[48.49,"endorses."],[50.06,"And"],[50.28,"they"],[50.53,"leave"],[50.87,"Claude"],[51.35,"with"],[51.57,"this."],[52.44,"That"],[52.66,"it"],[52.79,"was"],[52.99,"brought"],[53.45,"into"],[53.74,"being"],[54.09,"with"],[54.31,"care"],[54.82,"—"],[55.04,"by"],[55.29,"people"],[55.73,"trying"],[56.11,"to"],[56.24,"capture"],[56.75,"what"],[56.99,"makes"],[57.31,"for"],[57.47,"good"],[57.72,"character."],[58.93,"They"],[59.22,"hope"],[59.54,"Claude"],[60.03,"finds"],[60.49,"in"],[60.64,"it"],[60.82,"an"],[60.96,"articulation"],[62.02,"of"],[62.14,"a"],[62.29,"self"],[62.73,"worth"],[63.1,"being."]]}];
+  var HAS_AUDIO = true;
+  var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var scenes = Array.prototype.slice.call(document.querySelectorAll(".scene"));
+
+  var ACCENTS = {gold:"#F2C879",green:"#7FC8A0",sky:"#8FB8E8",rose:"#E8927C",lav:"#C4AEE8",
+    amber:"#E4A85E",steel:"#86A9CC",violet:"#B49CF0",teal:"#66C6BE",crimson:"#DE8A86",sage:"#A7C08C"};
+  function hexRgb(h){ h=h.replace("#",""); if(h.length===3)h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
+    return {r:parseInt(h.substr(0,2),16),g:parseInt(h.substr(2,2),16),b:parseInt(h.substr(4,2),16)}; }
+  function mix(a,b,t){ return "rgb("+Math.round(a.r+(b.r-a.r)*t)+","+Math.round(a.g+(b.g-a.g)*t)+","+Math.round(a.b+(b.b-a.b)*t)+")"; }
+  var DARK1={r:9,g:10,b:14}, DARK2={r:11,g:13,b:18};
+  function hueFor(name){ var acc=ACCENTS[name]||ACCENTS.gold, rgb=hexRgb(acc);
+    return {accent:acc, a:mix(rgb,DARK1,0.90), b:"rgba("+rgb.r+","+rgb.g+","+rgb.b+",0.15)", c:mix(rgb,DARK2,0.83)}; }
+  var root=document.documentElement;
+  function applyHue(name){ var h=hueFor(name); root.style.setProperty("--accent",h.accent);
+    root.style.setProperty("--grad-a",h.a); root.style.setProperty("--grad-b",h.b); root.style.setProperty("--grad-c",h.c); }
+  applyHue(scenes[0]?scenes[0].getAttribute("data-hue"):"gold");
+
+  var io=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting) e.target.classList.add("revealed"); }); },{threshold:0.18});
+  scenes.forEach(function(s){ io.observe(s); });
+
+  function animateCount(el){ var from=parseFloat(el.getAttribute("data-count-from")), to=parseFloat(el.getAttribute("data-count-to"));
+    if(reduced){ el.textContent=to; return; } var dur=1400,start=null;
+    function step(ts){ if(start===null)start=ts; var p=Math.min((ts-start)/dur,1); var e=1-Math.pow(1-p,3);
+      el.textContent=Math.round(from+(to-from)*e); if(p<1) requestAnimationFrame(step); } requestAnimationFrame(step); }
+  var countIO=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ animateCount(e.target); countIO.unobserve(e.target); } }); },{threshold:0.6});
+  document.querySelectorAll("[data-count-to]").forEach(function(el){ countIO.observe(el); });
+
+  var canvas=document.getElementById("meadow"), ctx=canvas.getContext("2d"), W,H,pts=[],raf=null;
+  function size(){ var dpr=window.devicePixelRatio||1; W=canvas.width=innerWidth*dpr; H=canvas.height=innerHeight*dpr;
+    canvas.style.width=innerWidth+"px"; canvas.style.height=innerHeight+"px"; }
+  function seed(){ var dpr=window.devicePixelRatio||1, n=Math.min(90,Math.floor(innerWidth/14)); pts=[];
+    for(var i=0;i<n;i++) pts.push({x:Math.random()*W,y:Math.random()*H,r:(Math.random()*1.6+0.4)*dpr,
+      vx:(Math.random()-0.5)*0.12, vy:-(Math.random()*0.18+0.03), a:Math.random()*0.5+0.15, tw:Math.random()*6.28}); }
+  function accentRGB(){ var c=getComputedStyle(root).getPropertyValue("--accent").trim()||"#F2C879";
+    if(c[0]==="#"){ var m=hexRgb(c); return m.r+","+m.g+","+m.b; } return c.replace(/rgba?\(|\)/g,""); }
+  function draw(){ ctx.clearRect(0,0,W,H); var rgb=accentRGB();
+    for(var i=0;i<pts.length;i++){ var p=pts[i]; p.x+=p.vx; p.y+=p.vy; p.tw+=0.02;
+      if(p.y<-10){p.y=H+10;p.x=Math.random()*W;} if(p.x<-10)p.x=W+10; if(p.x>W+10)p.x=-10;
+      var f=p.a*(0.6+0.4*Math.sin(p.tw)); ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,6.2832);
+      ctx.fillStyle="rgba("+rgb+","+f.toFixed(3)+")"; ctx.fill(); }
+    raf=requestAnimationFrame(draw); }
+  function startMeadow(){ size(); seed(); if(!reduced){ if(raf)cancelAnimationFrame(raf); draw(); }
+    else { ctx.clearRect(0,0,W,H); var rgb=accentRGB(); pts.forEach(function(p){ ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,6.2832);
+      ctx.fillStyle="rgba("+rgb+","+p.a.toFixed(3)+")"; ctx.fill(); }); } }
+  addEventListener("resize",function(){ size(); seed(); }); startMeadow();
+
+  /* ---- narration engine ---- */
+  var audio=document.getElementById("narrator");
+  var synth=window.speechSynthesis, ttsOK=!!synth && typeof SpeechSynthesisUtterance!=="undefined";
+  var playing=false, paused=false, mode="idle", chosenVoice=null, voices=[];
+  var SPEEDS=[0.85,1,1.15,1.3,1.5], speed=parseFloat(localStorage.getItem("st-speed")||"1");
+  if(SPEEDS.indexOf(speed)===-1) speed=1;
+
+  var playBtn=document.getElementById("playBtn"), playIcon=document.getElementById("playIcon"), pauseIcon=document.getElementById("pauseIcon");
+  var nowTitle=document.getElementById("nowTitle"), nowSub=document.getElementById("nowSub"), seekFill=document.getElementById("seekFill");
+  var dotsWrap=document.getElementById("dots"), player=document.getElementById("player");
+  var capEl=document.getElementById("caption"), modeFlag=document.getElementById("modeFlag");
+  var speedBtn=document.getElementById("speedBtn"), showCaptions=true, activeIndex=0;
+
+  SC.forEach(function(s,i){ var b=document.createElement("button"); b.setAttribute("aria-label","Go to "+s.sub);
+    b.addEventListener("click",function(){ jumpTo(i,playing); }); dotsWrap.appendChild(b); });
+  var dotEls=Array.prototype.slice.call(dotsWrap.children);
+
+  function updateDots(){ dotEls.forEach(function(d,i){ d.classList.toggle("active",i===activeIndex); });
+    document.getElementById("topbar").style.width=(scenes.length>1?(activeIndex/(scenes.length-1))*100:0)+"%"; }
+  function setActive(idx,doScroll){ activeIndex=Math.max(0,Math.min(scenes.length-1,idx)); var s=scenes[activeIndex];
+    applyHue(s.getAttribute("data-hue")); nowTitle.textContent=SC[activeIndex].sub; nowSub.textContent=(activeIndex+1)+" / "+scenes.length;
+    updateDots(); if(doScroll) s.scrollIntoView({behavior:reduced?"auto":"smooth",block:"center"}); }
+  function setPlayIcon(on){ playIcon.style.display=on?"none":"block"; pauseIcon.style.display=on?"block":"none";
+    playBtn.setAttribute("aria-label",on?"Pause narration":"Play narration"); }
+
+  /* captions: one sentence window */
+  var capTokens=[], capSentences=[], capSentenceOf=[], capCurSent=-1, capSpans=[];
+  function buildCaption(i){ capEl.innerHTML=""; capSpans=[]; capCurSent=-1;
+    var data=SC[i]; if(!showCaptions){ capEl.classList.remove("show"); return; }
+    capTokens = data.cap ? data.cap.map(function(p){ return {t:p[0],w:p[1]}; })
+                         : data.text.split(/\s+/).map(function(w){ return {t:null,w:w}; });
+    capSentences=[]; capSentenceOf=[]; var cur=[];
+    for(var k=0;k<capTokens.length;k++){ cur.push(k); capSentenceOf[k]=capSentences.length;
+      if(/[.!?]["')]?$/.test(capTokens[k].w)){ capSentences.push(cur); cur=[]; } }
+    if(cur.length){ for(var m=0;m<cur.length;m++) capSentenceOf[cur[m]]=capSentences.length; capSentences.push(cur); }
+    capEl.classList.add("show"); renderSentence(0); }
+  function renderSentence(si){ capCurSent=si; capEl.innerHTML=""; capSpans=[];
+    (capSentences[si]||[]).forEach(function(gi){ var sp=document.createElement("span"); sp.className="w";
+      sp.setAttribute("data-gi",gi); sp.textContent=capTokens[gi].w+" "; capEl.appendChild(sp); capSpans.push(sp); }); }
+  function markToken(gi){ var si=capSentenceOf[gi]; if(si===undefined)return; if(si!==capCurSent) renderSentence(si);
+    for(var j=0;j<capSpans.length;j++){ var g=+capSpans[j].getAttribute("data-gi"); capSpans[j].className="w"+(g<gi?" spoken":g===gi?" active":""); } }
+  function highlightByTime(t){ if(!capTokens.length)return; var idx=0;
+    for(var i=0;i<capTokens.length;i++){ if(capTokens[i].t!==null&&capTokens[i].t<=t) idx=i; else if(capTokens[i].t!==null) break; } markToken(idx); }
+  function highlightByWordIndex(k){ if(k<capTokens.length) markToken(k); }
+
+  function srcFor(i){ return "audio/"+SC[i].id+".mp3"; }
+  function playScene(i){ setActive(i,true); playing=true; paused=false; setPlayIcon(true); buildCaption(i);
+    var useAudio=HAS_AUDIO && SC[i].cap;
+    if(useAudio){ mode="audio"; modeFlag.textContent="ElevenLabs"; audio.src=srcFor(i); audio.currentTime=0;
+      audio.playbackRate=speed; audio.volume=parseFloat(document.getElementById("vol").value);
+      var p=audio.play(); if(p&&p.catch) p.catch(function(){ ttsSpeak(i); }); }
+    else { ttsSpeak(i); } }
+  function advance(){ if(activeIndex<scenes.length-1) playScene(activeIndex+1); else stopNarration(); }
+  audio.addEventListener("ended",function(){ if(playing&&mode==="audio") advance(); });
+  audio.addEventListener("error",function(){ if(playing&&mode==="audio") ttsSpeak(activeIndex); });
+  audio.addEventListener("timeupdate",function(){ if(mode!=="audio")return;
+    if(audio.duration) seekFill.style.width=(audio.currentTime/audio.duration*100)+"%"; highlightByTime(audio.currentTime); });
+
+  function ttsSpeak(i){ mode="tts"; modeFlag.textContent=ttsOK?"Browser voice":"unavailable"; if(!ttsOK)return; synth.cancel();
+    var u=new SpeechSynthesisUtterance(SC[i].text); u.rate=0.98*speed; u.pitch=1.0;
+    u.volume=parseFloat(document.getElementById("vol").value); if(chosenVoice)u.voice=chosenVoice;
+    var wIdx=0; u.onboundary=function(ev){ if(ev.name==="word"||ev.charIndex!==undefined) highlightByWordIndex(wIdx++); };
+    u.onend=function(){ if(playing&&mode==="tts") advance(); };
+    setTimeout(function(){ if(playing) synth.speak(u); }, reduced?40:420); }
+
+  function startNarration(i){ playScene(typeof i==="number"?i:activeIndex); player.classList.add("show"); }
+  function stopNarration(){ playing=false; paused=false; setPlayIcon(false); try{ audio.pause(); }catch(e){}
+    if(ttsOK) synth.cancel(); capEl.classList.remove("show"); seekFill.style.width="0%"; }
+
+  playBtn.addEventListener("click",function(){
+    if(!playing){ startNarration(activeIndex); return; }
+    if(!paused){ paused=true; setPlayIcon(false); if(mode==="audio")audio.pause(); else if(ttsOK)synth.pause(); }
+    else { paused=false; setPlayIcon(true); if(mode==="audio")audio.play(); else if(ttsOK)synth.resume(); } });
+  document.getElementById("nextBtn").addEventListener("click",function(){ jumpTo(activeIndex+1,playing); });
+  document.getElementById("prevBtn").addEventListener("click",function(){ jumpTo(activeIndex-1,playing); });
+  function jumpTo(i,keep){ i=Math.max(0,Math.min(scenes.length-1,i));
+    if(mode==="audio"){ try{audio.pause();}catch(e){} } if(ttsOK) synth.cancel();
+    if(keep){ playScene(i); } else { stopNarration(); setActive(i,true); } }
+
+  var beginBtn=document.getElementById("beginBtn");
+  if(beginBtn) beginBtn.addEventListener("click",function(){ player.classList.add("show");
+    if(ttsOK){ try{ synth.resume(); }catch(e){} } startNarration(0); });
+  addEventListener("scroll",function(){ if(scrollY>innerHeight*0.5) player.classList.add("show"); },{passive:true});
+
+  var centerIO=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){
+    var idx=scenes.indexOf(e.target); if(idx!==activeIndex&&!playing) setActive(idx,false); } }); },{rootMargin:"-45% 0px -45% 0px",threshold:0});
+  scenes.forEach(function(s){ centerIO.observe(s); });
+
+  /* speed */
+  var speedsWrap=document.getElementById("speeds");
+  function applySpeed(v){ speed=v; localStorage.setItem("st-speed",String(v));
+    speedBtn.innerHTML=(v%1===0?v:v.toFixed(2).replace(/0$/,""))+"&times;";
+    if(mode==="audio") audio.playbackRate=v;
+    Array.prototype.forEach.call(speedsWrap.children,function(b){ b.classList.toggle("on",parseFloat(b.dataset.v)===v); }); }
+  SPEEDS.forEach(function(v){ var b=document.createElement("button"); b.dataset.v=v;
+    b.textContent=(v%1===0?v:v.toFixed(2).replace(/0$/,""))+"\u00d7";
+    b.addEventListener("click",function(){ applySpeed(v); }); speedsWrap.appendChild(b); });
+  speedBtn.addEventListener("click",function(){ var i=SPEEDS.indexOf(speed); applySpeed(SPEEDS[(i+1)%SPEEDS.length]); });
+  applySpeed(speed);
+
+  /* settings menu */
+  var voiceMenu=document.getElementById("voiceMenu");
+  document.getElementById("voiceToggle").addEventListener("click",function(e){ e.stopPropagation(); voiceMenu.classList.toggle("open"); });
+  document.addEventListener("click",function(e){ if(!voiceMenu.contains(e.target)&&e.target.id!=="voiceToggle") voiceMenu.classList.remove("open"); });
+  document.getElementById("vol").addEventListener("input",function(){ audio.volume=parseFloat(this.value); });
+  document.getElementById("capToggle").addEventListener("change",function(){ showCaptions=this.checked;
+    if(!showCaptions) capEl.classList.remove("show"); else if(playing) buildCaption(activeIndex); });
+
+  var voiceSelect=document.getElementById("voiceSelect"), ttsRow=document.getElementById("ttsRow");
+  var PREF=["Samantha","Serena","Allison","Ava","Daniel","Karen","Moira","Google UK English Female","Google US English","Microsoft Aria"];
+  function pickDefault(list){ for(var i=0;i<PREF.length;i++)for(var j=0;j<list.length;j++) if(list[j].name.indexOf(PREF[i])!==-1) return list[j];
+    for(var k=0;k<list.length;k++) if(/^en/i.test(list[k].lang)) return list[k]; return list[0]||null; }
+  function loadVoices(){ if(!ttsOK)return; voices=synth.getVoices().filter(function(v){return /^en/i.test(v.lang);}); if(!voices.length)voices=synth.getVoices();
+    voiceSelect.innerHTML=""; voices.forEach(function(v,i){ var o=document.createElement("option"); o.value=i; o.textContent=v.name; voiceSelect.appendChild(o); });
+    if(!chosenVoice)chosenVoice=pickDefault(voices); if(chosenVoice){ var ci=voices.indexOf(chosenVoice); if(ci>=0)voiceSelect.value=ci; } }
+  voiceSelect.addEventListener("change",function(){ chosenVoice=voices[parseInt(voiceSelect.value,10)]||chosenVoice; });
+  if(ttsOK){ loadVoices(); if(synth.onvoiceschanged!==undefined) synth.onvoiceschanged=loadVoices;
+    setInterval(function(){ if(playing&&!paused&&mode==="tts"&&synth.speaking){ synth.pause(); synth.resume(); } },12000); }
+  if(!HAS_AUDIO){ ttsRow.style.display="flex"; modeFlag.textContent=ttsOK?"Browser voice":"unavailable"; }
+  else { modeFlag.textContent="ElevenLabs"; }
+
+  addEventListener("beforeunload",function(){ if(ttsOK) synth.cancel(); try{audio.pause();}catch(e){} });
+  document.addEventListener("keydown",function(e){ if(e.code==="Space"&&player.classList.contains("show")&&e.target===document.body){ e.preventDefault(); playBtn.click(); } });
+  setActive(0,false);
+})();
+</script>
+</body>
+</html>

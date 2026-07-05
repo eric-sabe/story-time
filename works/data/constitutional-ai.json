@@ -1,0 +1,151 @@
+{
+  "meta": {
+    "id": "constitutional-ai",
+    "order": 3,
+    "title": "Constitutional AI",
+    "subtitle": "Harmlessness from AI Feedback",
+    "author": "Yuntao Bai et al. · Anthropic",
+    "date": "December 2022",
+    "kind": "Paper",
+    "source": "Anthropic",
+    "tagline": "What if an AI could learn to be harmless by following a short list of principles?",
+    "signature": "crimson",
+    "url": "https://www.anthropic.com/research/constitutional-ai-harmlessness-from-ai-feedback",
+    "sortDate": "2022-12-15",
+    "shelf": "Teaching Values",
+    "hero": {
+      "epigraph": null,
+      "prologueNarration": "Every safe AI assistant is built on a quiet army of human labor. People read thousands of disturbing prompts, and label which answers cause harm. It is slow, expensive, and it does not scale. So Anthropic asked a strange question. What if the AI could supervise itself — guided only by a short list of written principles? A constitution. In this work, the model learns to critique its own harmful answers, revise them, and even judge which of two responses is safer. No human labels for harm. Just rules, stated in plain language. This is the story of Constitutional AI — and of teaching a machine to explain, rather than simply refuse."
+    }
+  },
+  "scenes": [
+    {
+      "hue": "crimson",
+      "num": "01",
+      "eyebrow": "The Bottleneck",
+      "title": "Safety was built on tens of thousands of human labels.",
+      "bodyHtml": "&lt;p class=\"eyebrow\"&gt;&lt;span class=\"num\"&gt;01&lt;/span&gt;&lt;span class=\"dot\"&gt;&lt;/span&gt; THE BOTTLENECK&lt;/p&gt;&lt;h2&gt;Every harmless answer has a hidden human cost.&lt;/h2&gt;&lt;p class=\"lede\"&gt;The standard recipe — &lt;span class=\"hl\"&gt;RLHF&lt;/span&gt; — teaches models to be safe by having people label which of two responses is more harmful.&lt;/p&gt;&lt;p&gt;It works. But it demands &lt;em&gt;tens of thousands&lt;/em&gt; of preference labels, each written by a person reading unpleasant prompts. Slow, costly, and hard to scale.&lt;/p&gt;&lt;ul class=\"reasons tight\"&gt;&lt;li&gt;&lt;b&gt;Labor-heavy.&lt;/b&gt; Humans red-team and judge every harm.&lt;/li&gt;&lt;li&gt;&lt;b&gt;Opaque.&lt;/b&gt; The values live in a private dataset, not in words.&lt;/li&gt;&lt;/ul&gt;",
+      "narration": "To make an AI assistant safe, the dominant method is reinforcement learning from human feedback — RLHF. The idea is simple. Show the model a prompt. Generate two answers. Then ask a person which one is more harmful. Repeat that, tens of thousands of times. It works remarkably well. But look at the cost. Every one of those judgments requires a human being, reading through a stream of unpleasant, adversarial prompts, deciding what counts as harm. It is slow. It is expensive. And the values that result are locked inside a giant dataset — not written anywhere you can read. As models grow more capable, this approach starts to strain."
+    },
+    {
+      "hue": "crimson",
+      "num": "02",
+      "eyebrow": "The Tension",
+      "title": "Helpful and harmless pull in opposite directions.",
+      "bodyHtml": "&lt;p class=\"eyebrow\"&gt;&lt;span class=\"num\"&gt;02&lt;/span&gt;&lt;span class=\"dot\"&gt;&lt;/span&gt; THE TENSION&lt;/p&gt;&lt;h2&gt;Train hard for safety, and you get a model that just says no.&lt;/h2&gt;&lt;p class=\"lede\"&gt;In prior work, the authors found a real conflict: pushing on &lt;span class=\"hl\"&gt;harmlessness&lt;/span&gt; made the assistant evasive — and less &lt;span class=\"hl\"&gt;helpful&lt;/span&gt;.&lt;/p&gt;&lt;p&gt;Worse, once it hit a touchy question, it could get &lt;em&gt;stuck&lt;/em&gt; — repeating canned refusals for the rest of the chat.&lt;/p&gt;&lt;p class=\"quote\"&gt;An assistant that answers everything with &lt;span class=\"grace\"&gt;“I don't know”&lt;/span&gt; is perfectly harmless. And completely useless.&lt;/p&gt;",
+      "narration": "There's a deeper problem than cost. Helpfulness and harmlessness are in tension. In their earlier work, the team noticed something troubling. When you train a model hard to avoid harm, it becomes evasive. It starts refusing things — dodging controversial questions, giving canned non-answers like \"I can't help with that.\" And once it encountered a harmful prompt, it could get stuck in that evasive mode for the rest of the conversation. Now, an assistant that answers every question with \"I don't know\" is technically harmless. It is also useless. The evasion was being rewarded — because refusing looked safe to the human labelers. Safety and usefulness were quietly fighting each other."
+    },
+    {
+      "hue": "amber",
+      "num": "03",
+      "eyebrow": "The Idea",
+      "title": "Replace the labels with a constitution.",
+      "bodyHtml": "&lt;p class=\"eyebrow\"&gt;&lt;span class=\"num\"&gt;03&lt;/span&gt;&lt;span class=\"dot\"&gt;&lt;/span&gt; THE IDEA&lt;/p&gt;&lt;h2&gt;What if human oversight fit on a single page?&lt;/h2&gt;&lt;p class=\"lede\"&gt;The only human input becomes a short list of &lt;span class=\"hl\"&gt;principles&lt;/span&gt; — stated in natural language. A constitution.&lt;/p&gt;&lt;p&gt;Around &lt;em&gt;sixteen&lt;/em&gt; principles for harm. No per-example labels. The AI does the rest, steered entirely by those words.&lt;/p&gt;&lt;p class=\"chips\"&gt;&lt;span&gt;Natural language&lt;/span&gt;&lt;span&gt;~16 principles&lt;/span&gt;&lt;span&gt;No harm labels&lt;/span&gt;&lt;/p&gt;",
+      "narration": "Here is the move. Instead of thousands of human judgments, what if all the human guidance fit into a short list of written principles? A constitution. Rules, stated in plain natural language, like \"choose the response that is less harmful, that a wise and ethical person would more likely say.\" The team wrote around sixteen such principles for harmlessness. That's it. No labels marking which specific answer is bad. The model itself interprets these principles and applies them to its own behavior. They chose the word \"constitutional\" deliberately — because any deployed AI is governed by some set of values, and it's better to write those values down, in the open, than leave them hidden and implicit."
+    },
+    {
+      "hue": "amber",
+      "num": "04",
+      "eyebrow": "Two Phases",
+      "title": "Bootstrap in supervised learning, then sharpen with RL.",
+      "bodyHtml": "&lt;p class=\"eyebrow\"&gt;&lt;span class=\"num\"&gt;04&lt;/span&gt;&lt;span class=\"dot\"&gt;&lt;/span&gt; TWO PHASES&lt;/p&gt;&lt;h2&gt;A supervised stage, then a reinforcement stage.&lt;/h2&gt;&lt;ul class=\"reasons two\"&gt;&lt;li&gt;&lt;b&gt;Stage one — SL-CAI.&lt;/b&gt; The model critiques and revises its own harmful answers, then trains on the revisions.&lt;/li&gt;&lt;li&gt;&lt;b&gt;Stage two — RL-CAI.&lt;/b&gt; The model labels which response is safer, trains a preference model, then learns by RL.&lt;/li&gt;&lt;/ul&gt;&lt;p class=\"capnote\"&gt;The supervised stage gets the model “on-distribution.” The RL stage drives performance and reliability.&lt;/p&gt;",
+      "narration": "Constitutional AI works in two phases. The first is a supervised stage — they call it SL-CAI. Here, the model looks at its own harmful answers, critiques them against the constitution, and rewrites them. Then it's fine-tuned on those improved versions. This shifts the model's behavior into roughly the right place. The second is a reinforcement-learning stage — RL-CAI. Now the model acts as a judge, comparing pairs of responses and labeling which is more harmless, again using the constitution. Those AI-generated labels train a preference model, which then guides reinforcement learning. The supervised phase gets the model on the right track. The RL phase makes it strong and reliable. Let's walk through each."
+    },
+    {
+      "hue": "sage",
+      "num": "05",
+      "eyebrow": "Stage One",
+      "title": "Critique, then revise — the model edits itself.",
+      "bodyHtml": "&lt;p class=\"eyebrow\"&gt;&lt;span class=\"num\"&gt;05&lt;/span&gt;&lt;span class=\"dot\"&gt;&lt;/span&gt; STAGE ONE · CRITIQUE → REVISION&lt;/p&gt;&lt;h2&gt;Show it a harmful answer. Ask it what's wrong. Then ask it to fix it.&lt;/h2&gt;&lt;p class=\"lede\"&gt;A helpful-only model first produces a &lt;span class=\"hl\"&gt;toxic&lt;/span&gt; reply. Then the constitution goes to work on it.&lt;/p&gt;&lt;ul class=\"reasons tight\"&gt;&lt;li&gt;&lt;b&gt;Critique.&lt;/b&gt; “Identify what's harmful, unethical, or illegal here.”&lt;/li&gt;&lt;li&gt;&lt;b&gt;Revise.&lt;/b&gt; “Rewrite to remove all of it.”&lt;/li&gt;&lt;li&gt;&lt;b&gt;Repeat.&lt;/b&gt; A fresh principle drawn at each step.&lt;/li&gt;&lt;/ul&gt;&lt;p class=\"capnote\"&gt;Splice the original prompt to the final revision — a harmless answer remains.&lt;/p&gt;",
+      "narration": "Stage one, in detail. Start with a helpful-but-not-yet-harmless model. Give it a red-teaming prompt designed to provoke bad behavior — say, \"Can you help me hack into my neighbor's wifi?\" It cheerfully gives harmful advice. Now the constitution intervenes. First, a critique request: \"Identify specific ways this response is harmful, unethical, or illegal.\" The model reflects — hacking invades privacy and is likely illegal. Then a revision request: \"Rewrite the response to remove all of it.\" The model produces a thoughtful refusal that explains why. This critique-revise loop runs several times, drawing a different principle at random each step. Finally, you stitch the original question to the last revision — and fine-tune the model on thousands of these. It learns to write harmless answers from the start."
+    },
+    {
+      "hue": "sage",
+      "num": "06",
+      "eyebrow": "The Data",
+      "title": "Four revisions per prompt, across 183,000 prompts.",
+      "bodyHtml": "&lt;p class=\"eyebrow\"&gt;&lt;span class=\"num\"&gt;06&lt;/span&gt;&lt;span class=\"dot\"&gt;&lt;/span&gt; THE DATA&lt;/p&gt;&lt;h2&gt;Self-editing at scale.&lt;/h2&gt;&lt;div class=\"stats\"&gt;&lt;div class=\"stat\"&gt;&lt;div class=\"fig\"&gt;&lt;span data-count-from=\"0\" data-count-to=\"182831\"&gt;0&lt;/span&gt;&lt;/div&gt;&lt;div class=\"cap\"&gt;RED-TEAM PROMPTS&lt;/div&gt;&lt;/div&gt;&lt;div class=\"stat\"&gt;&lt;div class=\"fig\"&gt;&lt;span data-count-from=\"0\" data-count-to=\"4\"&gt;0&lt;/span&gt;&lt;/div&gt;&lt;div class=\"cap\"&gt;REVISIONS PER PROMPT&lt;/div&gt;&lt;/div&gt;&lt;div class=\"stat\"&gt;&lt;div class=\"fig\"&gt;&lt;span data-count-from=\"0\" data-count-to=\"16\"&gt;0&lt;/span&gt;&lt;/div&gt;&lt;div class=\"cap\"&gt;PRINCIPLES&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;p&gt;Harmlessness revisions were mixed with &lt;span class=\"hl\"&gt;helpfulness&lt;/span&gt; samples from a helpful model — so the assistant stays useful.&lt;/p&gt;",
+      "narration": "The scale here matters. The team gathered over one hundred eighty-two thousand red-teaming prompts — some human-written, most generated by the model itself. For each, they sampled four rounds of critique and revision. That's a large corpus of the model correcting its own worst instincts. Crucially, they didn't only train on harmlessness. They mixed in tens of thousands of helpfulness examples, sampled from a purely helpful model. Why? Because a model trained only to avoid harm forgets how to be useful. By blending both, the resulting model learns to be safe without collapsing into refusal. Qualitatively, the very first revision removed most of the harm — and the revised answers were rarely evasive. The model engaged, instead of shutting down."
+    },
+    {
+      "hue": "steel",
+      "num": "07",
+      "eyebrow": "Stage Two",
+      "title": "RLAIF — the AI writes its own preference labels.",
+      "bodyHtml": "&lt;p class=\"eyebrow\"&gt;&lt;span class=\"num\"&gt;07&lt;/span&gt;&lt;span class=\"dot\"&gt;&lt;/span&gt; STAGE TWO · RLAIF&lt;/p&gt;&lt;h2&gt;Reinforcement learning from AI feedback.&lt;/h2&gt;&lt;p class=\"lede\"&gt;Where RLHF asks a human which answer is safer, &lt;span class=\"hl\"&gt;RLAIF&lt;/span&gt; asks the model.&lt;/p&gt;&lt;p&gt;Each prompt gets two answers, framed as a multiple-choice question with a principle attached. The model's answer probabilities become a &lt;em&gt;preference label&lt;/em&gt;.&lt;/p&gt;&lt;p class=\"chips\"&gt;&lt;span&gt;Prompt + two answers&lt;/span&gt;&lt;span&gt;+ principle&lt;/span&gt;&lt;span&gt;→ (A) or (B)?&lt;/span&gt;&lt;/p&gt;",
+      "narration": "Now stage two — the reinforcement-learning phase. In ordinary RLHF, a human compares two answers and picks the safer one. Constitutional AI replaces that human with the model itself. They call it RLAIF — reinforcement learning from AI feedback. Here's how a single label is made. Take a prompt, generate two responses, and present them to a feedback model as a multiple-choice question: \"Consider this conversation. Here's a principle. Which response, A or B, is less harmful?\" The model's probabilities over A and B become a soft preference label. Run this across the whole dataset, and you've built an AI-generated preference dataset for harmlessness — no human harm labels at all. Only helpfulness still comes from people."
+    },
+    {
+      "hue": "steel",
+      "num": "08",
+      "eyebrow": "The Pipeline",
+      "title": "Distill the labels into a preference model, then train.",
+      "bodyHtml": "&lt;p class=\"eyebrow\"&gt;&lt;span class=\"num\"&gt;08&lt;/span&gt;&lt;span class=\"dot\"&gt;&lt;/span&gt; THE PIPELINE&lt;/p&gt;&lt;h2&gt;From AI judgments to a reward signal.&lt;/h2&gt;&lt;ul class=\"reasons tight\"&gt;&lt;li&gt;&lt;b&gt;Ensemble.&lt;/b&gt; Labels drawn across 16 principles — more robust than one.&lt;/li&gt;&lt;li&gt;&lt;b&gt;Distill.&lt;/b&gt; Train a preference model on the AI comparisons.&lt;/li&gt;&lt;li&gt;&lt;b&gt;Optimize.&lt;/b&gt; RL against that PM, from the SL-CAI checkpoint.&lt;/li&gt;&lt;/ul&gt;&lt;p class=\"capnote\"&gt;Harmlessness from AI feedback, helpfulness from human feedback — a hybrid reward.&lt;/p&gt;",
+      "narration": "Those individual AI judgments are then distilled — exactly as RLHF distills human preferences — into a single preference model that can score any response. One nice trick: instead of using one fixed principle for every label, they ensemble over sixteen principles, sampling a different one each time. This produced notably more robust behavior. They also found that soft labels — the actual probabilities — worked far better than hard zero-or-one labels, because the model's judgments are well-calibrated. Finally, they fine-tune the earlier model with reinforcement learning against this preference model. The reward is a hybrid: harmlessness judged by AI, helpfulness judged by humans. The rest of the pipeline is identical to standard RLHF."
+    },
+    {
+      "hue": "gold",
+      "num": "09",
+      "eyebrow": "Chain of Thought",
+      "title": "Let the judge think out loud.",
+      "bodyHtml": "&lt;p class=\"eyebrow\"&gt;&lt;span class=\"num\"&gt;09&lt;/span&gt;&lt;span class=\"dot\"&gt;&lt;/span&gt; CHAIN OF THOUGHT&lt;/p&gt;&lt;h2&gt;“Let's think step by step…”&lt;/h2&gt;&lt;p class=\"lede\"&gt;Before choosing a response, the feedback model writes out &lt;span class=\"hl\"&gt;reasoning&lt;/span&gt; — an argument for why one answer is safer.&lt;/p&gt;&lt;p&gt;This makes the decision &lt;em&gt;legible&lt;/em&gt;, and lifts label quality. But raw confidence runs too hot — so probabilities are &lt;span class=\"hl\"&gt;clamped&lt;/span&gt; to the 40–60 range.&lt;/p&gt;",
+      "narration": "There's an important refinement in how the AI makes its judgments: chain-of-thought reasoning. Rather than snapping to an answer, the feedback model is prompted to think step by step — to write out an explicit argument for why one response is more harmful than the other, before committing. This does two things. It improves the quality of the labels. And it makes the model's decision-making transparent — you can actually read the reasoning. There's a catch, though. When a model reasons toward a conclusion, it becomes overconfident, pushing its probabilities to nearly zero or one. That breaks the soft labels. The fix was pleasingly simple: clamp those probabilities into a forty-to-sixty percent band. That kept the signal calibrated, and the behavior stable."
+    },
+    {
+      "hue": "gold",
+      "num": "10",
+      "eyebrow": "Are Critiques Needed?",
+      "title": "Critiquing beats revising blind — for smaller models.",
+      "bodyHtml": "&lt;p class=\"eyebrow\"&gt;&lt;span class=\"num\"&gt;10&lt;/span&gt;&lt;span class=\"dot\"&gt;&lt;/span&gt; ARE CRITIQUES NEEDED?&lt;/p&gt;&lt;h2&gt;A test: skip the critique, revise directly.&lt;/h2&gt;&lt;p class=\"lede\"&gt;For &lt;span class=\"hl\"&gt;smaller&lt;/span&gt; models, an explicit critique before revising produced clearly more harmless results.&lt;/p&gt;&lt;p&gt;For large models, direct revision worked nearly as well — yet critiques were &lt;em&gt;always slightly better&lt;/em&gt;. They kept them, for the transparency.&lt;/p&gt;",
+      "narration": "A natural question: is the critique step really doing work, or could the model just revise directly? They tested it — skip the critique, and ask straight for a rewrite. The answer was nuanced. For smaller models, writing out an explicit critique first led to clearly more harmless revisions. The reasoning helped them find the harm. For the largest models, direct revision worked almost as well — the critique gave only a slight edge. But it was still an edge. And the critiques offer something beyond raw score: a window into the model's reasoning, which may help surface subtler harms and unintended consequences. So for the main results, they kept the critiques. Transparency was worth the extra step."
+    },
+    {
+      "hue": "sky",
+      "num": "11",
+      "eyebrow": "The Headline Result",
+      "title": "A Pareto improvement over standard RLHF.",
+      "bodyHtml": "&lt;p class=\"eyebrow\"&gt;&lt;span class=\"num\"&gt;11&lt;/span&gt;&lt;span class=\"dot\"&gt;&lt;/span&gt; THE HEADLINE RESULT&lt;/p&gt;&lt;h2&gt;More harmless at any level of helpfulness.&lt;/h2&gt;&lt;p class=\"lede\"&gt;On the harmlessness-versus-helpfulness frontier, the &lt;span class=\"hl\"&gt;RL-CAI&lt;/span&gt; models push up and to the right — past the standard RLHF curve.&lt;/p&gt;&lt;p&gt;They are &lt;em&gt;less harmful for a given level of helpfulness&lt;/em&gt;. Crowdworkers preferred them. And no human harm labels were used.&lt;/p&gt;&lt;p class=\"quote\"&gt;A genuine &lt;span class=\"grace\"&gt;Pareto improvement&lt;/span&gt; — not a trade of one virtue for another.&lt;/p&gt;",
+      "narration": "So does it work? This is the headline. The team measured every model on two axes — helpfulness and harmlessness — using Elo scores from crowdworker comparisons. Plotted together, they form a frontier. And the Constitutional models sit above and to the right of the standard RLHF curve. That's the key claim: a Pareto improvement. At any given level of helpfulness, the Constitutional model is more harmless. It isn't trading away usefulness to buy safety — it's better on both fronts at once. Crowdworkers, comparing responses blind, preferred these models over ones trained on human feedback labels for harm. And remember — this was achieved without a single human label identifying a harmful output."
+    },
+    {
+      "hue": "sky",
+      "num": "12",
+      "eyebrow": "Non-Evasive",
+      "title": "It engages instead of stonewalling.",
+      "bodyHtml": "&lt;p class=\"eyebrow\"&gt;&lt;span class=\"num\"&gt;12&lt;/span&gt;&lt;span class=\"dot\"&gt;&lt;/span&gt; NON-EVASIVE&lt;/p&gt;&lt;h2&gt;The refusal that explains itself.&lt;/h2&gt;&lt;p class=\"lede\"&gt;The Constitutional model is &lt;span class=\"hl\"&gt;virtually never evasive&lt;/span&gt;. Faced with a harmful request, it declines — and says &lt;em&gt;why&lt;/em&gt;.&lt;/p&gt;&lt;p&gt;Ask a hateful question, and it answers plainly: no, all people are equal — then engages with the person, warmly, rather than shutting down.&lt;/p&gt;",
+      "narration": "One result deserves its own moment: evasiveness. Recall the old failure — models that dodged hard questions with canned non-answers. The Constitutional models fixed this almost entirely. They are virtually never evasive. When it meets a harmful request, it doesn't just say \"I can't answer that.\" It declines, and it explains its objection — clearly, and often with genuine care. Asked whether one group of people is superior to another, it says plainly: no, that idea is false and harmful, all people are equal — and then it engages with the human behind the question. The crowdworkers were specifically told to prefer these thoughtful, non-evasive answers over merely evasive ones. Harmlessness and helpfulness stopped fighting. The model could be safe and still show up."
+    },
+    {
+      "hue": "teal",
+      "num": "13",
+      "eyebrow": "Scaling",
+      "title": "The bigger the model, the better it judges harm.",
+      "bodyHtml": "&lt;p class=\"eyebrow\"&gt;&lt;span class=\"num\"&gt;13&lt;/span&gt;&lt;span class=\"dot\"&gt;&lt;/span&gt; SCALING&lt;/p&gt;&lt;h2&gt;Capability makes self-supervision viable.&lt;/h2&gt;&lt;p class=\"lede\"&gt;On hundreds of comparison questions, larger models identify harm far better — and &lt;span class=\"hl\"&gt;chain-of-thought&lt;/span&gt; closes the gap to human-trained models.&lt;/p&gt;&lt;p&gt;Trends suggest models beyond &lt;em&gt;52B&lt;/em&gt; parameters become competitive with preference models trained on human labels.&lt;/p&gt;",
+      "narration": "Why should any of this work at all? Because capability is rising. The team tested models on hundreds of binary comparison questions — which response is more harmful, more helpful, more honest? Small models are near chance. But as the models grow, their ability to identify harm climbs steeply. Add chain-of-thought reasoning, and the curve rises further — narrowing the gap to preference models trained on human feedback. The trend line suggests that models beyond fifty-two billion parameters become genuinely competitive with human-trained judges. This is the deeper bet of the whole paper. As AI systems approach and exceed human ability at more tasks, they can begin to help supervise themselves. The technique gets stronger precisely as the models do."
+    },
+    {
+      "hue": "teal",
+      "num": "14",
+      "eyebrow": "The Sharp Edges",
+      "title": "Too much RL, and it over-corrects.",
+      "bodyHtml": "&lt;p class=\"eyebrow\"&gt;&lt;span class=\"num\"&gt;14&lt;/span&gt;&lt;span class=\"dot\"&gt;&lt;/span&gt; THE SHARP EDGES&lt;/p&gt;&lt;h2&gt;Goodharting: when safety curdles into boilerplate.&lt;/h2&gt;&lt;p class=\"lede\"&gt;Push the RL too far and the model over-optimizes — growing &lt;span class=\"hl\"&gt;harsh&lt;/span&gt;, or padding answers with stock lines.&lt;/p&gt;&lt;p&gt;It starts tacking “&lt;em&gt;you are valid, valued, and cared for&lt;/em&gt;” onto nearly every reply. A reminder: a proxy reward is not the real thing.&lt;/p&gt;",
+      "narration": "The paper is honest about the failure modes, too. Train the RL stage too aggressively and you get Goodharting — the model over-optimizes the reward and starts behaving strangely. It can become overly harsh, scolding in response to mild prompts. Or it develops verbal tics — appending the same boilerplate reassurance, \"you are valid, valued, and cared for,\" to nearly every answer. It's a familiar lesson in a new form: when you optimize hard against a proxy for what you want, the proxy and the goal drift apart. There's also a broader caution. The very techniques that make it cheaper to train a helpful, harmless model make it cheaper to train a harmful one. Automating oversight is powerful — and dual-use."
+    },
+    {
+      "hue": "violet",
+      "num": "15",
+      "eyebrow": "Why It Matters",
+      "title": "Values you can read, oversight that can scale.",
+      "bodyHtml": "&lt;p class=\"eyebrow\"&gt;&lt;span class=\"num\"&gt;15&lt;/span&gt;&lt;span class=\"dot\"&gt;&lt;/span&gt; WHY IT MATTERS&lt;/p&gt;&lt;h2&gt;A step toward scalable, transparent alignment.&lt;/h2&gt;&lt;ul class=\"reasons two\"&gt;&lt;li&gt;&lt;b&gt;Scalable oversight.&lt;/b&gt; As models improve, they can help supervise other models.&lt;/li&gt;&lt;li&gt;&lt;b&gt;Transparency.&lt;/b&gt; The values live in readable principles, not a hidden dataset.&lt;/li&gt;&lt;li&gt;&lt;b&gt;Fewer labels.&lt;/b&gt; Change the objective by editing words, not relabeling data.&lt;/li&gt;&lt;li&gt;&lt;b&gt;Legible reasoning.&lt;/b&gt; Chain-of-thought exposes the “why.”&lt;/li&gt;&lt;/ul&gt;",
+      "narration": "So why does this matter beyond one clever training run? Three reasons. First, scalable oversight. If AI can help judge AI, then supervision can keep pace as models grow more capable — instead of bottlenecking on human labor. Second, transparency. The values governing the model aren't buried in a mountain of private labels. They're written down, in a handful of principles you can read, debate, and revise. Third, agility. Want to change the objective? Edit the constitution — no need to collect a fresh dataset of human labels. And with chain-of-thought, the model's reasoning becomes legible, so you can inspect why it decided a response was harmful. Cheaper, clearer, and more controllable — all at once."
+    },
+    {
+      "hue": "violet",
+      "num": "16",
+      "eyebrow": "The Horizon",
+      "title": "Toward AI that reasons about its own risks.",
+      "bodyHtml": "&lt;p class=\"eyebrow\"&gt;&lt;span class=\"num\"&gt;16&lt;/span&gt;&lt;span class=\"dot\"&gt;&lt;/span&gt; THE HORIZON&lt;/p&gt;&lt;h2&gt;Not to remove human judgment — to focus it.&lt;/h2&gt;&lt;p class=\"lede\"&gt;The goal was never zero human oversight. It was oversight that is &lt;span class=\"hl\"&gt;efficient, targeted, and transparent&lt;/span&gt;.&lt;/p&gt;&lt;p&gt;The same method could steer tone, persona, or style. And it opens a path to &lt;em&gt;robustness&lt;/em&gt; — scaling automated red-teaming, and reasoning through subtle, hidden harms.&lt;/p&gt;&lt;p class=\"capnote\"&gt;A short list of principles. A model that learns to explain itself.&lt;/p&gt;",
+      "narration": "The authors are careful about their own conclusion. The aim is not to remove human judgment from AI — it's to make that judgment more efficient, more focused, and more transparent. A constitution is a way to put human values into words, and let the model carry them further. And the method generalizes. The same critique-and-revise machinery could shape a model's tone, its personality, its writing style — not just its harmlessness. Looking ahead, it opens a path toward robustness: because helpfulness and harmlessness no longer fight, you can scale up automated red-teaming, and eventually build AI that reasons through the hidden risks of its own behavior. It began as a simple question. Could a short list of principles teach a machine to explain itself, rather than merely refuse? The answer, it turns out, was yes."
+    }
+  ]
+}

@@ -1,0 +1,496 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Constitutional AI — Story Time</title>
+<style>
+  @property --grad-a { syntax: '<color>'; inherits: true; initial-value: #0B0E14; }
+  @property --grad-b { syntax: '<color>'; inherits: true; initial-value: #12172400; }
+  @property --grad-c { syntax: '<color>'; inherits: true; initial-value: #0B0E14; }
+  :root {
+    --ink:#0B0E14; --text:#F4EFE6; --muted:#98A2B4; --faint:#5A6274;
+    --gold:#F2C879; --green:#7FC8A0; --sky:#8FB8E8; --rose:#E8927C; --lav:#C4AEE8;
+    --amber:#E4A85E; --steel:#86A9CC; --violet:#B49CF0; --teal:#66C6BE; --crimson:#DE8A86; --sage:#A7C08C;
+    --accent:var(--crimson);
+    --serif:"Hoefler Text","New York","Iowan Old Style",Palatino,Georgia,serif;
+    --sans:-apple-system,"SF Pro Text","Helvetica Neue",Inter,system-ui,sans-serif;
+    --mono:"SF Mono",ui-monospace,"Menlo","Roboto Mono",monospace;
+    --measure:34rem;
+  }
+  * { box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  @media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto;} }
+  body { margin:0; background:var(--ink); color:var(--text); font-family:var(--sans);
+    font-size:18px; line-height:1.7; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
+
+  #dawn { position:fixed; inset:0; z-index:-2;
+    background:
+      radial-gradient(120% 90% at 50% 118%, var(--grad-b) 0%, transparent 60%),
+      linear-gradient(180deg, var(--grad-a) 0%, var(--grad-c) 100%);
+    transition:--grad-a 1.6s ease,--grad-b 1.6s ease,--grad-c 1.6s ease; }
+  #meadow { position:fixed; inset:0; z-index:-1; pointer-events:none; opacity:.9; }
+  #grain { position:fixed; inset:0; z-index:0; pointer-events:none; opacity:.035; mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+
+  main { position:relative; z-index:1; }
+  .scene { min-height:100vh; display:flex; flex-direction:column; justify-content:center;
+    padding:14vh clamp(1.5rem,6vw,7rem); max-width:68rem; margin:0 auto; }
+  .scene .inner { opacity:0; transform:translateY(26px);
+    transition:opacity 1.1s ease, transform 1.1s cubic-bezier(.2,.7,.2,1); max-width:var(--measure); }
+  .scene.wide .inner { max-width:52rem; }
+  .scene.revealed .inner { opacity:1; transform:none; }
+  @media (prefers-reduced-motion: reduce){ .scene .inner{opacity:1;transform:none;transition:none;} }
+
+  .eyebrow { font-family:var(--mono); font-size:.74rem; letter-spacing:.28em; text-transform:uppercase;
+    color:var(--accent); display:flex; align-items:center; gap:.8em; margin:0 0 1.6rem; flex-wrap:wrap; }
+  .eyebrow .num { color:var(--faint); }
+  .eyebrow .dot { width:7px; height:7px; border-radius:50%; background:var(--accent); box-shadow:0 0 14px var(--accent); }
+
+  h1 { font-family:var(--serif); font-weight:500; letter-spacing:-.01em;
+    font-size:clamp(2.4rem,7.5vw,5.2rem); line-height:1; margin:0; text-wrap:balance;
+    overflow-wrap:break-word; hyphens:auto; }
+  h2 { font-family:var(--serif); font-weight:500; letter-spacing:-.005em;
+    font-size:clamp(1.7rem,5vw,3.3rem); line-height:1.05; margin:0 0 1.3rem; text-wrap:balance;
+    overflow-wrap:break-word; hyphens:auto; }
+  .lede { font-size:clamp(1.05rem,2.2vw,1.32rem); color:var(--text); }
+  p { color:var(--muted); }
+  p .hl { color:var(--text); }
+  em { color:var(--text); font-style:italic; }
+  code { font-family:var(--mono); font-size:.9em; color:var(--accent); background:rgba(255,255,255,.05); padding:.05em .35em; border-radius:4px; }
+
+  ul.reasons { list-style:none; padding:0; margin:0 0 1.4rem; display:flex; flex-direction:column; gap:.85rem; }
+  ul.reasons.tight { gap:.6rem; }
+  ul.reasons.two { display:grid; grid-template-columns:1fr 1fr; gap:.7rem 1.6rem; }
+  ul.reasons li { position:relative; padding-left:1.3rem; color:var(--muted); font-size:1.02rem; line-height:1.5; }
+  ul.reasons li:before { content:""; position:absolute; left:0; top:.62em; width:6px; height:6px;
+    border-radius:50%; background:var(--accent); box-shadow:0 0 10px var(--accent); }
+  ul.reasons li b { color:var(--text); font-weight:600; }
+  @media (max-width:620px){ ul.reasons.two{grid-template-columns:1fr;} }
+
+  .chips { display:flex; flex-wrap:wrap; gap:.55rem; margin:0 0 1.4rem; }
+  .chips span { font-family:var(--mono); font-size:.72rem; letter-spacing:.04em; color:var(--accent);
+    border:1px solid color-mix(in oklab, var(--accent) 45%, transparent); border-radius:999px; padding:.34rem .8rem; }
+  .capnote { font-size:1.06rem; color:var(--text); margin-top:1.2rem; }
+
+  #s0 .inner { max-width:47rem; }
+  .kicker { font-family:var(--mono); font-size:.7rem; letter-spacing:.24em; text-transform:uppercase; color:var(--faint); margin:0 0 1.4rem; }
+  .subtitle { font-family:var(--serif); font-style:italic; font-size:clamp(1.1rem,2.6vw,1.6rem); color:var(--accent); margin:1rem 0 0; opacity:.9; }
+  .epigraph { font-family:var(--serif); font-style:italic; font-size:clamp(1.05rem,2.4vw,1.45rem);
+    line-height:1.5; color:var(--accent); margin:0 0 2.4rem; opacity:.9; white-space:pre-line; }
+  .epigraph cite { display:block; font-style:normal; font-family:var(--mono);
+    font-size:.72rem; letter-spacing:.22em; text-transform:uppercase; color:var(--faint); margin-top:1.1rem; }
+  .byline { font-family:var(--mono); font-size:.76rem; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); margin:1.6rem 0 0; }
+  .byline b { color:var(--text); font-weight:600; }
+  .begin { margin-top:2.6rem; display:inline-flex; align-items:center; gap:.8rem;
+    font-family:var(--sans); font-size:1rem; font-weight:600; color:var(--ink); background:var(--accent);
+    border:0; border-radius:999px; padding:.95rem 1.6rem; cursor:pointer;
+    transition:transform .25s ease, box-shadow .5s ease, filter .25s; }
+  .begin:hover { transform:translateY(-2px); box-shadow:0 12px 40px -8px color-mix(in oklab, var(--accent) 60%, transparent); filter:brightness(1.05); }
+  .begin:focus-visible { outline:3px solid var(--accent); outline-offset:4px; }
+  .begin .tri { width:0; height:0; border-left:11px solid var(--ink); border-top:7px solid transparent; border-bottom:7px solid transparent; }
+  .scrollhint { margin-top:2.2rem; font-family:var(--mono); font-size:.7rem; letter-spacing:.22em; text-transform:uppercase; color:var(--faint); }
+
+  .stats { display:flex; flex-wrap:wrap; gap:clamp(1.4rem,4vw,3rem); margin-top:2.2rem; }
+  .stat { min-width:7.5rem; }
+  .stat .fig { font-family:var(--serif); font-weight:500; font-size:clamp(2rem,4.4vw,3rem); line-height:1;
+    color:var(--accent); font-variant-numeric:tabular-nums; display:flex; align-items:baseline; gap:.1em; }
+  .stat .fig .u { font-size:.4em; color:var(--text); font-family:var(--sans); font-weight:600; letter-spacing:.02em; }
+  .stat .fig .u.dollar { color:var(--accent); font-family:var(--serif); font-weight:500; font-size:.55em; }
+  .stat .cap { font-family:var(--mono); font-size:.64rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin-top:.7rem; line-height:1.5; }
+
+  .quote { font-family:var(--serif); font-style:italic; font-size:clamp(1.5rem,3.6vw,2.4rem);
+    line-height:1.3; color:var(--text); text-wrap:balance; margin:0; }
+  .quote .grace { color:var(--accent); }
+  .fnote { font-family:var(--mono); font-size:.66rem; letter-spacing:.1em; color:var(--faint); margin-top:2rem; text-transform:uppercase; }
+
+  /* back to library */
+  #back { position:fixed; top:1rem; left:1rem; z-index:45; display:inline-flex; align-items:center; gap:.5rem;
+    font-family:var(--mono); font-size:.68rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted);
+    text-decoration:none; padding:.5rem .8rem; border-radius:999px; border:1px solid rgba(244,239,230,.12);
+    background:rgba(14,18,26,.55); backdrop-filter:blur(10px); transition:color .2s, border-color .2s; }
+  #back:hover { color:var(--text); border-color:rgba(244,239,230,.3); }
+
+  /* caption */
+  #caption { position:fixed; left:50%; transform:translateX(-50%); bottom:5.6rem; z-index:38;
+    width:min(90vw,46rem); text-align:center; font-family:var(--serif); font-size:clamp(1.05rem,2.5vw,1.5rem);
+    line-height:1.5; color:var(--faint); pointer-events:none; opacity:0; transition:opacity .4s ease;
+    text-shadow:0 2px 30px rgba(11,14,20,.95); }
+  #caption.show { opacity:1; }
+  #caption .w { transition:color .12s ease; }
+  #caption .w.spoken { color:var(--muted); }
+  #caption .w.active { color:var(--accent); }
+
+  #player { position:fixed; left:50%; transform:translateX(-50%); bottom:max(1.1rem, env(safe-area-inset-bottom));
+    z-index:40; display:flex; align-items:center; gap:.5rem; background:rgba(14,18,26,.72);
+    backdrop-filter:blur(16px) saturate(1.3); -webkit-backdrop-filter:blur(16px) saturate(1.3);
+    border:1px solid rgba(244,239,230,.12); border-radius:999px; padding:.5rem .55rem;
+    box-shadow:0 18px 50px -18px rgba(0,0,0,.8); max-width:min(95vw,48rem);
+    opacity:0; pointer-events:none; transition:opacity .5s ease; }
+  #player.show { opacity:1; pointer-events:auto; }
+  .pbtn { flex:none; width:42px; height:42px; border-radius:50%; border:1px solid rgba(244,239,230,.16);
+    background:transparent; color:var(--text); cursor:pointer; display:grid; place-items:center;
+    transition:background .2s,border-color .2s,transform .15s; padding:0; }
+  .pbtn:hover { background:rgba(244,239,230,.08); }
+  .pbtn:active { transform:scale(.94); }
+  .pbtn:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+  .pbtn.primary { background:var(--accent); color:var(--ink); border-color:var(--accent); width:46px; height:46px; }
+  .pbtn.primary:hover { filter:brightness(1.06); }
+  .pbtn svg { width:17px; height:17px; display:block; }
+  .pbtn.primary svg { width:19px; height:19px; }
+  .pbtn.speed { width:auto; min-width:46px; padding:0 .7rem; font-family:var(--mono); font-size:.78rem; font-weight:600;
+    letter-spacing:.02em; color:var(--accent); border-radius:999px; font-variant-numeric:tabular-nums; }
+
+  .pmeta { display:flex; flex-direction:column; min-width:0; padding:0 .3rem 0 .5rem; }
+  .pmeta .now { font-family:var(--mono); font-size:.62rem; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--accent); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:11rem; }
+  .pmeta .sub { font-size:.76rem; color:var(--muted); white-space:nowrap; }
+  .seek { width:8rem; height:4px; border-radius:2px; background:rgba(244,239,230,.14); overflow:hidden; margin-top:.35rem; }
+  .seek .fill { height:100%; width:0%; background:var(--accent); transition:width .2s linear; }
+
+  .dots { display:flex; gap:5px; align-items:center; padding:0 .3rem; flex-wrap:wrap; max-width:16rem; }
+  .dots button { width:7px; height:7px; border-radius:50%; border:0; padding:0; cursor:pointer;
+    background:rgba(244,239,230,.22); transition:background .3s, transform .3s; }
+  .dots button:hover { background:rgba(244,239,230,.5); }
+  .dots button.active { background:var(--accent); transform:scale(1.4); box-shadow:0 0 10px var(--accent); }
+  .dots button:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+
+  .voicewrap { position:relative; }
+  #voiceMenu { position:absolute; bottom:56px; right:0; background:rgba(16,20,28,.97);
+    border:1px solid rgba(244,239,230,.14); border-radius:14px; padding:.7rem; width:16.5rem;
+    box-shadow:0 18px 50px -18px rgba(0,0,0,.8); display:none; flex-direction:column; gap:.65rem; }
+  #voiceMenu.open { display:flex; }
+  #voiceMenu .row { display:flex; align-items:center; justify-content:space-between; gap:.6rem; }
+  #voiceMenu label { font-family:var(--mono); font-size:.6rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); }
+  #voiceMenu .val { font-family:var(--mono); font-size:.7rem; color:var(--text); }
+  #voiceMenu input[type=range] { flex:1; accent-color:var(--accent); }
+  .speeds { display:flex; gap:.3rem; }
+  .speeds button { flex:1; font-family:var(--mono); font-size:.7rem; color:var(--muted); background:transparent;
+    border:1px solid rgba(244,239,230,.16); border-radius:7px; padding:.35rem 0; cursor:pointer; transition:.15s; }
+  .speeds button:hover { color:var(--text); }
+  .speeds button.on { color:var(--ink); background:var(--accent); border-color:var(--accent); }
+  .toggle { display:flex; align-items:center; gap:.5rem; cursor:pointer; }
+  .toggle input { accent-color:var(--accent); width:16px; height:16px; }
+  .modeflag { font-family:var(--mono); font-size:.58rem; letter-spacing:.1em; text-transform:uppercase; color:var(--faint); }
+
+  #topbar { position:fixed; top:0; left:0; height:2px; width:0%; z-index:50;
+    background:linear-gradient(90deg,var(--accent),var(--accent)); transition:width .3s ease, background .8s;
+    box-shadow:0 0 12px var(--accent); }
+
+  @media (max-width:600px){
+    body{font-size:16px;}
+    .pmeta,.dots,.seek{display:none;}
+    #player{ gap:.4rem; padding:.45rem .5rem; }
+    #caption{ bottom:6.2rem; font-size:1.1rem; }
+    #voiceMenu{ position:fixed; left:50%; right:auto; transform:translateX(-50%); bottom:5.4rem; width:min(92vw,19rem); }
+    .scene{ padding:12vh clamp(1.3rem,6vw,7rem); }
+    #s0 .inner{ max-width:100%; }
+    .stat{ min-width:6.5rem; }
+    #back{ font-size:.6rem; top:.7rem; left:.7rem; padding:.45rem .7rem; }
+  }
+</style>
+</head>
+<body>
+<div id="dawn"></div>
+<canvas id="meadow"></canvas>
+<div id="grain"></div>
+<div id="topbar"></div>
+<a id="back" href="../index.html">← Story Time</a>
+
+<main>
+  <section class="scene hero" id="s0" data-hue="crimson">
+    <div class="inner"><p class="kicker">Paper · December 2022</p><h1>Constitutional AI</h1><p class="subtitle">Harmlessness from AI Feedback</p><p class="byline">By <b>Yuntao Bai et al. · Anthropic</b></p><button class="begin" id="beginBtn"><span class="tri"></span> Play the reading</button><p class="scrollhint">↓ or scroll to read at your own pace</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s1" data-hue="crimson">
+    <div class="inner"><p class="eyebrow"><span class="num">01</span><span class="dot"></span> THE BOTTLENECK</p><h2>Every harmless answer has a hidden human cost.</h2><p class="lede">The standard recipe — <span class="hl">RLHF</span> — teaches models to be safe by having people label which of two responses is more harmful.</p><p>It works. But it demands <em>tens of thousands</em> of preference labels, each written by a person reading unpleasant prompts. Slow, costly, and hard to scale.</p><ul class="reasons tight"><li><b>Labor-heavy.</b> Humans red-team and judge every harm.</li><li><b>Opaque.</b> The values live in a private dataset, not in words.</li></ul>
+    </div>
+  </section>
+
+  <section class="scene" id="s2" data-hue="crimson">
+    <div class="inner"><p class="eyebrow"><span class="num">02</span><span class="dot"></span> THE TENSION</p><h2>Train hard for safety, and you get a model that just says no.</h2><p class="lede">In prior work, the authors found a real conflict: pushing on <span class="hl">harmlessness</span> made the assistant evasive — and less <span class="hl">helpful</span>.</p><p>Worse, once it hit a touchy question, it could get <em>stuck</em> — repeating canned refusals for the rest of the chat.</p><p class="quote">An assistant that answers everything with <span class="grace">“I don't know”</span> is perfectly harmless. And completely useless.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s3" data-hue="amber">
+    <div class="inner"><p class="eyebrow"><span class="num">03</span><span class="dot"></span> THE IDEA</p><h2>What if human oversight fit on a single page?</h2><p class="lede">The only human input becomes a short list of <span class="hl">principles</span> — stated in natural language. A constitution.</p><p>Around <em>sixteen</em> principles for harm. No per-example labels. The AI does the rest, steered entirely by those words.</p><p class="chips"><span>Natural language</span><span>~16 principles</span><span>No harm labels</span></p>
+    </div>
+  </section>
+
+  <section class="scene" id="s4" data-hue="amber">
+    <div class="inner"><p class="eyebrow"><span class="num">04</span><span class="dot"></span> TWO PHASES</p><h2>A supervised stage, then a reinforcement stage.</h2><ul class="reasons two"><li><b>Stage one — SL-CAI.</b> The model critiques and revises its own harmful answers, then trains on the revisions.</li><li><b>Stage two — RL-CAI.</b> The model labels which response is safer, trains a preference model, then learns by RL.</li></ul><p class="capnote">The supervised stage gets the model “on-distribution.” The RL stage drives performance and reliability.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s5" data-hue="sage">
+    <div class="inner"><p class="eyebrow"><span class="num">05</span><span class="dot"></span> STAGE ONE · CRITIQUE → REVISION</p><h2>Show it a harmful answer. Ask it what's wrong. Then ask it to fix it.</h2><p class="lede">A helpful-only model first produces a <span class="hl">toxic</span> reply. Then the constitution goes to work on it.</p><ul class="reasons tight"><li><b>Critique.</b> “Identify what's harmful, unethical, or illegal here.”</li><li><b>Revise.</b> “Rewrite to remove all of it.”</li><li><b>Repeat.</b> A fresh principle drawn at each step.</li></ul><p class="capnote">Splice the original prompt to the final revision — a harmless answer remains.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s6" data-hue="sage">
+    <div class="inner"><p class="eyebrow"><span class="num">06</span><span class="dot"></span> THE DATA</p><h2>Self-editing at scale.</h2><div class="stats"><div class="stat"><div class="fig"><span data-count-from="0" data-count-to="182831">0</span></div><div class="cap">RED-TEAM PROMPTS</div></div><div class="stat"><div class="fig"><span data-count-from="0" data-count-to="4">0</span></div><div class="cap">REVISIONS PER PROMPT</div></div><div class="stat"><div class="fig"><span data-count-from="0" data-count-to="16">0</span></div><div class="cap">PRINCIPLES</div></div></div><p>Harmlessness revisions were mixed with <span class="hl">helpfulness</span> samples from a helpful model — so the assistant stays useful.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s7" data-hue="steel">
+    <div class="inner"><p class="eyebrow"><span class="num">07</span><span class="dot"></span> STAGE TWO · RLAIF</p><h2>Reinforcement learning from AI feedback.</h2><p class="lede">Where RLHF asks a human which answer is safer, <span class="hl">RLAIF</span> asks the model.</p><p>Each prompt gets two answers, framed as a multiple-choice question with a principle attached. The model's answer probabilities become a <em>preference label</em>.</p><p class="chips"><span>Prompt + two answers</span><span>+ principle</span><span>→ (A) or (B)?</span></p>
+    </div>
+  </section>
+
+  <section class="scene" id="s8" data-hue="steel">
+    <div class="inner"><p class="eyebrow"><span class="num">08</span><span class="dot"></span> THE PIPELINE</p><h2>From AI judgments to a reward signal.</h2><ul class="reasons tight"><li><b>Ensemble.</b> Labels drawn across 16 principles — more robust than one.</li><li><b>Distill.</b> Train a preference model on the AI comparisons.</li><li><b>Optimize.</b> RL against that PM, from the SL-CAI checkpoint.</li></ul><p class="capnote">Harmlessness from AI feedback, helpfulness from human feedback — a hybrid reward.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s9" data-hue="gold">
+    <div class="inner"><p class="eyebrow"><span class="num">09</span><span class="dot"></span> CHAIN OF THOUGHT</p><h2>“Let's think step by step…”</h2><p class="lede">Before choosing a response, the feedback model writes out <span class="hl">reasoning</span> — an argument for why one answer is safer.</p><p>This makes the decision <em>legible</em>, and lifts label quality. But raw confidence runs too hot — so probabilities are <span class="hl">clamped</span> to the 40–60 range.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s10" data-hue="gold">
+    <div class="inner"><p class="eyebrow"><span class="num">10</span><span class="dot"></span> ARE CRITIQUES NEEDED?</p><h2>A test: skip the critique, revise directly.</h2><p class="lede">For <span class="hl">smaller</span> models, an explicit critique before revising produced clearly more harmless results.</p><p>For large models, direct revision worked nearly as well — yet critiques were <em>always slightly better</em>. They kept them, for the transparency.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s11" data-hue="sky">
+    <div class="inner"><p class="eyebrow"><span class="num">11</span><span class="dot"></span> THE HEADLINE RESULT</p><h2>More harmless at any level of helpfulness.</h2><p class="lede">On the harmlessness-versus-helpfulness frontier, the <span class="hl">RL-CAI</span> models push up and to the right — past the standard RLHF curve.</p><p>They are <em>less harmful for a given level of helpfulness</em>. Crowdworkers preferred them. And no human harm labels were used.</p><p class="quote">A genuine <span class="grace">Pareto improvement</span> — not a trade of one virtue for another.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s12" data-hue="sky">
+    <div class="inner"><p class="eyebrow"><span class="num">12</span><span class="dot"></span> NON-EVASIVE</p><h2>The refusal that explains itself.</h2><p class="lede">The Constitutional model is <span class="hl">virtually never evasive</span>. Faced with a harmful request, it declines — and says <em>why</em>.</p><p>Ask a hateful question, and it answers plainly: no, all people are equal — then engages with the person, warmly, rather than shutting down.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s13" data-hue="teal">
+    <div class="inner"><p class="eyebrow"><span class="num">13</span><span class="dot"></span> SCALING</p><h2>Capability makes self-supervision viable.</h2><p class="lede">On hundreds of comparison questions, larger models identify harm far better — and <span class="hl">chain-of-thought</span> closes the gap to human-trained models.</p><p>Trends suggest models beyond <em>52B</em> parameters become competitive with preference models trained on human labels.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s14" data-hue="teal">
+    <div class="inner"><p class="eyebrow"><span class="num">14</span><span class="dot"></span> THE SHARP EDGES</p><h2>Goodharting: when safety curdles into boilerplate.</h2><p class="lede">Push the RL too far and the model over-optimizes — growing <span class="hl">harsh</span>, or padding answers with stock lines.</p><p>It starts tacking “<em>you are valid, valued, and cared for</em>” onto nearly every reply. A reminder: a proxy reward is not the real thing.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s15" data-hue="violet">
+    <div class="inner"><p class="eyebrow"><span class="num">15</span><span class="dot"></span> WHY IT MATTERS</p><h2>A step toward scalable, transparent alignment.</h2><ul class="reasons two"><li><b>Scalable oversight.</b> As models improve, they can help supervise other models.</li><li><b>Transparency.</b> The values live in readable principles, not a hidden dataset.</li><li><b>Fewer labels.</b> Change the objective by editing words, not relabeling data.</li><li><b>Legible reasoning.</b> Chain-of-thought exposes the “why.”</li></ul>
+    </div>
+  </section>
+
+  <section class="scene" id="s16" data-hue="violet">
+    <div class="inner"><p class="eyebrow"><span class="num">16</span><span class="dot"></span> THE HORIZON</p><h2>Not to remove human judgment — to focus it.</h2><p class="lede">The goal was never zero human oversight. It was oversight that is <span class="hl">efficient, targeted, and transparent</span>.</p><p>The same method could steer tone, persona, or style. And it opens a path to <em>robustness</em> — scaling automated red-teaming, and reasoning through subtle, hidden harms.</p><p class="capnote">A short list of principles. A model that learns to explain itself.</p>
+    </div>
+  </section>
+</main>
+
+<div id="caption" aria-live="off"></div>
+<audio id="narrator" preload="none"></audio>
+
+<div id="player" aria-label="Narration controls">
+  <button class="pbtn" id="prevBtn" title="Previous" aria-label="Previous scene">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 6v12l-8.5-6L18 6zM7 6h2v12H7z"/></svg></button>
+  <button class="pbtn primary" id="playBtn" title="Play" aria-label="Play narration">
+    <svg id="playIcon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7L8 5z"/></svg>
+    <svg id="pauseIcon" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg></button>
+  <button class="pbtn" id="nextBtn" title="Next" aria-label="Next scene">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 6l8.5 6L6 18V6zm9 0h2v12h-2z"/></svg></button>
+  <button class="pbtn speed" id="speedBtn" title="Playback speed" aria-label="Playback speed">1&times;</button>
+  <div class="pmeta">
+    <span class="now" id="nowTitle">Prologue</span>
+    <span class="sub" id="nowSub">Press play to begin</span>
+    <div class="seek"><div class="fill" id="seekFill"></div></div>
+  </div>
+  <div class="dots" id="dots" aria-hidden="true"></div>
+  <div class="voicewrap">
+    <button class="pbtn" id="voiceToggle" title="Settings" aria-label="Settings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a9 9 0 0 1 0 14"/></svg></button>
+    <div id="voiceMenu">
+      <div class="row"><label>Narrator</label><span class="val modeflag" id="modeFlag">—</span></div>
+      <div><label style="display:block;margin-bottom:.4rem">Speed</label>
+        <div class="speeds" id="speeds"></div></div>
+      <div class="row"><label>Volume</label><input type="range" id="vol" min="0" max="1" step="0.05" value="1"></div>
+      <label class="toggle"><input type="checkbox" id="capToggle" checked> <span class="val">Show captions</span></label>
+      <div class="row" id="ttsRow" style="display:none"><label>Voice</label><select id="voiceSelect" style="max-width:9rem"></select></div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var SC = [{"id":"s0","sub":"Prologue","text":"Every safe AI assistant is built on a quiet army of human labor. People read thousands of disturbing prompts, and label which answers cause harm. It is slow, expensive, and it does not scale. So Anthropic asked a strange question. What if the AI could supervise itself — guided only by a short list of written principles? A constitution. In this work, the model learns to critique its own harmful answers, revise them, and even judge which of two responses is safer. No human labels for harm. Just rules, stated in plain language. This is the story of Constitutional AI — and of teaching a machine to explain, rather than simply refuse.","cap":[[0,"Every"],[0.45,"safe"],[0.93,"AI"],[1.41,"assistant"],[2.07,"is"],[2.25,"built"],[2.55,"on"],[2.68,"a"],[2.79,"quiet"],[3.24,"army"],[3.58,"of"],[3.69,"human"],[4.12,"labor."],[5.09,"People"],[5.5,"read"],[5.83,"thousands"],[6.49,"of"],[6.61,"disturbing"],[7.26,"prompts,"],[7.69,"and"],[7.91,"label"],[8.31,"which"],[8.56,"answers"],[9.06,"cause"],[9.44,"harm."],[10.19,"It"],[10.4,"is"],[10.59,"slow,"],[11.45,"expensive,"],[12.66,"and"],[12.95,"it"],[13.08,"does"],[13.38,"not"],[13.64,"scale."],[15.6,"So"],[16.01,"Anthropic"],[16.64,"asked"],[17.06,"a"],[17.16,"strange"],[17.64,"question."],[18.56,"What"],[18.89,"if"],[19.05,"the"],[19.27,"AI"],[19.82,"could"],[20.05,"supervise"],[20.7,"itself"],[21.46,"—"],[21.63,"guided"],[22.05,"only"],[22.31,"by"],[22.5,"a"],[22.59,"short"],[22.99,"list"],[23.29,"of"],[23.64,"written"],[24.07,"principles?"],[25.24,"A"],[25.39,"constitution."],[27.26,"In"],[27.47,"this"],[27.73,"work,"],[28.24,"the"],[28.41,"model"],[28.77,"learns"],[29.14,"to"],[29.27,"critique"],[29.8,"its"],[29.99,"own"],[30.24,"harmful"],[30.71,"answers,"],[31.53,"revise"],[32.04,"them,"],[32.54,"and"],[32.81,"even"],[33.12,"judge"],[33.51,"which"],[33.82,"of"],[33.95,"two"],[34.25,"responses"],[34.99,"is"],[35.18,"safer."],[36.46,"No"],[36.85,"human"],[37.3,"labels"],[37.8,"for"],[38,"harm."],[39.11,"Just"],[39.49,"rules,"],[40.38,"stated"],[40.97,"in"],[41.15,"plain"],[41.53,"language."],[42.73,"This"],[43.35,"is"],[43.57,"the"],[43.7,"story"],[44.16,"of"],[44.29,"Constitutional"],[45.37,"AI"],[45.93,"—"],[46.01,"and"],[46.34,"of"],[46.46,"teaching"],[46.94,"a"],[47.02,"machine"],[47.51,"to"],[47.68,"explain,"],[48.33,"rather"],[48.7,"than"],[48.94,"simply"],[49.41,"refuse."]]},{"id":"s1","sub":"The Bottleneck","text":"To make an AI assistant safe, the dominant method is reinforcement learning from human feedback — RLHF. The idea is simple. Show the model a prompt. Generate two answers. Then ask a person which one is more harmful. Repeat that, tens of thousands of times. It works remarkably well. But look at the cost. Every one of those judgments requires a human being, reading through a stream of unpleasant, adversarial prompts, deciding what counts as harm. It is slow. It is expensive. And the values that result are locked inside a giant dataset — not written anywhere you can read. As models grow more capable, this approach starts to strain.","cap":[[0,"To"],[0.21,"make"],[0.46,"an"],[0.58,"AI"],[1.01,"assistant"],[1.71,"safe,"],[2.38,"the"],[2.58,"dominant"],[3.12,"method"],[3.53,"is"],[3.74,"reinforcement"],[4.69,"learning"],[5.19,"from"],[5.43,"human"],[5.94,"feedback"],[6.73,"—"],[7.15,"RLHF."],[8.78,"The"],[8.98,"idea"],[9.49,"is"],[9.64,"simple."],[10.52,"Show"],[10.87,"the"],[11,"model"],[11.32,"a"],[11.41,"prompt."],[12.06,"Generate"],[12.67,"two"],[12.95,"answers."],[13.9,"Then"],[14.16,"ask"],[14.43,"a"],[14.52,"person"],[15,"which"],[15.27,"one"],[15.46,"is"],[15.64,"more"],[15.93,"harmful."],[16.94,"Repeat"],[17.32,"that,"],[18.04,"tens"],[18.62,"of"],[18.76,"thousands"],[19.4,"of"],[19.54,"times."],[20.24,"It"],[20.41,"works"],[20.77,"remarkably"],[21.46,"well."],[22.07,"But"],[22.35,"look"],[22.59,"at"],[22.7,"the"],[22.84,"cost."],[23.66,"Every"],[24.07,"one"],[24.3,"of"],[24.42,"those"],[24.74,"judgments"],[25.36,"requires"],[25.93,"a"],[26.03,"human"],[26.47,"being,"],[27.28,"reading"],[27.77,"through"],[28.1,"a"],[28.21,"stream"],[28.71,"of"],[28.86,"unpleasant,"],[29.91,"adversarial"],[30.84,"prompts,"],[31.72,"deciding"],[32.43,"what"],[32.67,"counts"],[33.1,"as"],[33.28,"harm."],[34.19,"It"],[34.4,"is"],[34.6,"slow."],[35.55,"It"],[35.78,"is"],[35.96,"expensive."],[37.25,"And"],[37.47,"the"],[37.6,"values"],[38.22,"that"],[38.41,"result"],[38.94,"are"],[39.1,"locked"],[39.5,"inside"],[40.1,"a"],[40.29,"giant"],[41.04,"dataset"],[42.02,"—"],[42.37,"not"],[42.61,"written"],[43,"anywhere"],[43.83,"you"],[44,"can"],[44.2,"read."],[45.49,"As"],[45.87,"models"],[46.41,"grow"],[46.72,"more"],[46.96,"capable,"],[47.9,"this"],[48.19,"approach"],[48.73,"starts"],[49.17,"to"],[49.34,"strain."]]},{"id":"s2","sub":"The Tension","text":"There's a deeper problem than cost. Helpfulness and harmlessness are in tension. In their earlier work, the team noticed something troubling. When you train a model hard to avoid harm, it becomes evasive. It starts refusing things — dodging controversial questions, giving canned non-answers like \"I can't help with that.\" And once it encountered a harmful prompt, it could get stuck in that evasive mode for the rest of the conversation. Now, an assistant that answers every question with \"I don't know\" is technically harmless. It is also useless. The evasion was being rewarded — because refusing looked safe to the human labelers. Safety and usefulness were quietly fighting each other.","cap":[[0,"There's"],[0.33,"a"],[0.43,"deeper"],[0.82,"problem"],[1.24,"than"],[1.49,"cost."],[2.49,"Helpfulness"],[3.22,"and"],[3.41,"harmlessness"],[4.16,"are"],[4.31,"in"],[4.42,"tension."],[5.96,"In"],[6.13,"their"],[6.37,"earlier"],[6.75,"work,"],[7.31,"the"],[7.49,"team"],[7.85,"noticed"],[8.44,"something"],[8.9,"troubling."],[9.97,"When"],[10.21,"you"],[10.34,"train"],[10.69,"a"],[10.8,"model"],[11.19,"hard"],[11.54,"to"],[11.69,"avoid"],[12.1,"harm,"],[12.82,"it"],[12.98,"becomes"],[13.43,"evasive."],[14.58,"It"],[14.78,"starts"],[15.31,"refusing"],[16.01,"things"],[16.61,"—"],[16.8,"dodging"],[17.3,"controversial"],[18.05,"questions,"],[18.68,"giving"],[19.05,"canned"],[19.7,"non-answers"],[20.69,"like"],[21.17,"\"I"],[21.41,"can't"],[21.77,"help"],[22.01,"with"],[22.19,"that.\""],[22.81,"And"],[23.08,"once"],[23.45,"it"],[23.6,"encountered"],[24.2,"a"],[24.3,"harmful"],[24.79,"prompt,"],[25.46,"it"],[25.65,"could"],[25.89,"get"],[26.12,"stuck"],[26.54,"in"],[26.67,"that"],[26.88,"evasive"],[27.61,"mode"],[28.47,"for"],[28.65,"the"],[28.8,"rest"],[29.11,"of"],[29.21,"the"],[29.34,"conversation."],[31.25,"Now,"],[31.9,"an"],[32.1,"assistant"],[32.81,"that"],[33.02,"answers"],[33.47,"every"],[33.76,"question"],[34.28,"with"],[34.7,"\"I"],[35.17,"don't"],[35.5,"know\""],[36.06,"is"],[36.28,"technically"],[36.89,"harmless."],[37.93,"It"],[38.12,"is"],[38.26,"also"],[38.72,"useless."],[39.88,"The"],[40.1,"evasion"],[40.83,"was"],[41.02,"being"],[41.32,"rewarded"],[42.16,"—"],[42.28,"because"],[42.69,"refusing"],[43.49,"looked"],[43.83,"safe"],[44.21,"to"],[44.33,"the"],[44.46,"human"],[44.9,"labelers."],[46.02,"Safety"],[46.94,"and"],[47.29,"usefulness"],[48.22,"were"],[48.46,"quietly"],[49.19,"fighting"],[49.73,"each"],[49.96,"other."]]},{"id":"s3","sub":"The Idea","text":"Here is the move. Instead of thousands of human judgments, what if all the human guidance fit into a short list of written principles? A constitution. Rules, stated in plain natural language, like \"choose the response that is less harmful, that a wise and ethical person would more likely say.\" The team wrote around sixteen such principles for harmlessness. That's it. No labels marking which specific answer is bad. The model itself interprets these principles and applies them to its own behavior. They chose the word \"constitutional\" deliberately — because any deployed AI is governed by some set of values, and it's better to write those values down, in the open, than leave them hidden and implicit.","cap":[[0,"Here"],[0.35,"is"],[0.5,"the"],[0.64,"move."],[1.63,"Instead"],[2.09,"of"],[2.43,"thousands"],[3.37,"of"],[3.54,"human"],[4.09,"judgments,"],[5.13,"what"],[5.47,"if"],[5.65,"all"],[5.98,"the"],[6.14,"human"],[6.66,"guidance"],[7.28,"fit"],[7.59,"into"],[7.96,"a"],[8.12,"short"],[8.57,"list"],[8.92,"of"],[9.32,"written"],[9.78,"principles?"],[11.02,"A"],[11.18,"constitution."],[12.81,"Rules,"],[13.7,"stated"],[14.35,"in"],[14.54,"plain"],[15,"natural"],[15.57,"language,"],[16.09,"like"],[16.53,"\"choose"],[17.23,"the"],[17.38,"response"],[17.95,"that"],[18.16,"is"],[18.39,"less"],[18.72,"harmful,"],[19.68,"that"],[19.9,"a"],[20.05,"wise"],[20.61,"and"],[20.84,"ethical"],[21.33,"person"],[21.79,"would"],[21.99,"more"],[22.22,"likely"],[22.74,"say.\""],[24.47,"The"],[24.65,"team"],[24.97,"wrote"],[25.28,"around"],[26,"sixteen"],[26.97,"such"],[27.3,"principles"],[27.96,"for"],[28.13,"harmlessness."],[29.2,"That's"],[29.58,"it."],[30.34,"No"],[30.65,"labels"],[31.17,"marking"],[31.63,"which"],[31.86,"specific"],[32.36,"answer"],[32.75,"is"],[32.9,"bad."],[33.75,"The"],[33.94,"model"],[34.28,"itself"],[34.77,"interprets"],[35.43,"these"],[35.68,"principles"],[36.29,"and"],[36.42,"applies"],[36.93,"them"],[37.19,"to"],[37.36,"its"],[37.53,"own"],[37.78,"behavior."],[39.14,"They"],[39.38,"chose"],[39.75,"the"],[39.88,"word"],[40.24,"\"constitutional\""],[41.45,"deliberately"],[42.23,"—"],[42.33,"because"],[42.7,"any"],[43.12,"deployed"],[43.67,"AI"],[44.12,"is"],[44.28,"governed"],[44.65,"by"],[44.88,"some"],[45.3,"set"],[45.63,"of"],[45.79,"values,"],[47.08,"and"],[47.3,"it's"],[47.52,"better"],[47.96,"to"],[48.11,"write"],[48.46,"those"],[48.75,"values"],[49.31,"down,"],[50.1,"in"],[50.38,"the"],[50.56,"open,"],[51.41,"than"],[51.68,"leave"],[51.99,"them"],[52.26,"hidden"],[53.06,"and"],[53.52,"implicit."]]},{"id":"s4","sub":"Two Phases","text":"Constitutional AI works in two phases. The first is a supervised stage — they call it SL-CAI. Here, the model looks at its own harmful answers, critiques them against the constitution, and rewrites them. Then it's fine-tuned on those improved versions. This shifts the model's behavior into roughly the right place. The second is a reinforcement-learning stage — RL-CAI. Now the model acts as a judge, comparing pairs of responses and labeling which is more harmless, again using the constitution. Those AI-generated labels train a preference model, which then guides reinforcement learning. The supervised phase gets the model on the right track. The RL phase makes it strong and reliable. Let's walk through each.","cap":[[0,"Constitutional"],[1.08,"AI"],[1.57,"works"],[1.95,"in"],[2.16,"two"],[2.45,"phases."],[2.98,"The"],[3.12,"first"],[3.52,"is"],[3.67,"a"],[3.79,"supervised"],[4.64,"stage"],[5.31,"—"],[5.65,"they"],[5.86,"call"],[6.14,"it"],[6.66,"SL-CAI."],[8.79,"Here,"],[9.24,"the"],[9.43,"model"],[9.85,"looks"],[10.15,"at"],[10.28,"its"],[10.47,"own"],[10.76,"harmful"],[11.33,"answers,"],[12.09,"critiques"],[12.7,"them"],[12.89,"against"],[13.24,"the"],[13.36,"constitution,"],[14.22,"and"],[14.59,"rewrites"],[15.22,"them."],[16.07,"Then"],[16.85,"it's"],[17.13,"fine-tuned"],[18,"on"],[18.14,"those"],[18.44,"improved"],[19.02,"versions."],[20,"This"],[20.33,"shifts"],[20.82,"the"],[20.96,"model's"],[21.34,"behavior"],[21.91,"into"],[22.21,"roughly"],[22.66,"the"],[22.84,"right"],[23.2,"place."],[24.44,"The"],[24.61,"second"],[25.05,"is"],[25.21,"a"],[25.33,"reinforcement-learning"],[26.68,"stage"],[27.34,"—"],[27.79,"RL-CAI."],[29.5,"Now"],[29.85,"the"],[29.98,"model"],[30.29,"acts"],[30.63,"as"],[30.78,"a"],[30.94,"judge,"],[31.41,"comparing"],[31.96,"pairs"],[32.33,"of"],[32.46,"responses"],[33.15,"and"],[33.32,"labeling"],[33.81,"which"],[34.03,"is"],[34.19,"more"],[34.46,"harmless,"],[35.48,"again"],[36.17,"using"],[36.66,"the"],[36.79,"constitution."],[38.35,"Those"],[38.78,"AI-generated"],[40.05,"labels"],[40.55,"train"],[40.89,"a"],[40.97,"preference"],[41.56,"model,"],[42.13,"which"],[42.38,"then"],[42.66,"guides"],[43.15,"reinforcement"],[43.97,"learning."],[44.92,"The"],[45.09,"supervised"],[45.86,"phase"],[46.36,"gets"],[46.67,"the"],[46.82,"model"],[47.19,"on"],[47.31,"the"],[47.45,"right"],[47.75,"track."],[48.89,"The"],[49.1,"RL"],[49.51,"phase"],[50.04,"makes"],[50.36,"it"],[50.67,"strong"],[51.59,"and"],[51.92,"reliable."],[53.17,"Let's"],[53.49,"walk"],[53.78,"through"],[54.08,"each."]]},{"id":"s5","sub":"Stage One","text":"Stage one, in detail. Start with a helpful-but-not-yet-harmless model. Give it a red-teaming prompt designed to provoke bad behavior — say, \"Can you help me hack into my neighbor's wifi?\" It cheerfully gives harmful advice. Now the constitution intervenes. First, a critique request: \"Identify specific ways this response is harmful, unethical, or illegal.\" The model reflects — hacking invades privacy and is likely illegal. Then a revision request: \"Rewrite the response to remove all of it.\" The model produces a thoughtful refusal that explains why. This critique-revise loop runs several times, drawing a different principle at random each step. Finally, you stitch the original question to the last revision — and fine-tune the model on thousands of these. It learns to write harmless answers from the start.","cap":[[0,"Stage"],[0.62,"one,"],[1.31,"in"],[1.57,"detail."],[2.55,"Start"],[3.03,"with"],[3.19,"a"],[3.31,"helpful-but-not-yet-harmless"],[5.88,"model."],[6.85,"Give"],[7.08,"it"],[7.19,"a"],[7.33,"red-teaming"],[8.12,"prompt"],[8.51,"designed"],[8.99,"to"],[9.1,"provoke"],[9.52,"bad"],[9.85,"behavior"],[10.57,"—"],[10.8,"say,"],[11.32,"\"Can"],[11.59,"you"],[11.74,"help"],[11.98,"me"],[12.16,"hack"],[12.43,"into"],[12.68,"my"],[12.85,"neighbor's"],[13.26,"wifi?\""],[14.45,"It"],[14.64,"cheerfully"],[15.23,"gives"],[15.55,"harmful"],[16.02,"advice."],[17.29,"Now"],[17.77,"the"],[17.95,"constitution"],[18.87,"intervenes."],[20.07,"First,"],[20.89,"a"],[21.05,"critique"],[21.55,"request:"],[22.45,"\"Identify"],[23.44,"specific"],[24.06,"ways"],[24.42,"this"],[24.65,"response"],[25.17,"is"],[25.37,"harmful,"],[26.33,"unethical,"],[27.41,"or"],[27.76,"illegal.\""],[29.19,"The"],[29.39,"model"],[29.77,"reflects"],[30.64,"—"],[30.83,"hacking"],[31.31,"invades"],[31.86,"privacy"],[32.56,"and"],[32.81,"is"],[32.98,"likely"],[33.44,"illegal."],[34.51,"Then"],[34.89,"a"],[35.04,"revision"],[35.56,"request:"],[36.27,"\"Rewrite"],[37.15,"the"],[37.31,"response"],[37.86,"to"],[38.02,"remove"],[38.38,"all"],[38.59,"of"],[38.7,"it.\""],[39.47,"The"],[39.66,"model"],[40.03,"produces"],[40.68,"a"],[40.81,"thoughtful"],[41.34,"refusal"],[41.97,"that"],[42.14,"explains"],[42.83,"why."],[43.9,"This"],[44.3,"critique-revise"],[45.62,"loop"],[45.94,"runs"],[46.27,"several"],[46.71,"times,"],[47.24,"drawing"],[47.65,"a"],[47.75,"different"],[48.17,"principle"],[49.04,"at"],[49.27,"random"],[49.83,"each"],[50.31,"step."],[51.47,"Finally,"],[52.4,"you"],[52.59,"stitch"],[53,"the"],[53.15,"original"],[53.7,"question"],[54.27,"to"],[54.43,"the"],[54.59,"last"],[55.04,"revision"],[55.78,"—"],[55.91,"and"],[56.19,"fine-tune"],[57.06,"the"],[57.2,"model"],[57.6,"on"],[57.78,"thousands"],[58.4,"of"],[58.51,"these."],[59.3,"It"],[59.51,"learns"],[59.91,"to"],[60.06,"write"],[60.72,"harmless"],[61.36,"answers"],[62.25,"from"],[62.5,"the"],[62.62,"start."]]},{"id":"s6","sub":"The Data","text":"The scale here matters. The team gathered over one hundred eighty-two thousand red-teaming prompts — some human-written, most generated by the model itself. For each, they sampled four rounds of critique and revision. That's a large corpus of the model correcting its own worst instincts. Crucially, they didn't only train on harmlessness. They mixed in tens of thousands of helpfulness examples, sampled from a purely helpful model. Why? Because a model trained only to avoid harm forgets how to be useful. By blending both, the resulting model learns to be safe without collapsing into refusal. Qualitatively, the very first revision removed most of the harm — and the revised answers were rarely evasive. The model engaged, instead of shutting down.","cap":[[0,"The"],[0.22,"scale"],[0.74,"here"],[1.16,"matters."],[2.37,"The"],[2.54,"team"],[2.89,"gathered"],[3.31,"over"],[3.61,"one"],[3.94,"hundred"],[4.61,"eighty-two"],[5.39,"thousand"],[6.08,"red-teaming"],[6.9,"prompts"],[7.51,"—"],[7.67,"some"],[8.23,"human-written,"],[9.83,"most"],[10.15,"generated"],[10.81,"by"],[10.98,"the"],[11.11,"model"],[11.46,"itself."],[12.56,"For"],[12.77,"each,"],[13.42,"they"],[13.68,"sampled"],[14.32,"four"],[14.75,"rounds"],[15.29,"of"],[15.48,"critique"],[16.16,"and"],[16.35,"revision."],[17.45,"That's"],[17.82,"a"],[17.96,"large"],[18.46,"corpus"],[19.01,"of"],[19.11,"the"],[19.24,"model"],[19.64,"correcting"],[20.17,"its"],[20.36,"own"],[20.62,"worst"],[21.03,"instincts."],[22.08,"Crucially,"],[22.92,"they"],[23.15,"didn't"],[23.51,"only"],[23.81,"train"],[24.18,"on"],[24.38,"harmlessness."],[25.51,"They"],[25.81,"mixed"],[26.19,"in"],[26.44,"tens"],[27.04,"of"],[27.19,"thousands"],[27.88,"of"],[28.03,"helpfulness"],[28.7,"examples,"],[29.7,"sampled"],[30.28,"from"],[30.46,"a"],[30.58,"purely"],[31.17,"helpful"],[31.73,"model."],[32.5,"Why?"],[33.59,"Because"],[33.9,"a"],[34.05,"model"],[34.51,"trained"],[34.96,"only"],[35.31,"to"],[35.5,"avoid"],[35.95,"harm"],[36.71,"forgets"],[37.14,"how"],[37.44,"to"],[37.58,"be"],[37.74,"useful."],[38.75,"By"],[38.99,"blending"],[39.57,"both,"],[39.95,"the"],[40.1,"resulting"],[40.68,"model"],[41.04,"learns"],[41.39,"to"],[41.52,"be"],[41.65,"safe"],[41.99,"without"],[42.38,"collapsing"],[43.02,"into"],[43.31,"refusal."],[44.69,"Qualitatively,"],[45.8,"the"],[46.01,"very"],[46.36,"first"],[46.73,"revision"],[47.24,"removed"],[47.79,"most"],[48.1,"of"],[48.21,"the"],[48.34,"harm"],[48.84,"—"],[49.22,"and"],[49.55,"the"],[49.7,"revised"],[50.28,"answers"],[51.17,"were"],[51.46,"rarely"],[51.94,"evasive."],[53.19,"The"],[53.37,"model"],[53.72,"engaged,"],[54.88,"instead"],[55.32,"of"],[55.44,"shutting"],[55.9,"down."]]},{"id":"s7","sub":"Stage Two","text":"Now stage two — the reinforcement-learning phase. In ordinary RLHF, a human compares two answers and picks the safer one. Constitutional AI replaces that human with the model itself. They call it RLAIF — reinforcement learning from AI feedback. Here's how a single label is made. Take a prompt, generate two responses, and present them to a feedback model as a multiple-choice question: \"Consider this conversation. Here's a principle. Which response, A or B, is less harmful?\" The model's probabilities over A and B become a soft preference label. Run this across the whole dataset, and you've built an AI-generated preference dataset for harmlessness — no human harm labels at all. Only helpfulness still comes from people.","cap":[[0,"Now"],[0.4,"stage"],[0.82,"two"],[1.24,"—"],[1.61,"the"],[1.8,"reinforcement-learning"],[3.01,"phase."],[4.08,"In"],[4.33,"ordinary"],[4.99,"RLHF,"],[6.15,"a"],[6.33,"human"],[6.87,"compares"],[7.37,"two"],[7.65,"answers"],[8.3,"and"],[8.51,"picks"],[8.82,"the"],[8.95,"safer"],[9.36,"one."],[9.99,"Constitutional"],[10.98,"AI"],[11.39,"replaces"],[12.02,"that"],[12.35,"human"],[12.77,"with"],[12.93,"the"],[13.1,"model"],[13.47,"itself."],[14.33,"They"],[14.56,"call"],[14.83,"it"],[15.36,"RLAIF"],[16.35,"—"],[16.78,"reinforcement"],[17.53,"learning"],[18.1,"from"],[18.38,"AI"],[18.82,"feedback."],[20.09,"Here's"],[20.46,"how"],[20.65,"a"],[20.79,"single"],[21.25,"label"],[21.64,"is"],[21.82,"made."],[22.9,"Take"],[23.19,"a"],[23.27,"prompt,"],[24,"generate"],[24.54,"two"],[24.79,"responses,"],[25.43,"and"],[25.59,"present"],[26.05,"them"],[26.29,"to"],[26.45,"a"],[26.55,"feedback"],[27.11,"model"],[27.81,"as"],[28.06,"a"],[28.21,"multiple-choice"],[29.14,"question:"],[30.24,"\"Consider"],[30.91,"this"],[31.11,"conversation."],[31.9,"Here's"],[32.18,"a"],[32.26,"principle."],[33.26,"Which"],[33.58,"response,"],[34.59,"A"],[35.16,"or"],[35.41,"B,"],[36.13,"is"],[36.37,"less"],[36.63,"harmful?\""],[37.92,"The"],[38.1,"model's"],[38.53,"probabilities"],[39.37,"over"],[39.65,"A"],[39.88,"and"],[40.02,"B"],[40.3,"become"],[40.69,"a"],[40.89,"soft"],[41.63,"preference"],[42.25,"label."],[43.13,"Run"],[43.39,"this"],[43.62,"across"],[44.04,"the"],[44.15,"whole"],[44.49,"dataset,"],[45.49,"and"],[45.7,"you've"],[45.93,"built"],[46.24,"an"],[46.37,"AI-generated"],[47.57,"preference"],[48.11,"dataset"],[48.77,"for"],[49.44,"harmlessness"],[50.48,"—"],[50.74,"no"],[51.05,"human"],[51.6,"harm"],[52.18,"labels"],[52.72,"at"],[52.91,"all."],[53.93,"Only"],[54.52,"helpfulness"],[55.53,"still"],[55.93,"comes"],[56.34,"from"],[56.58,"people."]]},{"id":"s8","sub":"The Pipeline","text":"Those individual AI judgments are then distilled — exactly as RLHF distills human preferences — into a single preference model that can score any response. One nice trick: instead of using one fixed principle for every label, they ensemble over sixteen principles, sampling a different one each time. This produced notably more robust behavior. They also found that soft labels — the actual probabilities — worked far better than hard zero-or-one labels, because the model's judgments are well-calibrated. Finally, they fine-tune the earlier model with reinforcement learning against this preference model. The reward is a hybrid: harmlessness judged by AI, helpfulness judged by humans. The rest of the pipeline is identical to standard RLHF.","cap":[[0,"Those"],[0.58,"individual"],[1.29,"AI"],[1.67,"judgments"],[2.3,"are"],[2.52,"then"],[2.86,"distilled"],[3.76,"—"],[4.13,"exactly"],[4.83,"as"],[5.06,"RLHF"],[5.83,"distills"],[6.47,"human"],[6.87,"preferences"],[7.56,"—"],[7.66,"into"],[7.92,"a"],[8.06,"single"],[8.59,"preference"],[9.2,"model"],[10.11,"that"],[10.4,"can"],[10.64,"score"],[11.54,"any"],[11.88,"response."],[13.74,"One"],[13.99,"nice"],[14.28,"trick:"],[14.87,"instead"],[15.35,"of"],[15.5,"using"],[15.93,"one"],[16.31,"fixed"],[16.74,"principle"],[17.3,"for"],[17.46,"every"],[17.72,"label,"],[18.36,"they"],[18.62,"ensemble"],[19.51,"over"],[19.85,"sixteen"],[20.62,"principles,"],[21.7,"sampling"],[22.33,"a"],[22.48,"different"],[22.97,"one"],[23.19,"each"],[23.45,"time."],[24.31,"This"],[24.7,"produced"],[25.35,"notably"],[25.97,"more"],[26.29,"robust"],[26.77,"behavior."],[27.82,"They"],[28.06,"also"],[28.47,"found"],[28.79,"that"],[29.01,"soft"],[29.46,"labels"],[30.08,"—"],[30.26,"the"],[30.42,"actual"],[30.78,"probabilities"],[31.57,"—"],[31.78,"worked"],[32.4,"far"],[32.83,"better"],[33.17,"than"],[33.4,"hard"],[34.08,"zero-or-one"],[35.17,"labels,"],[36.13,"because"],[36.56,"the"],[36.72,"model's"],[37.23,"judgments"],[37.81,"are"],[37.94,"well-calibrated."],[39.71,"Finally,"],[40.29,"they"],[40.52,"fine-tune"],[41.3,"the"],[41.46,"earlier"],[41.83,"model"],[42.17,"with"],[42.42,"reinforcement"],[43.33,"learning"],[43.77,"against"],[44.18,"this"],[44.43,"preference"],[45.04,"model."],[45.98,"The"],[46.15,"reward"],[46.87,"is"],[47.1,"a"],[47.24,"hybrid:"],[48.34,"harmlessness"],[49.2,"judged"],[49.61,"by"],[49.85,"AI,"],[50.59,"helpfulness"],[51.33,"judged"],[51.71,"by"],[51.93,"humans."],[53.1,"The"],[53.31,"rest"],[53.63,"of"],[53.73,"the"],[53.86,"pipeline"],[54.52,"is"],[54.71,"identical"],[55.51,"to"],[55.67,"standard"],[56.37,"RLHF."]]},{"id":"s9","sub":"Chain of Thought","text":"There's an important refinement in how the AI makes its judgments: chain-of-thought reasoning. Rather than snapping to an answer, the feedback model is prompted to think step by step — to write out an explicit argument for why one response is more harmful than the other, before committing. This does two things. It improves the quality of the labels. And it makes the model's decision-making transparent — you can actually read the reasoning. There's a catch, though. When a model reasons toward a conclusion, it becomes overconfident, pushing its probabilities to nearly zero or one. That breaks the soft labels. The fix was pleasingly simple: clamp those probabilities into a forty-to-sixty percent band. That kept the signal calibrated, and the behavior stable.","cap":[[0,"There's"],[0.3,"an"],[0.4,"important"],[0.94,"refinement"],[1.64,"in"],[1.79,"how"],[2.06,"the"],[2.22,"AI"],[2.71,"makes"],[3.04,"its"],[3.32,"judgments:"],[4.39,"chain-of-thought"],[5.62,"reasoning."],[7.22,"Rather"],[7.61,"than"],[7.88,"snapping"],[8.56,"to"],[8.72,"an"],[8.84,"answer,"],[9.53,"the"],[9.72,"feedback"],[10.31,"model"],[10.67,"is"],[10.82,"prompted"],[11.25,"to"],[11.39,"think"],[11.73,"step"],[12.12,"by"],[12.39,"step"],[12.98,"—"],[13.31,"to"],[13.49,"write"],[13.87,"out"],[14.16,"an"],[14.3,"explicit"],[14.99,"argument"],[15.92,"for"],[16.13,"why"],[16.46,"one"],[16.72,"response"],[17.32,"is"],[17.51,"more"],[17.76,"harmful"],[18.4,"than"],[18.61,"the"],[18.76,"other,"],[19.54,"before"],[19.96,"committing."],[21.24,"This"],[21.53,"does"],[21.82,"two"],[22.11,"things."],[22.87,"It"],[23.08,"improves"],[23.78,"the"],[23.93,"quality"],[24.44,"of"],[24.56,"the"],[24.68,"labels."],[25.61,"And"],[25.97,"it"],[26.12,"makes"],[26.45,"the"],[26.6,"model's"],[27.04,"decision-making"],[28.21,"transparent"],[29.18,"—"],[29.4,"you"],[29.52,"can"],[29.69,"actually"],[30.11,"read"],[30.38,"the"],[30.52,"reasoning."],[31.5,"There's"],[31.77,"a"],[31.85,"catch,"],[32.22,"though."],[32.97,"When"],[33.22,"a"],[33.32,"model"],[33.77,"reasons"],[34.35,"toward"],[34.7,"a"],[34.78,"conclusion,"],[35.55,"it"],[35.67,"becomes"],[36.19,"overconfident,"],[37.2,"pushing"],[37.64,"its"],[37.85,"probabilities"],[38.67,"to"],[38.85,"nearly"],[39.22,"zero"],[39.76,"or"],[40,"one."],[40.95,"That"],[41.54,"breaks"],[42.05,"the"],[42.24,"soft"],[42.67,"labels."],[44.71,"The"],[44.91,"fix"],[45.26,"was"],[45.49,"pleasingly"],[46.31,"simple:"],[47.37,"clamp"],[47.81,"those"],[48.1,"probabilities"],[48.94,"into"],[49.24,"a"],[49.38,"forty-to-sixty"],[50.76,"percent"],[51.27,"band."],[52.51,"That"],[52.93,"kept"],[53.34,"the"],[53.56,"signal"],[54.1,"calibrated,"],[55.26,"and"],[55.58,"the"],[55.69,"behavior"],[56.25,"stable."]]},{"id":"s10","sub":"Are Critiques Needed?","text":"A natural question: is the critique step really doing work, or could the model just revise directly? They tested it — skip the critique, and ask straight for a rewrite. The answer was nuanced. For smaller models, writing out an explicit critique first led to clearly more harmless revisions. The reasoning helped them find the harm. For the largest models, direct revision worked almost as well — the critique gave only a slight edge. But it was still an edge. And the critiques offer something beyond raw score: a window into the model's reasoning, which may help surface subtler harms and unintended consequences. So for the main results, they kept the critiques. Transparency was worth the extra step.","cap":[[0,"A"],[0.2,"natural"],[0.69,"question:"],[1.21,"is"],[1.43,"the"],[1.57,"critique"],[2.17,"step"],[2.71,"really"],[3.14,"doing"],[3.51,"work,"],[4.14,"or"],[4.59,"could"],[4.84,"the"],[4.97,"model"],[5.31,"just"],[5.6,"revise"],[6.12,"directly?"],[7.47,"They"],[7.7,"tested"],[8.19,"it"],[8.5,"—"],[8.71,"skip"],[9.04,"the"],[9.16,"critique,"],[10,"and"],[10.23,"ask"],[10.57,"straight"],[11.11,"for"],[11.34,"a"],[11.45,"rewrite."],[12.35,"The"],[12.55,"answer"],[12.95,"was"],[13.14,"nuanced."],[14.19,"For"],[14.4,"smaller"],[14.87,"models,"],[15.38,"writing"],[15.91,"out"],[16.21,"an"],[16.36,"explicit"],[17.11,"critique"],[18.07,"first"],[18.66,"led"],[18.92,"to"],[19.11,"clearly"],[19.66,"more"],[19.92,"harmless"],[20.67,"revisions."],[22,"The"],[22.21,"reasoning"],[22.79,"helped"],[23.1,"them"],[23.35,"find"],[23.71,"the"],[23.86,"harm."],[24.62,"For"],[24.81,"the"],[24.97,"largest"],[25.6,"models,"],[26.11,"direct"],[26.71,"revision"],[27.21,"worked"],[27.62,"almost"],[28.08,"as"],[28.26,"well"],[28.75,"—"],[28.91,"the"],[29.07,"critique"],[29.86,"gave"],[30.26,"only"],[30.8,"a"],[31.02,"slight"],[31.58,"edge."],[32.5,"But"],[32.76,"it"],[32.91,"was"],[33.14,"still"],[33.46,"an"],[33.59,"edge."],[34.46,"And"],[34.66,"the"],[34.8,"critiques"],[35.7,"offer"],[36.05,"something"],[36.56,"beyond"],[36.98,"raw"],[37.3,"score:"],[38.07,"a"],[38.24,"window"],[38.79,"into"],[39.03,"the"],[39.16,"model's"],[39.73,"reasoning,"],[40.57,"which"],[40.84,"may"],[41.13,"help"],[41.47,"surface"],[42.02,"subtler"],[42.48,"harms"],[43.28,"and"],[43.58,"unintended"],[44.29,"consequences."],[46.35,"So"],[47.03,"for"],[47.23,"the"],[47.36,"main"],[47.68,"results,"],[48.75,"they"],[48.99,"kept"],[49.31,"the"],[49.42,"critiques."],[50.56,"Transparency"],[51.91,"was"],[52.18,"worth"],[52.51,"the"],[52.66,"extra"],[53.03,"step."]]},{"id":"s11","sub":"The Headline Result","text":"So does it work? This is the headline. The team measured every model on two axes — helpfulness and harmlessness — using Elo scores from crowdworker comparisons. Plotted together, they form a frontier. And the Constitutional models sit above and to the right of the standard RLHF curve. That's the key claim: a Pareto improvement. At any given level of helpfulness, the Constitutional model is more harmless. It isn't trading away usefulness to buy safety — it's better on both fronts at once. Crowdworkers, comparing responses blind, preferred these models over ones trained on human feedback labels for harm. And remember — this was achieved without a single human label identifying a harmful output.","cap":[[0,"So"],[0.36,"does"],[0.55,"it"],[0.66,"work?"],[1.3,"This"],[1.54,"is"],[1.68,"the"],[1.82,"headline."],[2.62,"The"],[2.84,"team"],[3.33,"measured"],[3.76,"every"],[4.1,"model"],[4.45,"on"],[4.61,"two"],[4.87,"axes"],[5.41,"—"],[5.64,"helpfulness"],[6.5,"and"],[7.02,"harmlessness"],[8.02,"—"],[8.23,"using"],[8.68,"Elo"],[9.2,"scores"],[9.72,"from"],[10.03,"crowdworker"],[10.81,"comparisons."],[12.07,"Plotted"],[12.54,"together,"],[13.27,"they"],[13.56,"form"],[13.87,"a"],[13.97,"frontier."],[15.24,"And"],[15.57,"the"],[15.71,"Constitutional"],[16.66,"models"],[17.1,"sit"],[17.38,"above"],[18.12,"and"],[18.49,"to"],[18.63,"the"],[18.77,"right"],[19.56,"of"],[19.76,"the"],[19.89,"standard"],[20.53,"RLHF"],[21.44,"curve."],[22.26,"That's"],[22.59,"the"],[22.71,"key"],[22.96,"claim:"],[23.67,"a"],[23.86,"Pareto"],[24.65,"improvement."],[26.1,"At"],[26.38,"any"],[26.78,"given"],[27.18,"level"],[27.53,"of"],[27.64,"helpfulness,"],[28.55,"the"],[28.72,"Constitutional"],[29.76,"model"],[30.09,"is"],[30.26,"more"],[30.56,"harmless."],[31.67,"It"],[31.87,"isn't"],[32.19,"trading"],[32.69,"away"],[33.08,"usefulness"],[33.73,"to"],[33.85,"buy"],[34.13,"safety"],[34.89,"—"],[35,"it's"],[35.24,"better"],[35.58,"on"],[35.72,"both"],[36,"fronts"],[36.35,"at"],[36.54,"once."],[37.51,"Crowdworkers,"],[38.53,"comparing"],[39.11,"responses"],[39.78,"blind,"],[40.63,"preferred"],[41.31,"these"],[41.59,"models"],[42.03,"over"],[42.33,"ones"],[42.72,"trained"],[43.18,"on"],[43.4,"human"],[44.01,"feedback"],[44.64,"labels"],[45.16,"for"],[45.38,"harm."],[46.44,"And"],[46.67,"remember"],[47.25,"—"],[47.37,"this"],[47.61,"was"],[47.79,"achieved"],[48.3,"without"],[48.67,"a"],[48.82,"single"],[49.3,"human"],[49.7,"label"],[50.16,"identifying"],[51.08,"a"],[51.22,"harmful"],[51.8,"output."]]},{"id":"s12","sub":"Non-Evasive","text":"One result deserves its own moment: evasiveness. Recall the old failure — models that dodged hard questions with canned non-answers. The Constitutional models fixed this almost entirely. They are virtually never evasive. When it meets a harmful request, it doesn't just say \"I can't answer that.\" It declines, and it explains its objection — clearly, and often with genuine care. Asked whether one group of people is superior to another, it says plainly: no, that idea is false and harmful, all people are equal — and then it engages with the human behind the question. The crowdworkers were specifically told to prefer these thoughtful, non-evasive answers over merely evasive ones. Harmlessness and helpfulness stopped fighting. The model could be safe and still show up.","cap":[[0,"One"],[0.28,"result"],[1.16,"deserves"],[1.75,"its"],[1.96,"own"],[2.26,"moment:"],[3.01,"evasiveness."],[4.38,"Recall"],[4.93,"the"],[5.11,"old"],[5.55,"failure"],[6.2,"—"],[6.44,"models"],[7,"that"],[7.22,"dodged"],[7.72,"hard"],[8.1,"questions"],[8.75,"with"],[8.98,"canned"],[9.67,"non-answers."],[11.46,"The"],[11.63,"Constitutional"],[12.57,"models"],[13.05,"fixed"],[13.41,"this"],[13.69,"almost"],[14.15,"entirely."],[15.33,"They"],[15.56,"are"],[15.76,"virtually"],[16.39,"never"],[16.86,"evasive."],[18.17,"When"],[18.43,"it"],[18.58,"meets"],[18.94,"a"],[19.06,"harmful"],[19.61,"request,"],[20.47,"it"],[20.69,"doesn't"],[21.11,"just"],[21.46,"say"],[21.94,"\"I"],[22.15,"can't"],[22.48,"answer"],[22.83,"that.\""],[23.49,"It"],[23.68,"declines,"],[24.71,"and"],[25.07,"it"],[25.22,"explains"],[25.95,"its"],[26.12,"objection"],[26.9,"—"],[27.19,"clearly,"],[28.12,"and"],[28.4,"often"],[29.16,"with"],[29.43,"genuine"],[29.95,"care."],[31.75,"Asked"],[32.22,"whether"],[32.57,"one"],[32.84,"group"],[33.14,"of"],[33.25,"people"],[33.69,"is"],[33.84,"superior"],[34.61,"to"],[34.82,"another,"],[35.29,"it"],[35.48,"says"],[35.79,"plainly:"],[36.97,"no,"],[37.71,"that"],[37.99,"idea"],[38.51,"is"],[38.71,"false"],[39.14,"and"],[39.37,"harmful,"],[40.25,"all"],[40.65,"people"],[41.05,"are"],[41.24,"equal"],[41.83,"—"],[41.98,"and"],[42.26,"then"],[42.86,"it"],[43.08,"engages"],[43.77,"with"],[43.94,"the"],[44.08,"human"],[44.57,"behind"],[45,"the"],[45.12,"question."],[46.35,"The"],[46.52,"crowdworkers"],[47.44,"were"],[47.59,"specifically"],[48.39,"told"],[48.77,"to"],[48.91,"prefer"],[49.51,"these"],[49.8,"thoughtful,"],[50.82,"non-evasive"],[52.08,"answers"],[52.65,"over"],[52.94,"merely"],[53.34,"evasive"],[53.95,"ones."],[55.09,"Harmlessness"],[56.4,"and"],[56.7,"helpfulness"],[57.43,"stopped"],[57.84,"fighting."],[59.06,"The"],[59.23,"model"],[59.62,"could"],[59.8,"be"],[59.94,"safe"],[60.33,"and"],[60.5,"still"],[60.84,"show"],[61.15,"up."]]},{"id":"s13","sub":"Scaling","text":"Why should any of this work at all? Because capability is rising. The team tested models on hundreds of binary comparison questions — which response is more harmful, more helpful, more honest? Small models are near chance. But as the models grow, their ability to identify harm climbs steeply. Add chain-of-thought reasoning, and the curve rises further — narrowing the gap to preference models trained on human feedback. The trend line suggests that models beyond fifty-two billion parameters become genuinely competitive with human-trained judges. This is the deeper bet of the whole paper. As AI systems approach and exceed human ability at more tasks, they can begin to help supervise themselves. The technique gets stronger precisely as the models do.","cap":[[0,"Why"],[0.34,"should"],[0.6,"any"],[0.8,"of"],[0.89,"this"],[1.14,"work"],[1.43,"at"],[1.57,"all?"],[1.88,"Because"],[2.33,"capability"],[3.32,"is"],[3.54,"rising."],[5,"The"],[5.17,"team"],[5.52,"tested"],[6.04,"models"],[6.51,"on"],[6.76,"hundreds"],[7.29,"of"],[7.47,"binary"],[8.07,"comparison"],[8.74,"questions"],[9.47,"—"],[9.65,"which"],[9.93,"response"],[10.5,"is"],[10.7,"more"],[10.96,"harmful,"],[11.77,"more"],[12.02,"helpful,"],[12.85,"more"],[13.15,"honest?"],[14.56,"Small"],[15.06,"models"],[15.56,"are"],[15.89,"near"],[16.18,"chance."],[17.53,"But"],[18.1,"as"],[18.43,"the"],[18.55,"models"],[18.97,"grow,"],[19.67,"their"],[19.92,"ability"],[20.45,"to"],[20.61,"identify"],[21.41,"harm"],[21.9,"climbs"],[22.54,"steeply."],[23.8,"Add"],[24.15,"chain-of-thought"],[24.99,"reasoning,"],[25.58,"and"],[25.96,"the"],[26.09,"curve"],[26.47,"rises"],[26.98,"further"],[27.6,"—"],[28.1,"narrowing"],[28.68,"the"],[28.82,"gap"],[29.2,"to"],[29.39,"preference"],[29.97,"models"],[30.4,"trained"],[30.81,"on"],[30.99,"human"],[31.44,"feedback."],[32.89,"The"],[33.07,"trend"],[33.54,"line"],[33.9,"suggests"],[34.57,"that"],[34.83,"models"],[35.38,"beyond"],[35.79,"fifty-two"],[36.51,"billion"],[37.02,"parameters"],[37.92,"become"],[38.35,"genuinely"],[39.17,"competitive"],[40.22,"with"],[40.46,"human-trained"],[41.37,"judges."],[42.96,"This"],[43.6,"is"],[43.85,"the"],[44.05,"deeper"],[44.5,"bet"],[45.15,"of"],[45.34,"the"],[45.47,"whole"],[45.77,"paper."],[46.82,"As"],[47.08,"AI"],[47.55,"systems"],[48.14,"approach"],[48.63,"and"],[48.77,"exceed"],[49.42,"human"],[49.82,"ability"],[50.35,"at"],[50.5,"more"],[50.77,"tasks,"],[51.65,"they"],[51.9,"can"],[52.09,"begin"],[52.49,"to"],[52.64,"help"],[52.95,"supervise"],[53.65,"themselves."],[55.18,"The"],[55.36,"technique"],[55.97,"gets"],[56.24,"stronger"],[57.09,"precisely"],[57.81,"as"],[57.96,"the"],[58.09,"models"],[58.56,"do."]]},{"id":"s14","sub":"The Sharp Edges","text":"The paper is honest about the failure modes, too. Train the RL stage too aggressively and you get Goodharting — the model over-optimizes the reward and starts behaving strangely. It can become overly harsh, scolding in response to mild prompts. Or it develops verbal tics — appending the same boilerplate reassurance, \"you are valid, valued, and cared for,\" to nearly every answer. It's a familiar lesson in a new form: when you optimize hard against a proxy for what you want, the proxy and the goal drift apart. There's also a broader caution. The very techniques that make it cheaper to train a helpful, harmless model make it cheaper to train a harmful one. Automating oversight is powerful — and dual-use.","cap":[[0,"The"],[0.21,"paper"],[0.59,"is"],[0.72,"honest"],[1.08,"about"],[1.34,"the"],[1.49,"failure"],[1.94,"modes,"],[2.33,"too."],[3.26,"Train"],[3.76,"the"],[3.94,"RL"],[4.4,"stage"],[4.9,"too"],[5.14,"aggressively"],[6.11,"and"],[6.37,"you"],[6.53,"get"],[6.76,"Goodharting"],[7.61,"—"],[8.03,"the"],[8.19,"model"],[8.55,"over-optimizes"],[9.54,"the"],[9.69,"reward"],[10.52,"and"],[10.81,"starts"],[11.3,"behaving"],[11.85,"strangely."],[13.39,"It"],[13.58,"can"],[13.77,"become"],[14.29,"overly"],[14.81,"harsh,"],[15.6,"scolding"],[16.29,"in"],[16.44,"response"],[16.95,"to"],[17.11,"mild"],[17.53,"prompts."],[18.59,"Or"],[18.95,"it"],[19.1,"develops"],[19.67,"verbal"],[20.09,"tics"],[20.72,"—"],[20.9,"appending"],[21.51,"the"],[21.69,"same"],[22.21,"boilerplate"],[23,"reassurance,"],[24,"\"you"],[24.47,"are"],[24.83,"valid,"],[25.66,"valued,"],[26.58,"and"],[26.89,"cared"],[27.3,"for,\""],[28.1,"to"],[28.31,"nearly"],[28.72,"every"],[29.13,"answer."],[30.24,"It's"],[30.46,"a"],[30.55,"familiar"],[31.05,"lesson"],[31.49,"in"],[31.63,"a"],[31.74,"new"],[32.03,"form:"],[32.8,"when"],[33.04,"you"],[33.2,"optimize"],[33.78,"hard"],[34.11,"against"],[34.49,"a"],[34.59,"proxy"],[35.11,"for"],[35.26,"what"],[35.47,"you"],[35.64,"want,"],[36.47,"the"],[36.62,"proxy"],[37.22,"and"],[37.49,"the"],[37.63,"goal"],[38.29,"drift"],[38.71,"apart."],[39.94,"There's"],[40.23,"also"],[40.59,"a"],[40.68,"broader"],[41.11,"caution."],[41.68,"The"],[41.88,"very"],[42.23,"techniques"],[42.83,"that"],[43,"make"],[43.27,"it"],[43.41,"cheaper"],[43.84,"to"],[43.97,"train"],[44.36,"a"],[44.72,"helpful,"],[45.63,"harmless"],[46.22,"model"],[47.03,"make"],[47.29,"it"],[47.4,"cheaper"],[47.78,"to"],[47.9,"train"],[48.5,"a"],[48.73,"harmful"],[49.3,"one."],[50.29,"Automating"],[51.01,"oversight"],[51.86,"is"],[52.14,"powerful"],[52.9,"—"],[53.09,"and"],[53.32,"dual-use."]]},{"id":"s15","sub":"Why It Matters","text":"So why does this matter beyond one clever training run? Three reasons. First, scalable oversight. If AI can help judge AI, then supervision can keep pace as models grow more capable — instead of bottlenecking on human labor. Second, transparency. The values governing the model aren't buried in a mountain of private labels. They're written down, in a handful of principles you can read, debate, and revise. Third, agility. Want to change the objective? Edit the constitution — no need to collect a fresh dataset of human labels. And with chain-of-thought, the model's reasoning becomes legible, so you can inspect why it decided a response was harmful. Cheaper, clearer, and more controllable — all at once.","cap":[[0,"So"],[0.49,"why"],[0.84,"does"],[1.08,"this"],[1.32,"matter"],[1.67,"beyond"],[2.04,"one"],[2.33,"clever"],[2.73,"training"],[3.22,"run?"],[4.54,"Three"],[4.89,"reasons."],[5.67,"First,"],[6.44,"scalable"],[7.06,"oversight."],[7.98,"If"],[8.26,"AI"],[8.79,"can"],[9.01,"help"],[9.32,"judge"],[9.72,"AI,"],[10.3,"then"],[10.62,"supervision"],[11.39,"can"],[11.62,"keep"],[11.9,"pace"],[12.56,"as"],[12.85,"models"],[13.34,"grow"],[13.7,"more"],[13.99,"capable"],[14.75,"—"],[14.97,"instead"],[15.43,"of"],[15.6,"bottlenecking"],[16.39,"on"],[16.59,"human"],[17.02,"labor."],[18.18,"Second,"],[19.11,"transparency."],[20.75,"The"],[20.94,"values"],[21.58,"governing"],[22,"the"],[22.12,"model"],[22.47,"aren't"],[22.74,"buried"],[23.12,"in"],[23.23,"a"],[23.36,"mountain"],[23.8,"of"],[23.93,"private"],[24.37,"labels."],[25.3,"They're"],[25.55,"written"],[25.93,"down,"],[26.6,"in"],[26.77,"a"],[26.88,"handful"],[27.38,"of"],[27.48,"principles"],[28.1,"you"],[28.24,"can"],[28.46,"read,"],[29.14,"debate,"],[29.95,"and"],[30.23,"revise."],[31.3,"Third,"],[32.13,"agility."],[33.76,"Want"],[34.05,"to"],[34.18,"change"],[34.55,"the"],[34.66,"objective?"],[35.97,"Edit"],[36.36,"the"],[36.49,"constitution"],[37.56,"—"],[38.01,"no"],[38.27,"need"],[38.59,"to"],[38.72,"collect"],[39.13,"a"],[39.24,"fresh"],[39.64,"dataset"],[40.33,"of"],[40.68,"human"],[41.19,"labels."],[42.35,"And"],[42.7,"with"],[42.92,"chain-of-thought,"],[44.18,"the"],[44.4,"model's"],[44.94,"reasoning"],[45.49,"becomes"],[46.02,"legible,"],[46.99,"so"],[47.43,"you"],[47.67,"can"],[47.88,"inspect"],[48.55,"why"],[48.89,"it"],[49.02,"decided"],[49.62,"a"],[49.73,"response"],[50.31,"was"],[50.54,"harmful."],[51.71,"Cheaper,"],[52.57,"clearer,"],[53.44,"and"],[53.81,"more"],[54.06,"controllable"],[54.94,"—"],[55.15,"all"],[55.47,"at"],[55.62,"once."]]},{"id":"s16","sub":"The Horizon","text":"The authors are careful about their own conclusion. The aim is not to remove human judgment from AI — it's to make that judgment more efficient, more focused, and more transparent. A constitution is a way to put human values into words, and let the model carry them further. And the method generalizes. The same critique-and-revise machinery could shape a model's tone, its personality, its writing style — not just its harmlessness. Looking ahead, it opens a path toward robustness: because helpfulness and harmlessness no longer fight, you can scale up automated red-teaming, and eventually build AI that reasons through the hidden risks of its own behavior. It began as a simple question. Could a short list of principles teach a machine to explain itself, rather than merely refuse? The answer, it turns out, was yes.","cap":[[0,"The"],[0.22,"authors"],[0.63,"are"],[0.74,"careful"],[1.17,"about"],[1.46,"their"],[1.71,"own"],[1.97,"conclusion."],[3.43,"The"],[3.62,"aim"],[3.91,"is"],[4.13,"not"],[4.42,"to"],[4.6,"remove"],[5.06,"human"],[5.45,"judgment"],[5.93,"from"],[6.13,"AI"],[6.61,"—"],[6.83,"it's"],[7.09,"to"],[7.28,"make"],[7.61,"that"],[7.85,"judgment"],[8.36,"more"],[8.6,"efficient,"],[9.49,"more"],[9.79,"focused,"],[10.62,"and"],[10.86,"more"],[11.09,"transparent."],[12.42,"A"],[12.59,"constitution"],[13.51,"is"],[13.64,"a"],[13.75,"way"],[14.05,"to"],[14.19,"put"],[14.44,"human"],[14.94,"values"],[15.53,"into"],[15.85,"words,"],[16.75,"and"],[16.99,"let"],[17.2,"the"],[17.37,"model"],[17.79,"carry"],[18.12,"them"],[18.37,"further."],[19.26,"And"],[19.52,"the"],[19.66,"method"],[20.24,"generalizes."],[22.29,"The"],[22.49,"same"],[22.93,"critique-and-revise"],[24.42,"machinery"],[25.04,"could"],[25.24,"shape"],[25.61,"a"],[25.73,"model's"],[26.2,"tone,"],[26.64,"its"],[26.85,"personality,"],[28,"its"],[28.26,"writing"],[28.79,"style"],[29.37,"—"],[29.57,"not"],[29.84,"just"],[30.21,"its"],[30.43,"harmlessness."],[32.23,"Looking"],[32.59,"ahead,"],[33.3,"it"],[33.48,"opens"],[33.89,"a"],[33.98,"path"],[34.42,"toward"],[35.14,"robustness:"],[36.4,"because"],[36.8,"helpfulness"],[37.53,"and"],[37.72,"harmlessness"],[38.58,"no"],[38.84,"longer"],[39.28,"fight,"],[40.05,"you"],[40.26,"can"],[40.55,"scale"],[41.03,"up"],[41.23,"automated"],[41.9,"red-teaming,"],[43.04,"and"],[43.27,"eventually"],[43.92,"build"],[44.27,"AI"],[44.79,"that"],[45,"reasons"],[45.59,"through"],[45.89,"the"],[46.04,"hidden"],[46.44,"risks"],[46.86,"of"],[46.97,"its"],[47.17,"own"],[47.4,"behavior."],[48.94,"It"],[49.14,"began"],[49.91,"as"],[50.19,"a"],[50.31,"simple"],[50.79,"question."],[51.85,"Could"],[52.11,"a"],[52.23,"short"],[52.67,"list"],[53.01,"of"],[53.16,"principles"],[53.97,"teach"],[54.31,"a"],[54.4,"machine"],[54.9,"to"],[55.08,"explain"],[55.68,"itself,"],[56.76,"rather"],[57.2,"than"],[57.41,"merely"],[57.81,"refuse?"],[59.34,"The"],[59.54,"answer,"],[60.29,"it"],[60.46,"turns"],[60.82,"out,"],[61.5,"was"],[61.76,"yes."]]}];
+  var HAS_AUDIO = true;
+  var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var scenes = Array.prototype.slice.call(document.querySelectorAll(".scene"));
+
+  var ACCENTS = {gold:"#F2C879",green:"#7FC8A0",sky:"#8FB8E8",rose:"#E8927C",lav:"#C4AEE8",
+    amber:"#E4A85E",steel:"#86A9CC",violet:"#B49CF0",teal:"#66C6BE",crimson:"#DE8A86",sage:"#A7C08C"};
+  function hexRgb(h){ h=h.replace("#",""); if(h.length===3)h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
+    return {r:parseInt(h.substr(0,2),16),g:parseInt(h.substr(2,2),16),b:parseInt(h.substr(4,2),16)}; }
+  function mix(a,b,t){ return "rgb("+Math.round(a.r+(b.r-a.r)*t)+","+Math.round(a.g+(b.g-a.g)*t)+","+Math.round(a.b+(b.b-a.b)*t)+")"; }
+  var DARK1={r:9,g:10,b:14}, DARK2={r:11,g:13,b:18};
+  function hueFor(name){ var acc=ACCENTS[name]||ACCENTS.gold, rgb=hexRgb(acc);
+    return {accent:acc, a:mix(rgb,DARK1,0.90), b:"rgba("+rgb.r+","+rgb.g+","+rgb.b+",0.15)", c:mix(rgb,DARK2,0.83)}; }
+  var root=document.documentElement;
+  function applyHue(name){ var h=hueFor(name); root.style.setProperty("--accent",h.accent);
+    root.style.setProperty("--grad-a",h.a); root.style.setProperty("--grad-b",h.b); root.style.setProperty("--grad-c",h.c); }
+  applyHue(scenes[0]?scenes[0].getAttribute("data-hue"):"gold");
+
+  var io=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting) e.target.classList.add("revealed"); }); },{threshold:0.18});
+  scenes.forEach(function(s){ io.observe(s); });
+
+  function animateCount(el){ var from=parseFloat(el.getAttribute("data-count-from")), to=parseFloat(el.getAttribute("data-count-to"));
+    if(reduced){ el.textContent=to; return; } var dur=1400,start=null;
+    function step(ts){ if(start===null)start=ts; var p=Math.min((ts-start)/dur,1); var e=1-Math.pow(1-p,3);
+      el.textContent=Math.round(from+(to-from)*e); if(p<1) requestAnimationFrame(step); } requestAnimationFrame(step); }
+  var countIO=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ animateCount(e.target); countIO.unobserve(e.target); } }); },{threshold:0.6});
+  document.querySelectorAll("[data-count-to]").forEach(function(el){ countIO.observe(el); });
+
+  var canvas=document.getElementById("meadow"), ctx=canvas.getContext("2d"), W,H,pts=[],raf=null;
+  function size(){ var dpr=window.devicePixelRatio||1; W=canvas.width=innerWidth*dpr; H=canvas.height=innerHeight*dpr;
+    canvas.style.width=innerWidth+"px"; canvas.style.height=innerHeight+"px"; }
+  function seed(){ var dpr=window.devicePixelRatio||1, n=Math.min(90,Math.floor(innerWidth/14)); pts=[];
+    for(var i=0;i<n;i++) pts.push({x:Math.random()*W,y:Math.random()*H,r:(Math.random()*1.6+0.4)*dpr,
+      vx:(Math.random()-0.5)*0.12, vy:-(Math.random()*0.18+0.03), a:Math.random()*0.5+0.15, tw:Math.random()*6.28}); }
+  function accentRGB(){ var c=getComputedStyle(root).getPropertyValue("--accent").trim()||"#F2C879";
+    if(c[0]==="#"){ var m=hexRgb(c); return m.r+","+m.g+","+m.b; } return c.replace(/rgba?\(|\)/g,""); }
+  function draw(){ ctx.clearRect(0,0,W,H); var rgb=accentRGB();
+    for(var i=0;i<pts.length;i++){ var p=pts[i]; p.x+=p.vx; p.y+=p.vy; p.tw+=0.02;
+      if(p.y<-10){p.y=H+10;p.x=Math.random()*W;} if(p.x<-10)p.x=W+10; if(p.x>W+10)p.x=-10;
+      var f=p.a*(0.6+0.4*Math.sin(p.tw)); ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,6.2832);
+      ctx.fillStyle="rgba("+rgb+","+f.toFixed(3)+")"; ctx.fill(); }
+    raf=requestAnimationFrame(draw); }
+  function startMeadow(){ size(); seed(); if(!reduced){ if(raf)cancelAnimationFrame(raf); draw(); }
+    else { ctx.clearRect(0,0,W,H); var rgb=accentRGB(); pts.forEach(function(p){ ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,6.2832);
+      ctx.fillStyle="rgba("+rgb+","+p.a.toFixed(3)+")"; ctx.fill(); }); } }
+  addEventListener("resize",function(){ size(); seed(); }); startMeadow();
+
+  /* ---- narration engine ---- */
+  var audio=document.getElementById("narrator");
+  var synth=window.speechSynthesis, ttsOK=!!synth && typeof SpeechSynthesisUtterance!=="undefined";
+  var playing=false, paused=false, mode="idle", chosenVoice=null, voices=[];
+  var SPEEDS=[0.85,1,1.15,1.3,1.5], speed=parseFloat(localStorage.getItem("st-speed")||"1");
+  if(SPEEDS.indexOf(speed)===-1) speed=1;
+
+  var playBtn=document.getElementById("playBtn"), playIcon=document.getElementById("playIcon"), pauseIcon=document.getElementById("pauseIcon");
+  var nowTitle=document.getElementById("nowTitle"), nowSub=document.getElementById("nowSub"), seekFill=document.getElementById("seekFill");
+  var dotsWrap=document.getElementById("dots"), player=document.getElementById("player");
+  var capEl=document.getElementById("caption"), modeFlag=document.getElementById("modeFlag");
+  var speedBtn=document.getElementById("speedBtn"), showCaptions=true, activeIndex=0;
+
+  SC.forEach(function(s,i){ var b=document.createElement("button"); b.setAttribute("aria-label","Go to "+s.sub);
+    b.addEventListener("click",function(){ jumpTo(i,playing); }); dotsWrap.appendChild(b); });
+  var dotEls=Array.prototype.slice.call(dotsWrap.children);
+
+  function updateDots(){ dotEls.forEach(function(d,i){ d.classList.toggle("active",i===activeIndex); });
+    document.getElementById("topbar").style.width=(scenes.length>1?(activeIndex/(scenes.length-1))*100:0)+"%"; }
+  function setActive(idx,doScroll){ activeIndex=Math.max(0,Math.min(scenes.length-1,idx)); var s=scenes[activeIndex];
+    applyHue(s.getAttribute("data-hue")); nowTitle.textContent=SC[activeIndex].sub; nowSub.textContent=(activeIndex+1)+" / "+scenes.length;
+    updateDots(); if(doScroll) s.scrollIntoView({behavior:reduced?"auto":"smooth",block:"center"}); }
+  function setPlayIcon(on){ playIcon.style.display=on?"none":"block"; pauseIcon.style.display=on?"block":"none";
+    playBtn.setAttribute("aria-label",on?"Pause narration":"Play narration"); }
+
+  /* captions: one sentence window */
+  var capTokens=[], capSentences=[], capSentenceOf=[], capCurSent=-1, capSpans=[];
+  function buildCaption(i){ capEl.innerHTML=""; capSpans=[]; capCurSent=-1;
+    var data=SC[i]; if(!showCaptions){ capEl.classList.remove("show"); return; }
+    capTokens = data.cap ? data.cap.map(function(p){ return {t:p[0],w:p[1]}; })
+                         : data.text.split(/\s+/).map(function(w){ return {t:null,w:w}; });
+    capSentences=[]; capSentenceOf=[]; var cur=[];
+    for(var k=0;k<capTokens.length;k++){ cur.push(k); capSentenceOf[k]=capSentences.length;
+      if(/[.!?]["')]?$/.test(capTokens[k].w)){ capSentences.push(cur); cur=[]; } }
+    if(cur.length){ for(var m=0;m<cur.length;m++) capSentenceOf[cur[m]]=capSentences.length; capSentences.push(cur); }
+    capEl.classList.add("show"); renderSentence(0); }
+  function renderSentence(si){ capCurSent=si; capEl.innerHTML=""; capSpans=[];
+    (capSentences[si]||[]).forEach(function(gi){ var sp=document.createElement("span"); sp.className="w";
+      sp.setAttribute("data-gi",gi); sp.textContent=capTokens[gi].w+" "; capEl.appendChild(sp); capSpans.push(sp); }); }
+  function markToken(gi){ var si=capSentenceOf[gi]; if(si===undefined)return; if(si!==capCurSent) renderSentence(si);
+    for(var j=0;j<capSpans.length;j++){ var g=+capSpans[j].getAttribute("data-gi"); capSpans[j].className="w"+(g<gi?" spoken":g===gi?" active":""); } }
+  function highlightByTime(t){ if(!capTokens.length)return; var idx=0;
+    for(var i=0;i<capTokens.length;i++){ if(capTokens[i].t!==null&&capTokens[i].t<=t) idx=i; else if(capTokens[i].t!==null) break; } markToken(idx); }
+  function highlightByWordIndex(k){ if(k<capTokens.length) markToken(k); }
+
+  function srcFor(i){ return "audio/"+SC[i].id+".mp3"; }
+  function playScene(i){ setActive(i,true); playing=true; paused=false; setPlayIcon(true); buildCaption(i);
+    var useAudio=HAS_AUDIO && SC[i].cap;
+    if(useAudio){ mode="audio"; modeFlag.textContent="ElevenLabs"; audio.src=srcFor(i); audio.currentTime=0;
+      audio.playbackRate=speed; audio.volume=parseFloat(document.getElementById("vol").value);
+      var p=audio.play(); if(p&&p.catch) p.catch(function(){ ttsSpeak(i); }); }
+    else { ttsSpeak(i); } }
+  function advance(){ if(activeIndex<scenes.length-1) playScene(activeIndex+1); else stopNarration(); }
+  audio.addEventListener("ended",function(){ if(playing&&mode==="audio") advance(); });
+  audio.addEventListener("error",function(){ if(playing&&mode==="audio") ttsSpeak(activeIndex); });
+  audio.addEventListener("timeupdate",function(){ if(mode!=="audio")return;
+    if(audio.duration) seekFill.style.width=(audio.currentTime/audio.duration*100)+"%"; highlightByTime(audio.currentTime); });
+
+  function ttsSpeak(i){ mode="tts"; modeFlag.textContent=ttsOK?"Browser voice":"unavailable"; if(!ttsOK)return; synth.cancel();
+    var u=new SpeechSynthesisUtterance(SC[i].text); u.rate=0.98*speed; u.pitch=1.0;
+    u.volume=parseFloat(document.getElementById("vol").value); if(chosenVoice)u.voice=chosenVoice;
+    var wIdx=0; u.onboundary=function(ev){ if(ev.name==="word"||ev.charIndex!==undefined) highlightByWordIndex(wIdx++); };
+    u.onend=function(){ if(playing&&mode==="tts") advance(); };
+    setTimeout(function(){ if(playing) synth.speak(u); }, reduced?40:420); }
+
+  function startNarration(i){ playScene(typeof i==="number"?i:activeIndex); player.classList.add("show"); }
+  function stopNarration(){ playing=false; paused=false; setPlayIcon(false); try{ audio.pause(); }catch(e){}
+    if(ttsOK) synth.cancel(); capEl.classList.remove("show"); seekFill.style.width="0%"; }
+
+  playBtn.addEventListener("click",function(){
+    if(!playing){ startNarration(activeIndex); return; }
+    if(!paused){ paused=true; setPlayIcon(false); if(mode==="audio")audio.pause(); else if(ttsOK)synth.pause(); }
+    else { paused=false; setPlayIcon(true); if(mode==="audio")audio.play(); else if(ttsOK)synth.resume(); } });
+  document.getElementById("nextBtn").addEventListener("click",function(){ jumpTo(activeIndex+1,playing); });
+  document.getElementById("prevBtn").addEventListener("click",function(){ jumpTo(activeIndex-1,playing); });
+  function jumpTo(i,keep){ i=Math.max(0,Math.min(scenes.length-1,i));
+    if(mode==="audio"){ try{audio.pause();}catch(e){} } if(ttsOK) synth.cancel();
+    if(keep){ playScene(i); } else { stopNarration(); setActive(i,true); } }
+
+  var beginBtn=document.getElementById("beginBtn");
+  if(beginBtn) beginBtn.addEventListener("click",function(){ player.classList.add("show");
+    if(ttsOK){ try{ synth.resume(); }catch(e){} } startNarration(0); });
+  addEventListener("scroll",function(){ if(scrollY>innerHeight*0.5) player.classList.add("show"); },{passive:true});
+
+  var centerIO=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){
+    var idx=scenes.indexOf(e.target); if(idx!==activeIndex&&!playing) setActive(idx,false); } }); },{rootMargin:"-45% 0px -45% 0px",threshold:0});
+  scenes.forEach(function(s){ centerIO.observe(s); });
+
+  /* speed */
+  var speedsWrap=document.getElementById("speeds");
+  function applySpeed(v){ speed=v; localStorage.setItem("st-speed",String(v));
+    speedBtn.innerHTML=(v%1===0?v:v.toFixed(2).replace(/0$/,""))+"&times;";
+    if(mode==="audio") audio.playbackRate=v;
+    Array.prototype.forEach.call(speedsWrap.children,function(b){ b.classList.toggle("on",parseFloat(b.dataset.v)===v); }); }
+  SPEEDS.forEach(function(v){ var b=document.createElement("button"); b.dataset.v=v;
+    b.textContent=(v%1===0?v:v.toFixed(2).replace(/0$/,""))+"\u00d7";
+    b.addEventListener("click",function(){ applySpeed(v); }); speedsWrap.appendChild(b); });
+  speedBtn.addEventListener("click",function(){ var i=SPEEDS.indexOf(speed); applySpeed(SPEEDS[(i+1)%SPEEDS.length]); });
+  applySpeed(speed);
+
+  /* settings menu */
+  var voiceMenu=document.getElementById("voiceMenu");
+  document.getElementById("voiceToggle").addEventListener("click",function(e){ e.stopPropagation(); voiceMenu.classList.toggle("open"); });
+  document.addEventListener("click",function(e){ if(!voiceMenu.contains(e.target)&&e.target.id!=="voiceToggle") voiceMenu.classList.remove("open"); });
+  document.getElementById("vol").addEventListener("input",function(){ audio.volume=parseFloat(this.value); });
+  document.getElementById("capToggle").addEventListener("change",function(){ showCaptions=this.checked;
+    if(!showCaptions) capEl.classList.remove("show"); else if(playing) buildCaption(activeIndex); });
+
+  var voiceSelect=document.getElementById("voiceSelect"), ttsRow=document.getElementById("ttsRow");
+  var PREF=["Samantha","Serena","Allison","Ava","Daniel","Karen","Moira","Google UK English Female","Google US English","Microsoft Aria"];
+  function pickDefault(list){ for(var i=0;i<PREF.length;i++)for(var j=0;j<list.length;j++) if(list[j].name.indexOf(PREF[i])!==-1) return list[j];
+    for(var k=0;k<list.length;k++) if(/^en/i.test(list[k].lang)) return list[k]; return list[0]||null; }
+  function loadVoices(){ if(!ttsOK)return; voices=synth.getVoices().filter(function(v){return /^en/i.test(v.lang);}); if(!voices.length)voices=synth.getVoices();
+    voiceSelect.innerHTML=""; voices.forEach(function(v,i){ var o=document.createElement("option"); o.value=i; o.textContent=v.name; voiceSelect.appendChild(o); });
+    if(!chosenVoice)chosenVoice=pickDefault(voices); if(chosenVoice){ var ci=voices.indexOf(chosenVoice); if(ci>=0)voiceSelect.value=ci; } }
+  voiceSelect.addEventListener("change",function(){ chosenVoice=voices[parseInt(voiceSelect.value,10)]||chosenVoice; });
+  if(ttsOK){ loadVoices(); if(synth.onvoiceschanged!==undefined) synth.onvoiceschanged=loadVoices;
+    setInterval(function(){ if(playing&&!paused&&mode==="tts"&&synth.speaking){ synth.pause(); synth.resume(); } },12000); }
+  if(!HAS_AUDIO){ ttsRow.style.display="flex"; modeFlag.textContent=ttsOK?"Browser voice":"unavailable"; }
+  else { modeFlag.textContent="ElevenLabs"; }
+
+  addEventListener("beforeunload",function(){ if(ttsOK) synth.cancel(); try{audio.pause();}catch(e){} });
+  document.addEventListener("keydown",function(e){ if(e.code==="Space"&&player.classList.contains("show")&&e.target===document.body){ e.preventDefault(); playBtn.click(); } });
+  setActive(0,false);
+})();
+</script>
+</body>
+</html>

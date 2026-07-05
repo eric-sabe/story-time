@@ -1,0 +1,636 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Machines of Loving Grace — Story Time</title>
+<style>
+  @property --grad-a { syntax: '<color>'; inherits: true; initial-value: #0B0E14; }
+  @property --grad-b { syntax: '<color>'; inherits: true; initial-value: #12172400; }
+  @property --grad-c { syntax: '<color>'; inherits: true; initial-value: #0B0E14; }
+  :root {
+    --ink:#0B0E14; --text:#F4EFE6; --muted:#98A2B4; --faint:#5A6274;
+    --gold:#F2C879; --green:#7FC8A0; --sky:#8FB8E8; --rose:#E8927C; --lav:#C4AEE8;
+    --amber:#E4A85E; --steel:#86A9CC; --violet:#B49CF0; --teal:#66C6BE; --crimson:#DE8A86; --sage:#A7C08C;
+    --accent:var(--gold);
+    --serif:"Hoefler Text","New York","Iowan Old Style",Palatino,Georgia,serif;
+    --sans:-apple-system,"SF Pro Text","Helvetica Neue",Inter,system-ui,sans-serif;
+    --mono:"SF Mono",ui-monospace,"Menlo","Roboto Mono",monospace;
+    --measure:34rem;
+  }
+  * { box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  @media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto;} }
+  body { margin:0; background:var(--ink); color:var(--text); font-family:var(--sans);
+    font-size:18px; line-height:1.7; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
+
+  #dawn { position:fixed; inset:0; z-index:-2;
+    background:
+      radial-gradient(120% 90% at 50% 118%, var(--grad-b) 0%, transparent 60%),
+      linear-gradient(180deg, var(--grad-a) 0%, var(--grad-c) 100%);
+    transition:--grad-a 1.6s ease,--grad-b 1.6s ease,--grad-c 1.6s ease; }
+  #meadow { position:fixed; inset:0; z-index:-1; pointer-events:none; opacity:.9; }
+  #grain { position:fixed; inset:0; z-index:0; pointer-events:none; opacity:.035; mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+
+  main { position:relative; z-index:1; }
+  .scene { min-height:100vh; display:flex; flex-direction:column; justify-content:center;
+    padding:14vh clamp(1.5rem,6vw,7rem); max-width:68rem; margin:0 auto; }
+  .scene .inner { opacity:0; transform:translateY(26px);
+    transition:opacity 1.1s ease, transform 1.1s cubic-bezier(.2,.7,.2,1); max-width:var(--measure); }
+  .scene.wide .inner { max-width:52rem; }
+  .scene.revealed .inner { opacity:1; transform:none; }
+  @media (prefers-reduced-motion: reduce){ .scene .inner{opacity:1;transform:none;transition:none;} }
+
+  .eyebrow { font-family:var(--mono); font-size:.74rem; letter-spacing:.28em; text-transform:uppercase;
+    color:var(--accent); display:flex; align-items:center; gap:.8em; margin:0 0 1.6rem; flex-wrap:wrap; }
+  .eyebrow .num { color:var(--faint); }
+  .eyebrow .dot { width:7px; height:7px; border-radius:50%; background:var(--accent); box-shadow:0 0 14px var(--accent); }
+
+  h1 { font-family:var(--serif); font-weight:500; letter-spacing:-.01em;
+    font-size:clamp(2.4rem,7.5vw,5.2rem); line-height:1; margin:0; text-wrap:balance;
+    overflow-wrap:break-word; hyphens:auto; }
+  h2 { font-family:var(--serif); font-weight:500; letter-spacing:-.005em;
+    font-size:clamp(1.7rem,5vw,3.3rem); line-height:1.05; margin:0 0 1.3rem; text-wrap:balance;
+    overflow-wrap:break-word; hyphens:auto; }
+  .lede { font-size:clamp(1.05rem,2.2vw,1.32rem); color:var(--text); }
+  p { color:var(--muted); }
+  p .hl { color:var(--text); }
+  em { color:var(--text); font-style:italic; }
+  code { font-family:var(--mono); font-size:.9em; color:var(--accent); background:rgba(255,255,255,.05); padding:.05em .35em; border-radius:4px; }
+
+  ul.reasons { list-style:none; padding:0; margin:0 0 1.4rem; display:flex; flex-direction:column; gap:.85rem; }
+  ul.reasons.tight { gap:.6rem; }
+  ul.reasons.two { display:grid; grid-template-columns:1fr 1fr; gap:.7rem 1.6rem; }
+  ul.reasons li { position:relative; padding-left:1.3rem; color:var(--muted); font-size:1.02rem; line-height:1.5; }
+  ul.reasons li:before { content:""; position:absolute; left:0; top:.62em; width:6px; height:6px;
+    border-radius:50%; background:var(--accent); box-shadow:0 0 10px var(--accent); }
+  ul.reasons li b { color:var(--text); font-weight:600; }
+  @media (max-width:620px){ ul.reasons.two{grid-template-columns:1fr;} }
+
+  .chips { display:flex; flex-wrap:wrap; gap:.55rem; margin:0 0 1.4rem; }
+  .chips span { font-family:var(--mono); font-size:.72rem; letter-spacing:.04em; color:var(--accent);
+    border:1px solid color-mix(in oklab, var(--accent) 45%, transparent); border-radius:999px; padding:.34rem .8rem; }
+  .capnote { font-size:1.06rem; color:var(--text); margin-top:1.2rem; }
+
+  #s0 .inner { max-width:47rem; }
+  .kicker { font-family:var(--mono); font-size:.7rem; letter-spacing:.24em; text-transform:uppercase; color:var(--faint); margin:0 0 1.4rem; }
+  .subtitle { font-family:var(--serif); font-style:italic; font-size:clamp(1.1rem,2.6vw,1.6rem); color:var(--accent); margin:1rem 0 0; opacity:.9; }
+  .epigraph { font-family:var(--serif); font-style:italic; font-size:clamp(1.05rem,2.4vw,1.45rem);
+    line-height:1.5; color:var(--accent); margin:0 0 2.4rem; opacity:.9; white-space:pre-line; }
+  .epigraph cite { display:block; font-style:normal; font-family:var(--mono);
+    font-size:.72rem; letter-spacing:.22em; text-transform:uppercase; color:var(--faint); margin-top:1.1rem; }
+  .byline { font-family:var(--mono); font-size:.76rem; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); margin:1.6rem 0 0; }
+  .byline b { color:var(--text); font-weight:600; }
+  .begin { margin-top:2.6rem; display:inline-flex; align-items:center; gap:.8rem;
+    font-family:var(--sans); font-size:1rem; font-weight:600; color:var(--ink); background:var(--accent);
+    border:0; border-radius:999px; padding:.95rem 1.6rem; cursor:pointer;
+    transition:transform .25s ease, box-shadow .5s ease, filter .25s; }
+  .begin:hover { transform:translateY(-2px); box-shadow:0 12px 40px -8px color-mix(in oklab, var(--accent) 60%, transparent); filter:brightness(1.05); }
+  .begin:focus-visible { outline:3px solid var(--accent); outline-offset:4px; }
+  .begin .tri { width:0; height:0; border-left:11px solid var(--ink); border-top:7px solid transparent; border-bottom:7px solid transparent; }
+  .scrollhint { margin-top:2.2rem; font-family:var(--mono); font-size:.7rem; letter-spacing:.22em; text-transform:uppercase; color:var(--faint); }
+
+  .stats { display:flex; flex-wrap:wrap; gap:clamp(1.4rem,4vw,3rem); margin-top:2.2rem; }
+  .stat { min-width:7.5rem; }
+  .stat .fig { font-family:var(--serif); font-weight:500; font-size:clamp(2rem,4.4vw,3rem); line-height:1;
+    color:var(--accent); font-variant-numeric:tabular-nums; display:flex; align-items:baseline; gap:.1em; }
+  .stat .fig .u { font-size:.4em; color:var(--text); font-family:var(--sans); font-weight:600; letter-spacing:.02em; }
+  .stat .fig .u.dollar { color:var(--accent); font-family:var(--serif); font-weight:500; font-size:.55em; }
+  .stat .cap { font-family:var(--mono); font-size:.64rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin-top:.7rem; line-height:1.5; }
+
+  .quote { font-family:var(--serif); font-style:italic; font-size:clamp(1.5rem,3.6vw,2.4rem);
+    line-height:1.3; color:var(--text); text-wrap:balance; margin:0; }
+  .quote .grace { color:var(--accent); }
+  .fnote { font-family:var(--mono); font-size:.66rem; letter-spacing:.1em; color:var(--faint); margin-top:2rem; text-transform:uppercase; }
+
+  /* back to library */
+  #back { position:fixed; top:1rem; left:1rem; z-index:45; display:inline-flex; align-items:center; gap:.5rem;
+    font-family:var(--mono); font-size:.68rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted);
+    text-decoration:none; padding:.5rem .8rem; border-radius:999px; border:1px solid rgba(244,239,230,.12);
+    background:rgba(14,18,26,.55); backdrop-filter:blur(10px); transition:color .2s, border-color .2s; }
+  #back:hover { color:var(--text); border-color:rgba(244,239,230,.3); }
+
+  /* caption */
+  #caption { position:fixed; left:50%; transform:translateX(-50%); bottom:5.6rem; z-index:38;
+    width:min(90vw,46rem); text-align:center; font-family:var(--serif); font-size:clamp(1.05rem,2.5vw,1.5rem);
+    line-height:1.5; color:var(--faint); pointer-events:none; opacity:0; transition:opacity .4s ease;
+    text-shadow:0 2px 30px rgba(11,14,20,.95); }
+  #caption.show { opacity:1; }
+  #caption .w { transition:color .12s ease; }
+  #caption .w.spoken { color:var(--muted); }
+  #caption .w.active { color:var(--accent); }
+
+  #player { position:fixed; left:50%; transform:translateX(-50%); bottom:max(1.1rem, env(safe-area-inset-bottom));
+    z-index:40; display:flex; align-items:center; gap:.5rem; background:rgba(14,18,26,.72);
+    backdrop-filter:blur(16px) saturate(1.3); -webkit-backdrop-filter:blur(16px) saturate(1.3);
+    border:1px solid rgba(244,239,230,.12); border-radius:999px; padding:.5rem .55rem;
+    box-shadow:0 18px 50px -18px rgba(0,0,0,.8); max-width:min(95vw,48rem);
+    opacity:0; pointer-events:none; transition:opacity .5s ease; }
+  #player.show { opacity:1; pointer-events:auto; }
+  .pbtn { flex:none; width:42px; height:42px; border-radius:50%; border:1px solid rgba(244,239,230,.16);
+    background:transparent; color:var(--text); cursor:pointer; display:grid; place-items:center;
+    transition:background .2s,border-color .2s,transform .15s; padding:0; }
+  .pbtn:hover { background:rgba(244,239,230,.08); }
+  .pbtn:active { transform:scale(.94); }
+  .pbtn:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+  .pbtn.primary { background:var(--accent); color:var(--ink); border-color:var(--accent); width:46px; height:46px; }
+  .pbtn.primary:hover { filter:brightness(1.06); }
+  .pbtn svg { width:17px; height:17px; display:block; }
+  .pbtn.primary svg { width:19px; height:19px; }
+  .pbtn.speed { width:auto; min-width:46px; padding:0 .7rem; font-family:var(--mono); font-size:.78rem; font-weight:600;
+    letter-spacing:.02em; color:var(--accent); border-radius:999px; font-variant-numeric:tabular-nums; }
+
+  .pmeta { display:flex; flex-direction:column; min-width:0; padding:0 .3rem 0 .5rem; }
+  .pmeta .now { font-family:var(--mono); font-size:.62rem; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--accent); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:11rem; }
+  .pmeta .sub { font-size:.76rem; color:var(--muted); white-space:nowrap; }
+  .seek { width:8rem; height:4px; border-radius:2px; background:rgba(244,239,230,.14); overflow:hidden; margin-top:.35rem; }
+  .seek .fill { height:100%; width:0%; background:var(--accent); transition:width .2s linear; }
+
+  .dots { display:flex; gap:5px; align-items:center; padding:0 .3rem; flex-wrap:wrap; max-width:16rem; }
+  .dots button { width:7px; height:7px; border-radius:50%; border:0; padding:0; cursor:pointer;
+    background:rgba(244,239,230,.22); transition:background .3s, transform .3s; }
+  .dots button:hover { background:rgba(244,239,230,.5); }
+  .dots button.active { background:var(--accent); transform:scale(1.4); box-shadow:0 0 10px var(--accent); }
+  .dots button:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+
+  .voicewrap { position:relative; }
+  #voiceMenu { position:absolute; bottom:56px; right:0; background:rgba(16,20,28,.97);
+    border:1px solid rgba(244,239,230,.14); border-radius:14px; padding:.7rem; width:16.5rem;
+    box-shadow:0 18px 50px -18px rgba(0,0,0,.8); display:none; flex-direction:column; gap:.65rem; }
+  #voiceMenu.open { display:flex; }
+  #voiceMenu .row { display:flex; align-items:center; justify-content:space-between; gap:.6rem; }
+  #voiceMenu label { font-family:var(--mono); font-size:.6rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); }
+  #voiceMenu .val { font-family:var(--mono); font-size:.7rem; color:var(--text); }
+  #voiceMenu input[type=range] { flex:1; accent-color:var(--accent); }
+  .speeds { display:flex; gap:.3rem; }
+  .speeds button { flex:1; font-family:var(--mono); font-size:.7rem; color:var(--muted); background:transparent;
+    border:1px solid rgba(244,239,230,.16); border-radius:7px; padding:.35rem 0; cursor:pointer; transition:.15s; }
+  .speeds button:hover { color:var(--text); }
+  .speeds button.on { color:var(--ink); background:var(--accent); border-color:var(--accent); }
+  .toggle { display:flex; align-items:center; gap:.5rem; cursor:pointer; }
+  .toggle input { accent-color:var(--accent); width:16px; height:16px; }
+  .modeflag { font-family:var(--mono); font-size:.58rem; letter-spacing:.1em; text-transform:uppercase; color:var(--faint); }
+
+  #topbar { position:fixed; top:0; left:0; height:2px; width:0%; z-index:50;
+    background:linear-gradient(90deg,var(--accent),var(--accent)); transition:width .3s ease, background .8s;
+    box-shadow:0 0 12px var(--accent); }
+
+  @media (max-width:600px){
+    body{font-size:16px;}
+    .pmeta,.dots,.seek{display:none;}
+    #player{ gap:.4rem; padding:.45rem .5rem; }
+    #caption{ bottom:6.2rem; font-size:1.1rem; }
+    #voiceMenu{ position:fixed; left:50%; right:auto; transform:translateX(-50%); bottom:5.4rem; width:min(92vw,19rem); }
+    .scene{ padding:12vh clamp(1.3rem,6vw,7rem); }
+    #s0 .inner{ max-width:100%; }
+    .stat{ min-width:6.5rem; }
+    #back{ font-size:.6rem; top:.7rem; left:.7rem; padding:.45rem .7rem; }
+  }
+</style>
+</head>
+<body>
+<div id="dawn"></div>
+<canvas id="meadow"></canvas>
+<div id="grain"></div>
+<div id="topbar"></div>
+<a id="back" href="../index.html">← Story Time</a>
+
+<main>
+  <section class="scene hero" id="s0" data-hue="gold">
+    <div class="inner"><p class="epigraph">I like to think (it has to be!)
+of a cybernetic meadow
+where mammals and computers
+live together in mutually
+programming harmony
+<cite>Richard Brautigan · 1967</cite></p><p class="kicker">Essay · October 2024</p><h1>Machines of Loving Grace</h1><p class="subtitle">How AI Could Transform the World for the Better</p><p class="byline">By <b>Dario Amodei</b> · Anthropic</p><button class="begin" id="beginBtn"><span class="tri"></span> Play the reading</button><p class="scrollhint">↓ or scroll to read at your own pace</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s1" data-hue="gold">
+    <div class="inner">
+      <p class="eyebrow"><span class="dot"></span> The premise</p>
+      <h2>He is not a doomer.</h2>
+      <p class="lede">Amodei rarely talks about the upside — and he's honest about why. Four reasons hold him back:</p>
+      <ul class="reasons">
+        <li><b>Maximize leverage.</b> The benefits feel inevitable; the risks are where his words can change the odds.</li>
+        <li><b>Avoid propaganda.</b> It's bad for the soul to spend your time "talking your book."</li>
+        <li><b>Avoid grandiosity.</b> No prophets leading their people to salvation.</li>
+        <li><b>Avoid sci-fi baggage.</b> Uploaded minds and cyberpunk vibes make it all feel unreal.</li>
+      </ul>
+      <p>And yet we need a vision that inspires — not just a plan to fight fires. Fear motivates, but it isn't enough. <span class="hl">We need hope as well.</span></p>
+    </div>
+  </section>
+
+  <section class="scene" id="s2" data-hue="gold">
+    <div class="inner">
+      <p class="eyebrow"><span class="dot"></span> The definition</p>
+      <h2>Not “AGI.” Powerful AI.</h2>
+      <p class="lede">He dislikes the hype-laden term. His definition is specific — a model that is:</p>
+      <ul class="reasons">
+        <li><b>Smarter than a Nobel laureate</b> across biology, coding, math, engineering, writing.</li>
+        <li><b>Fully equipped</b> — text, audio, video, mouse and keyboard, the internet, lab robots.</li>
+        <li><b>Autonomous</b> — given a task of hours, days, or weeks, it goes and finishes it.</li>
+        <li><b>Massively parallel</b> — millions of copies, each running at 10–100× human speed.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="scene" id="s3" data-hue="gold">
+    <div class="inner">
+      <p class="eyebrow"><span class="dot"></span> The idea</p>
+      <h2>A country of geniuses in a datacenter.</h2>
+      <p class="lede">How fast could that change the world? He rejects both extremes. Not an instant Singularity — intelligence <em>isn't magic fairy dust</em>. But not saturated either.</p>
+      <p>It comes down to the <span class="hl">marginal returns to intelligence</span>: for any task, how much does being smarter actually help — and how fast?</p>
+      <div class="stats">
+        <div class="stat"><div class="fig"><span data-count-from="1" data-count-to="1">1</span><span class="u">M+ copies</span></div><div class="cap">run from one model's training compute</div></div>
+        <div class="stat"><div class="fig"><span data-count-from="0" data-count-to="100">0</span><span class="u">× speed</span></div><div class="cap">up to, versus a human</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="scene" id="s4" data-hue="gold">
+    <div class="inner">
+      <p class="eyebrow"><span class="dot"></span> The framework</p>
+      <h2>What holds intelligence back.</h2>
+      <p class="lede">Genius alone isn't enough. Five factors become the real bottlenecks:</p>
+      <ul class="reasons tight">
+        <li><b>Speed of the outside world</b> — cells and trials run at their own pace.</li>
+        <li><b>Need for data</b> — sometimes it doesn't exist yet.</li>
+        <li><b>Intrinsic complexity</b> — chaotic systems resist prediction.</li>
+        <li><b>Constraints from humans</b> — laws, habits, institutions.</li>
+        <li><b>Physical laws</b> — no faster-than-light; pudding does not unstir.</li>
+      </ul>
+      <p>The key move: over time, intelligence <span class="hl">routes around</span> these limits — inventing tools and methods that dissolve them.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s5" data-hue="green">
+    <div class="inner">
+      <p class="eyebrow"><span class="num">01</span><span class="dot"></span> Biology &amp; health</p>
+      <h2>Not a tool that reads the data. A scientist that makes it.</h2>
+      <p class="lede">The skeptic says: AI can analyze data, but "garbage in, garbage out." Amodei says that misses the point.</p>
+      <p>Picture instead a <span class="hl">virtual biologist</span> — designing and running experiments, driving lab robots, inventing new measurement tools, directing human teams like a principal investigator. It speeds up <em>the whole research process</em>.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s6" data-hue="green">
+    <div class="inner">
+      <p class="eyebrow"><span class="num">01</span><span class="dot"></span> The engine of progress</p>
+      <h2>A handful of discoveries drive most of medicine.</h2>
+      <p class="lede">More than half of progress in biology traces to a few broad tools for measuring and intervening:</p>
+      <p class="chips"><span>CRISPR</span><span>Genome sequencing</span><span>Optogenetics</span><span>mRNA vaccines</span><span>CAR-T therapy</span><span>Microscopy</span></p>
+      <p>CRISPR's key part was seen in bacteria in the <span class="hl">1980s</span> — it took 25 years to realize it could edit genes. That gap is insight, not funding. Hundreds more wait — if only there were more brilliant minds to find them.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s7" data-hue="green">
+    <div class="inner">
+      <p class="eyebrow"><span class="num">01</span><span class="dot"></span> The central bet</p>
+      <h2>The compressed 21st century.</h2>
+      <p class="lede">His headline prediction: the next <span class="hl">50–100 years</span> of biological progress, delivered in five to ten.</p>
+      <div class="stats">
+        <div class="stat"><div class="fig">~<span data-count-from="100" data-count-to="7">100</span><span class="u">years</span></div><div class="cap">to make a century of medical progress</div></div>
+        <div class="stat"><div class="fig"><span data-count-from="75" data-count-to="150">75</span><span class="u">yr lifespan</span></div><div class="cap">a doubling, as in the last century</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="scene" id="s8" data-hue="green">
+    <div class="inner">
+      <p class="eyebrow"><span class="num">01</span><span class="dot"></span> The list</p>
+      <h2>What that decade could deliver.</h2>
+      <ul class="reasons two">
+        <li>Nearly all <b>infectious disease</b> prevented — "vaccines for anything."</li>
+        <li>Most <b>cancer</b> eliminated — up to 95% less mortality and incidence.</li>
+        <li><b>Genetic disease</b> prevented and cured.</li>
+        <li><b>Alzheimer's</b> understood and prevented.</li>
+        <li>Diabetes, obesity, <b>heart disease</b> in steep decline.</li>
+        <li><b>Biological freedom</b> — control over your own body.</li>
+      </ul>
+      <p class="capnote">…and a human lifespan doubling toward <span class="hl">150 years</span> — perhaps reaching "escape velocity."</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s9" data-hue="sky">
+    <div class="inner">
+      <p class="eyebrow"><span class="num">02</span><span class="dot"></span> Neuroscience &amp; mind</p>
+      <h2>Then, the mind itself.</h2>
+      <p class="lede">Mental health may shape well-being even more directly than physical health — and hundreds of millions live with depression, addiction, schizophrenia, PTSD.</p>
+      <p>The same framework applies. And there's a feedback loop: <span class="hl">interpretability</span> — the science of reading an AI's internals — may become a tool for understanding the far-harder-to-probe biological brain.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s10" data-hue="sky">
+    <div class="inner">
+      <p class="eyebrow"><span class="num">02</span><span class="dot"></span> The prediction</p>
+      <h2>A better baseline of experience.</h2>
+      <ul class="reasons two">
+        <li>Most <b>mental illness</b> cured — PTSD, depression, schizophrenia, addiction.</li>
+        <li>An <b>"AI coach"</b> that helps you become your best self.</li>
+        <li>Even <b>structural</b> conditions and genetic prevention in reach.</li>
+        <li>Everyday <b>anger, anxiety, focus</b> — eased.</li>
+      </ul>
+      <p class="capnote">And the rare heights — inspiration, compassion, transcendence, peace — a <span class="hl">larger part of ordinary life</span>.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s11" data-hue="amber">
+    <div class="inner">
+      <p class="eyebrow"><span class="num">03</span><span class="dot"></span> Economic development &amp; poverty</p>
+      <h2>A cure means little if it never reaches you.</h2>
+      <p class="lede">To let AI widen this gap, he says, would be a moral failure that stains everything else.</p>
+      <div class="stats">
+        <div class="stat"><div class="fig"><span class="u dollar">$</span><span data-count-from="2" data-count-to="2">2</span><span class="u">k / yr</span></div><div class="cap">income per person, Sub-Saharan Africa</div></div>
+        <div class="stat"><div class="fig"><span class="u dollar">$</span><span data-count-from="2" data-count-to="75">2</span><span class="u">k / yr</span></div><div class="cap">income per person, United States</div></div>
+      </div>
+      <p>He's less sure AI can fix economies than biology — corruption, weak institutions, the socialist calculation problem. But there are real reasons for hope.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s12" data-hue="amber">
+    <div class="inner">
+      <p class="eyebrow"><span class="num">03</span><span class="dot"></span> Reasons for hope</p>
+      <h2>The developing world, catching up — fast.</h2>
+      <ul class="reasons two">
+        <li><b>Eradication</b> — smallpox, nearly polio; one-shot malaria vaccines; gene drives.</li>
+        <li><b>Growth</b> — East Asia hit 10%/yr. "AI finance ministers" could match it.</li>
+        <li><b>Food</b> — a second Green Revolution.</li>
+        <li><b>Climate</b> — cheaper, less disruptive mitigation.</li>
+      </ul>
+      <p class="capnote">The dream: <span class="hl">20% annual growth</span>, lifting Sub-Saharan Africa to China's level in a decade. Not the default — a thing we must fight for.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s13" data-hue="rose">
+    <div class="inner">
+      <p class="eyebrow"><span class="num">04</span><span class="dot"></span> Peace &amp; governance</p>
+      <h2>This one has to be won.</h2>
+      <p class="lede">Unlike health, AI has <span class="hl">no structural bias</span> toward democracy. Conflict is adversarial — it arms the good guys and the bad guys alike.</p>
+      <p>And some factors tilt the wrong way: AI is superb at the <em>propaganda and surveillance</em> autocrats depend on. The triumph of liberal democracy is not guaranteed — perhaps not even likely.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s14" data-hue="rose">
+    <div class="inner">
+      <p class="eyebrow"><span class="num">04</span><span class="dot"></span> The strategy</p>
+      <h2>An entente of democracies.</h2>
+      <p class="lede">A coalition secures the AI supply chain — chips, fab equipment — builds a lead, and blocks adversaries.</p>
+      <ul class="reasons tight">
+        <li><b>The stick</b> — AI-backed military security.</li>
+        <li><b>The carrot</b> — share the benefits with all who join. Like "Atoms for Peace."</li>
+        <li><b>The prize</b> — an "eternal 1991," democracy ascendant, made to last.</li>
+      </ul>
+      <p>An uncensorable AI in every pocket could back dissidents everywhere — and even make democracies <span class="hl">better than they are</span>: fairer courts, less bias, self-enforcing constitutions.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s15" data-hue="lav">
+    <div class="inner">
+      <p class="eyebrow"><span class="num">05</span><span class="dot"></span> Work &amp; meaning</p>
+      <h2>If machines can do everything, what are people for?</h2>
+      <p class="lede">His answer is gentle. A task isn't meaningless just because an AI could do it better — <span class="hl">almost no one is the best at anything</span>, and it never troubles us.</p>
+      <p>He plays video games, bikes up mountains, talks with friends: zero economic value, all of it worth doing. Meaning comes from connection, effort, and accomplishment — not from being paid.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s16" data-hue="lav">
+    <div class="inner">
+      <p class="eyebrow"><span class="num">05</span><span class="dot"></span> The harder half</p>
+      <h2>How will people earn a living?</h2>
+      <p class="lede">Short term, <span class="hl">comparative advantage</span> protects us: if AI is better at 90% of a job, the last 10% makes humans <em>more</em> valuable — and that sliver expands into new work.</p>
+      <p>Long term, he's candid: AI may grow so cheap and capable that today's economy stops making sense. UBI is maybe a small part. He has no full answer — only the knowledge that civilization has crossed such shifts before, and that dystopian versions must be prevented.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s17" data-hue="gold">
+    <div class="inner">
+      <p class="eyebrow"><span class="dot"></span> Taking stock</p>
+      <h2>Overdetermined.</h2>
+      <p class="lede">The vision is radical — an absurd fantasy, some will say. And yet something about it is <span class="hl">blindingly obvious</span>, as if every honest attempt to imagine a good world lands roughly here.</p>
+      <p>Basic human intuitions — fairness, cooperation, curiosity, autonomy — are cumulative in a way our destructive impulses aren't. Children shouldn't die of disease; everyone's children deserve that equally; and from there it isn't far to rule of law and Enlightenment values. AI just makes the destination clearer.</p>
+    </div>
+  </section>
+
+  <section class="scene wide" id="s18" data-hue="gold">
+    <div class="inner">
+      <p class="eyebrow"><span class="dot"></span> Coda</p>
+      <p class="quote">If it arrives — disease defeated, billions lifted from poverty, freedom renewed — Amodei suspects many of us will be <span class="grace">moved to tears</span>, watching a long-held dream materialize at last.</p>
+      <p class="lede" style="margin-top:2.4rem">It is a world worth fighting for. It will take enormous effort and struggle from many brave and dedicated people.</p>
+      <p>“It is,” he writes, “a thing of <em>transcendent beauty</em>. We have the opportunity to play some small role in making it real.”</p>
+      <p class="fnote">Machines of Loving Grace · Dario Amodei · October 2024</p>
+    </div>
+  </section>
+</main>
+
+<div id="caption" aria-live="off"></div>
+<audio id="narrator" preload="none"></audio>
+
+<div id="player" aria-label="Narration controls">
+  <button class="pbtn" id="prevBtn" title="Previous" aria-label="Previous scene">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 6v12l-8.5-6L18 6zM7 6h2v12H7z"/></svg></button>
+  <button class="pbtn primary" id="playBtn" title="Play" aria-label="Play narration">
+    <svg id="playIcon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7L8 5z"/></svg>
+    <svg id="pauseIcon" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg></button>
+  <button class="pbtn" id="nextBtn" title="Next" aria-label="Next scene">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 6l8.5 6L6 18V6zm9 0h2v12h-2z"/></svg></button>
+  <button class="pbtn speed" id="speedBtn" title="Playback speed" aria-label="Playback speed">1&times;</button>
+  <div class="pmeta">
+    <span class="now" id="nowTitle">Prologue</span>
+    <span class="sub" id="nowSub">Press play to begin</span>
+    <div class="seek"><div class="fill" id="seekFill"></div></div>
+  </div>
+  <div class="dots" id="dots" aria-hidden="true"></div>
+  <div class="voicewrap">
+    <button class="pbtn" id="voiceToggle" title="Settings" aria-label="Settings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a9 9 0 0 1 0 14"/></svg></button>
+    <div id="voiceMenu">
+      <div class="row"><label>Narrator</label><span class="val modeflag" id="modeFlag">—</span></div>
+      <div><label style="display:block;margin-bottom:.4rem">Speed</label>
+        <div class="speeds" id="speeds"></div></div>
+      <div class="row"><label>Volume</label><input type="range" id="vol" min="0" max="1" step="0.05" value="1"></div>
+      <label class="toggle"><input type="checkbox" id="capToggle" checked> <span class="val">Show captions</span></label>
+      <div class="row" id="ttsRow" style="display:none"><label>Voice</label><select id="voiceSelect" style="max-width:9rem"></select></div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var SC = [{"id":"s0","sub":"Prologue","text":"Machines of Loving Grace. An essay by Dario Amodei — the CEO of Anthropic — published in October twenty twenty-four. Amodei spends most of his time warning about the dangers of powerful AI. So people assume he's a pessimist. A doomer. He isn't. In fact, he argues — the reason to take the risks so seriously is that they are the only thing standing between us, and a future that is, in his words, fundamentally positive. And far more radical than almost anyone imagines. This is his attempt to picture that future. Not a fantasy… but an educated guess, at what the world could look like — if everything goes right. Let's walk through it. In full.","cap":[[0,"Machines"],[0.67,"of"],[0.87,"Loving"],[1.35,"Grace."],[1.81,"An"],[1.94,"essay"],[2.31,"by"],[2.95,"Dario"],[3.59,"Amodei"],[4.19,"—"],[4.27,"the"],[4.46,"CEO"],[5.14,"of"],[5.27,"Anthropic"],[6.14,"—"],[6.3,"published"],[6.82,"in"],[6.93,"October"],[7.47,"twenty"],[7.99,"twenty-four."],[9.66,"Amodei"],[10.17,"spends"],[10.6,"most"],[10.88,"of"],[10.97,"his"],[11.13,"time"],[11.48,"warning"],[11.9,"about"],[12.13,"the"],[12.26,"dangers"],[12.83,"of"],[12.99,"powerful"],[13.55,"AI."],[14.39,"So"],[14.64,"people"],[15.02,"assume"],[15.55,"he's"],[15.74,"a"],[15.81,"pessimist."],[16.73,"A"],[16.87,"doomer."],[17.74,"He"],[17.98,"isn't."],[19.15,"In"],[19.4,"fact,"],[20.43,"he"],[20.63,"argues"],[21.36,"—"],[21.49,"the"],[21.66,"reason"],[22.08,"to"],[22.21,"take"],[22.47,"the"],[22.58,"risks"],[23.09,"so"],[23.41,"seriously"],[24.36,"is"],[24.6,"that"],[24.8,"they"],[24.96,"are"],[25.1,"the"],[25.24,"only"],[25.57,"thing"],[25.88,"standing"],[26.44,"between"],[26.9,"us,"],[27.6,"and"],[27.81,"a"],[27.91,"future"],[28.56,"that"],[28.79,"is,"],[29.08,"in"],[29.35,"his"],[29.63,"words,"],[30.43,"fundamentally"],[31.27,"positive."],[32.15,"And"],[32.4,"far"],[32.78,"more"],[33.08,"radical"],[33.63,"than"],[33.81,"almost"],[34.21,"anyone"],[34.67,"imagines."],[35.74,"This"],[36.44,"is"],[36.7,"his"],[36.89,"attempt"],[37.34,"to"],[37.5,"picture"],[37.95,"that"],[38.2,"future."],[39.08,"Not"],[39.44,"a"],[39.54,"fantasy…"],[40.73,"but"],[41.05,"an"],[41.2,"educated"],[42.03,"guess,"],[42.77,"at"],[42.98,"what"],[43.22,"the"],[43.35,"world"],[43.74,"could"],[43.97,"look"],[44.23,"like"],[44.69,"—"],[45.19,"if"],[45.41,"everything"],[45.89,"goes"],[46.2,"right."],[47.24,"Let's"],[47.55,"walk"],[47.81,"through"],[48.1,"it."],[48.65,"In"],[48.92,"full."]]},{"id":"s1","sub":"Why he stays quiet","text":"First — a confession. About why he, and AI companies generally, so rarely talk this way. He gives four reasons. One: they want to maximize their leverage. The benefits of AI feel inevitable, driven by market forces — while the risks are not yet decided. So risk is where their words matter most. Two: they want to avoid sounding like propagandists, talking their own book. Three: they want to avoid grandiosity — the messianic tone of people who speak about the post-AI world like prophets, leading their followers to salvation. And four: they want to avoid science-fiction baggage — the uploaded minds and cyberpunk clichés that make the whole subject feel unreal. And yet, he says — we need a vision that genuinely inspires. Not just a plan to fight fires. Fear can motivate us. But it isn't enough. There has to be something we are fighting for. We need hope, as well.","cap":[[0,"First"],[0.65,"—"],[0.81,"a"],[0.94,"confession."],[2.07,"About"],[2.51,"why"],[3,"he,"],[3.37,"and"],[3.81,"AI"],[4.26,"companies"],[4.84,"generally,"],[5.7,"so"],[6.05,"rarely"],[6.56,"talk"],[6.9,"this"],[7.12,"way."],[7.93,"He"],[8.13,"gives"],[8.52,"four"],[9.04,"reasons."],[10.21,"One:"],[10.8,"they"],[11.06,"want"],[11.32,"to"],[11.48,"maximize"],[12.2,"their"],[12.49,"leverage."],[13.49,"The"],[13.65,"benefits"],[14.11,"of"],[14.22,"AI"],[14.69,"feel"],[15.08,"inevitable,"],[16.13,"driven"],[16.63,"by"],[16.87,"market"],[17.35,"forces"],[17.77,"—"],[17.93,"while"],[18.17,"the"],[18.32,"risks"],[18.82,"are"],[19.09,"not"],[19.4,"yet"],[19.68,"decided."],[20.9,"So"],[21.24,"risk"],[21.64,"is"],[21.8,"where"],[22.11,"their"],[22.35,"words"],[22.87,"matter"],[23.3,"most."],[24.42,"Two:"],[25.54,"they"],[25.8,"want"],[26.1,"to"],[26.31,"avoid"],[26.82,"sounding"],[27.37,"like"],[27.64,"propagandists,"],[28.97,"talking"],[29.49,"their"],[29.72,"own"],[30.02,"book."],[31.12,"Three:"],[32,"they"],[32.3,"want"],[32.58,"to"],[32.78,"avoid"],[33.31,"grandiosity"],[34.47,"—"],[34.59,"the"],[34.76,"messianic"],[35.43,"tone"],[35.76,"of"],[35.89,"people"],[36.27,"who"],[36.48,"speak"],[36.84,"about"],[37.13,"the"],[37.28,"post-AI"],[38.21,"world"],[38.64,"like"],[38.92,"prophets,"],[39.71,"leading"],[40.15,"their"],[40.4,"followers"],[40.9,"to"],[41.07,"salvation."],[42.4,"And"],[42.69,"four:"],[43.71,"they"],[43.97,"want"],[44.27,"to"],[44.46,"avoid"],[45.02,"science-fiction"],[46.01,"baggage"],[46.6,"—"],[46.75,"the"],[46.94,"uploaded"],[47.65,"minds"],[48.18,"and"],[48.46,"cyberpunk"],[49.32,"clichés"],[50.4,"that"],[50.63,"make"],[50.88,"the"],[51.04,"whole"],[51.54,"subject"],[52.19,"feel"],[52.61,"unreal."],[54.12,"And"],[54.35,"yet,"],[54.96,"he"],[55.12,"says"],[55.66,"—"],[55.8,"we"],[56.02,"need"],[56.38,"a"],[56.54,"vision"],[56.99,"that"],[57.23,"genuinely"],[58.04,"inspires."],[58.88,"Not"],[59.08,"just"],[59.36,"a"],[59.51,"plan"],[59.97,"to"],[60.15,"fight"],[60.55,"fires."],[61.41,"Fear"],[61.81,"can"],[62.04,"motivate"],[62.68,"us."],[63.47,"But"],[63.68,"it"],[63.79,"isn't"],[64.12,"enough."],[64.91,"There"],[65.17,"has"],[65.38,"to"],[65.49,"be"],[65.64,"something"],[66.1,"we"],[66.22,"are"],[66.4,"fighting"],[66.87,"for."],[67.54,"We"],[67.81,"need"],[68.19,"hope,"],[69.03,"as"],[69.28,"well."]]},{"id":"s2","sub":"Powerful AI, defined","text":"So — what exactly are we talking about? Amodei dislikes the term AGI. Too much hype. He prefers 'powerful AI' — and he defines it with care. Imagine a model smarter than a Nobel Prize winner, across most fields — biology, coding, mathematics, engineering, writing. It has every interface a human working remotely would have. It can use text, audio, and video. It can control a mouse and keyboard, browse the internet, run experiments — even give instructions to people. And it doesn't just answer questions. You can hand it a task that takes hours, days, or weeks — and it goes off and completes it on its own. The way a brilliant employee would. It has no body. But it can drive robots — and laboratory equipment — through a computer. And the very resources used to train one such model… could run millions of copies of it. Each thinking at ten to a hundred times human speed.","cap":[[0,"So"],[0.43,"—"],[0.78,"what"],[1.06,"exactly"],[1.57,"are"],[1.65,"we"],[1.74,"talking"],[2.13,"about?"],[2.93,"Amodei"],[3.5,"dislikes"],[3.95,"the"],[4.08,"term"],[4.54,"AGI."],[5.5,"Too"],[5.79,"much"],[6.03,"hype."],[6.71,"He"],[6.89,"prefers"],[7.45,"'powerful"],[8.17,"AI'"],[8.77,"—"],[8.86,"and"],[9.09,"he"],[9.25,"defines"],[9.91,"it"],[10.36,"with"],[10.61,"care."],[11.76,"Imagine"],[12.32,"a"],[12.42,"model"],[12.93,"smarter"],[13.48,"than"],[13.64,"a"],[13.77,"Nobel"],[14.21,"Prize"],[14.58,"winner,"],[14.87,"across"],[15.29,"most"],[15.58,"fields"],[16.07,"—"],[16.21,"biology,"],[17.1,"coding,"],[17.86,"mathematics,"],[18.93,"engineering,"],[19.91,"writing."],[21.18,"It"],[21.41,"has"],[21.73,"every"],[22.11,"interface"],[22.84,"a"],[22.99,"human"],[23.55,"working"],[24.07,"remotely"],[24.57,"would"],[24.79,"have."],[25.52,"It"],[25.75,"can"],[25.98,"use"],[26.26,"text,"],[26.96,"audio,"],[27.53,"and"],[27.9,"video."],[28.74,"It"],[28.97,"can"],[29.22,"control"],[29.8,"a"],[29.94,"mouse"],[30.41,"and"],[30.62,"keyboard,"],[31.2,"browse"],[31.61,"the"],[31.75,"internet,"],[32.37,"run"],[32.6,"experiments"],[33.44,"—"],[33.81,"even"],[34.17,"give"],[34.39,"instructions"],[35.11,"to"],[35.25,"people."],[36.57,"And"],[37.05,"it"],[37.31,"doesn't"],[37.77,"just"],[38.1,"answer"],[38.48,"questions."],[39.1,"You"],[39.24,"can"],[39.45,"hand"],[39.76,"it"],[39.89,"a"],[40.01,"task"],[40.55,"that"],[40.74,"takes"],[41.11,"hours,"],[41.62,"days,"],[42.17,"or"],[42.43,"weeks"],[43.02,"—"],[43.35,"and"],[43.55,"it"],[43.68,"goes"],[44.05,"off"],[44.3,"and"],[44.46,"completes"],[44.97,"it"],[45.11,"on"],[45.23,"its"],[45.42,"own."],[46.01,"The"],[46.16,"way"],[46.34,"a"],[46.44,"brilliant"],[46.96,"employee"],[47.66,"would."],[48.33,"It"],[48.55,"has"],[49.05,"no"],[49.35,"body."],[50.38,"But"],[50.61,"it"],[50.75,"can"],[50.99,"drive"],[51.51,"robots"],[52.33,"—"],[52.63,"and"],[53.13,"laboratory"],[53.75,"equipment"],[54.5,"—"],[54.66,"through"],[55,"a"],[55.07,"computer."],[56.38,"And"],[56.59,"the"],[56.77,"very"],[57.14,"resources"],[57.96,"used"],[58.53,"to"],[58.74,"train"],[59.28,"one"],[59.64,"such"],[59.99,"model…"],[60.86,"could"],[61.12,"run"],[61.66,"millions"],[62.3,"of"],[62.44,"copies"],[62.9,"of"],[63.04,"it."],[63.82,"Each"],[64.16,"thinking"],[64.68,"at"],[64.84,"ten"],[65.57,"to"],[65.81,"a"],[65.9,"hundred"],[66.28,"times"],[67.12,"human"],[67.72,"speed."]]},{"id":"s3","sub":"A country of geniuses","text":"He has a phrase for this. A country of geniuses… in a datacenter. Now — how quickly could something like that change the world? Amodei rejects both extremes. It is not the Singularity. Intelligence is not magic fairy dust — and even a nation of geniuses runs into hard physical limits. You cannot rush a cell culture. You cannot rush an animal trial. But nor is progress saturated, the way some skeptics claim. The truth is messier. And it turns on what he calls — the marginal returns to intelligence. For any given task: how much does being smarter actually help? And on what timescale?","cap":[[0,"He"],[0.22,"has"],[0.42,"a"],[0.51,"phrase"],[0.96,"for"],[1.12,"this."],[1.64,"A"],[1.81,"country"],[2.24,"of"],[2.37,"geniuses…"],[3.58,"in"],[3.76,"a"],[3.88,"datacenter."],[5.96,"Now"],[6.42,"—"],[6.66,"how"],[6.95,"quickly"],[7.44,"could"],[7.67,"something"],[8.09,"like"],[8.34,"that"],[8.59,"change"],[9.01,"the"],[9.15,"world?"],[9.56,"Amodei"],[10.07,"rejects"],[10.72,"both"],[11.04,"extremes."],[11.73,"It"],[11.87,"is"],[12.07,"not"],[12.41,"the"],[12.59,"Singularity."],[14.25,"Intelligence"],[15.02,"is"],[15.22,"not"],[15.57,"magic"],[16.08,"fairy"],[16.56,"dust"],[17.14,"—"],[17.26,"and"],[17.52,"even"],[17.82,"a"],[17.95,"nation"],[18.39,"of"],[18.52,"geniuses"],[19.25,"runs"],[19.68,"into"],[19.99,"hard"],[20.64,"physical"],[21.27,"limits."],[22.38,"You"],[22.57,"cannot"],[22.94,"rush"],[23.26,"a"],[23.36,"cell"],[23.72,"culture."],[24.43,"You"],[24.6,"cannot"],[24.94,"rush"],[25.22,"an"],[25.35,"animal"],[25.71,"trial."],[26.48,"But"],[26.75,"nor"],[27.11,"is"],[27.28,"progress"],[27.85,"saturated,"],[28.96,"the"],[29.11,"way"],[29.34,"some"],[29.65,"skeptics"],[30.29,"claim."],[31.28,"The"],[31.45,"truth"],[32.21,"is"],[32.47,"messier."],[33.81,"And"],[34.03,"it"],[34.15,"turns"],[34.65,"on"],[34.9,"what"],[35.16,"he"],[35.33,"calls"],[35.86,"—"],[35.95,"the"],[36.1,"marginal"],[36.75,"returns"],[37.44,"to"],[37.63,"intelligence."],[38.95,"For"],[39.15,"any"],[39.35,"given"],[39.67,"task:"],[40.91,"how"],[41.22,"much"],[41.54,"does"],[41.8,"being"],[42.12,"smarter"],[43.02,"actually"],[43.6,"help?"],[44.34,"And"],[44.57,"on"],[44.71,"what"],[44.93,"timescale?"]]},{"id":"s4","sub":"What holds intelligence back","text":"Because intelligence is never the only ingredient. Amodei lists the factors that complement it — the ones that become the real bottlenecks, once intelligence is cheap. The speed of the outside world: experiments take the time they take. The need for data: sometimes it simply doesn't exist yet — and no amount of thinking will conjure it. Intrinsic complexity: some systems are chaotic, and resist prediction. Constraints from other humans: laws, regulations, the slow pace at which people change their habits. And physical laws: you cannot travel faster than light — and pudding does not unstir. But here is the crucial move. Over time — intelligence learns to route around these limits. Inventing new methods. Building new tools. Finding the paths through. The question is never simply how smart. It's how fast… and in what order.","cap":[[0,"Because"],[0.49,"intelligence"],[1.28,"is"],[1.5,"never"],[1.83,"the"],[2,"only"],[2.31,"ingredient."],[3.48,"Amodei"],[4.19,"lists"],[4.66,"the"],[4.82,"factors"],[5.35,"that"],[5.54,"complement"],[6.26,"it"],[6.58,"—"],[6.75,"the"],[6.94,"ones"],[7.35,"that"],[7.52,"become"],[7.93,"the"],[8.13,"real"],[8.71,"bottlenecks,"],[9.97,"once"],[10.33,"intelligence"],[11.04,"is"],[11.2,"cheap."],[12.14,"The"],[12.34,"speed"],[12.84,"of"],[12.93,"the"],[13.08,"outside"],[13.68,"world:"],[14.13,"experiments"],[14.99,"take"],[15.29,"the"],[15.43,"time"],[16,"they"],[16.32,"take."],[17.37,"The"],[17.57,"need"],[17.91,"for"],[18.09,"data:"],[19.27,"sometimes"],[20.04,"it"],[20.18,"simply"],[20.59,"doesn't"],[20.98,"exist"],[21.42,"yet"],[21.82,"—"],[22.06,"and"],[22.5,"no"],[22.76,"amount"],[23.19,"of"],[23.31,"thinking"],[23.79,"will"],[24.01,"conjure"],[24.49,"it."],[25.45,"Intrinsic"],[26.31,"complexity:"],[27.54,"some"],[27.92,"systems"],[28.57,"are"],[28.92,"chaotic,"],[29.57,"and"],[29.78,"resist"],[30.21,"prediction."],[31.2,"Constraints"],[31.94,"from"],[32.14,"other"],[32.35,"humans:"],[33.07,"laws,"],[33.74,"regulations,"],[35.01,"the"],[35.19,"slow"],[35.69,"pace"],[36.08,"at"],[36.21,"which"],[36.48,"people"],[36.89,"change"],[37.36,"their"],[37.63,"habits."],[38.85,"And"],[39.2,"physical"],[39.71,"laws:"],[40.33,"you"],[40.55,"cannot"],[40.95,"travel"],[41.39,"faster"],[41.92,"than"],[42.19,"light"],[42.74,"—"],[42.9,"and"],[43.13,"pudding"],[43.65,"does"],[43.91,"not"],[44.21,"unstir."],[45.29,"But"],[45.54,"here"],[46.19,"is"],[46.41,"the"],[46.55,"crucial"],[47.06,"move."],[48.05,"Over"],[48.43,"time"],[49.09,"—"],[49.32,"intelligence"],[50.55,"learns"],[51.1,"to"],[51.31,"route"],[51.65,"around"],[52.04,"these"],[52.33,"limits."],[53.3,"Inventing"],[54.16,"new"],[54.43,"methods."],[55.37,"Building"],[55.93,"new"],[56.18,"tools."],[57.09,"Finding"],[57.76,"the"],[57.94,"paths"],[58.65,"through."],[60.55,"The"],[60.72,"question"],[61.46,"is"],[61.78,"never"],[62.16,"simply"],[62.76,"how"],[63.14,"smart."],[64.03,"It's"],[64.29,"how"],[64.56,"fast…"],[65.54,"and"],[65.96,"in"],[66.13,"what"],[66.4,"order."]]},{"id":"s5","sub":"Biology & health","text":"Now — the five domains. And biology is where Amodei is boldest. The common view is that AI can analyze biological data — but it can't produce it. Garbage in, garbage out. He thinks that misses the point entirely. Don't picture AI as a tool for crunching data. Picture it as a virtual biologist — one that does everything a biologist does. It designs and runs experiments. It drives the lab robots. It invents whole new ways to measure. It directs teams of humans — the way a senior scientist guides a room full of graduate students. It's by speeding up the whole research process — not just one step of it — that AI transforms biology.","cap":[[0,"Now"],[0.46,"—"],[0.73,"the"],[0.89,"five"],[1.5,"domains."],[2.81,"And"],[3.04,"biology"],[3.75,"is"],[3.9,"where"],[4.2,"Amodei"],[4.78,"is"],[4.98,"boldest."],[6.03,"The"],[6.21,"common"],[6.62,"view"],[7,"is"],[7.15,"that"],[7.33,"AI"],[7.78,"can"],[8,"analyze"],[8.7,"biological"],[9.4,"data"],[9.99,"—"],[10.19,"but"],[10.4,"it"],[10.54,"can't"],[10.91,"produce"],[11.38,"it."],[12.03,"Garbage"],[12.47,"in,"],[12.85,"garbage"],[13.33,"out."],[14.48,"He"],[14.68,"thinks"],[15.01,"that"],[15.27,"misses"],[15.64,"the"],[15.77,"point"],[16.11,"entirely."],[17.21,"Don't"],[17.57,"picture"],[18.04,"AI"],[18.56,"as"],[18.8,"a"],[18.95,"tool"],[19.46,"for"],[19.69,"crunching"],[20.29,"data."],[21.25,"Picture"],[21.66,"it"],[21.83,"as"],[22.01,"a"],[22.16,"virtual"],[22.71,"biologist"],[23.57,"—"],[23.96,"one"],[24.21,"that"],[24.4,"does"],[24.67,"everything"],[25.15,"a"],[25.24,"biologist"],[25.89,"does."],[26.26,"It"],[26.41,"designs"],[27.16,"and"],[27.33,"runs"],[27.74,"experiments."],[28.89,"It"],[29.08,"drives"],[29.62,"the"],[29.79,"lab"],[30.14,"robots."],[31.13,"It"],[31.35,"invents"],[31.87,"whole"],[32.44,"new"],[32.74,"ways"],[33.19,"to"],[33.39,"measure."],[34.19,"It"],[34.4,"directs"],[35.02,"teams"],[35.5,"of"],[35.63,"humans"],[36.27,"—"],[36.37,"the"],[36.54,"way"],[36.86,"a"],[37.01,"senior"],[37.51,"scientist"],[38.19,"guides"],[38.61,"a"],[38.73,"room"],[39.07,"full"],[39.29,"of"],[39.4,"graduate"],[39.95,"students."],[41.15,"It's"],[41.42,"by"],[41.71,"speeding"],[42.25,"up"],[42.47,"the"],[42.62,"whole"],[43.06,"research"],[43.64,"process"],[44.2,"—"],[44.37,"not"],[44.62,"just"],[44.95,"one"],[45.22,"step"],[45.52,"of"],[45.64,"it"],[45.86,"—"],[46.06,"that"],[46.27,"AI"],[46.72,"transforms"],[47.6,"biology."]]},{"id":"s6","sub":"Why the returns are high","text":"And he makes a striking argument — about how progress actually happens. A surprisingly large share of biology — more than half of it — flows from a tiny handful of broad discoveries. Tools for measuring. And tools for intervening. CRISPR, which lets us edit any gene at will. Genome sequencing, which has fallen in cost by orders of magnitude. Optogenetics. mRNA vaccines. CAR-T cell therapies. Roughly one such breakthrough… a year. And here's the thing — they tend to come from a small number of researchers. Often the very same people, again and again. CRISPR's key component was found in bacteria back in the nineteen-eighties. It took another twenty-five years for anyone to realize it could edit genes. That gap, Amodei argues, is a gap of insight — not of money. Which means hundreds more discoveries may be waiting — if only there were more brilliant, creative minds to find them. The returns to intelligence, here, are enormous.","cap":[[0,"And"],[0.22,"he"],[0.35,"makes"],[0.66,"a"],[0.77,"striking"],[1.46,"argument"],[1.97,"—"],[2.23,"about"],[2.52,"how"],[2.81,"progress"],[3.47,"actually"],[3.94,"happens."],[5.02,"A"],[5.18,"surprisingly"],[6.06,"large"],[6.53,"share"],[6.94,"of"],[7.08,"biology"],[7.91,"—"],[8.1,"more"],[8.3,"than"],[8.49,"half"],[8.79,"of"],[8.89,"it"],[9.17,"—"],[9.37,"flows"],[9.81,"from"],[10.01,"a"],[10.11,"tiny"],[10.69,"handful"],[11.26,"of"],[11.4,"broad"],[11.87,"discoveries."],[13.14,"Tools"],[13.83,"for"],[14.04,"measuring."],[14.83,"And"],[15.3,"tools"],[16.02,"for"],[16.25,"intervening."],[17.6,"CRISPR,"],[18.34,"which"],[18.61,"lets"],[18.91,"us"],[19.08,"edit"],[19.42,"any"],[19.8,"gene"],[20.22,"at"],[20.39,"will."],[21.11,"Genome"],[21.77,"sequencing,"],[22.64,"which"],[22.86,"has"],[23.05,"fallen"],[23.49,"in"],[23.66,"cost"],[24.3,"by"],[24.57,"orders"],[24.94,"of"],[25.11,"magnitude."],[26.38,"Optogenetics."],[28.05,"mRNA"],[28.8,"vaccines."],[29.92,"CAR-T"],[30.72,"cell"],[31.21,"therapies."],[32.32,"Roughly"],[32.79,"one"],[33.13,"such"],[33.45,"breakthrough…"],[34.48,"a"],[34.68,"year."],[35.45,"And"],[35.64,"here's"],[35.89,"the"],[36.01,"thing"],[36.42,"—"],[36.57,"they"],[36.79,"tend"],[37.05,"to"],[37.16,"come"],[37.4,"from"],[37.59,"a"],[37.7,"small"],[38.25,"number"],[38.63,"of"],[38.75,"researchers."],[39.95,"Often"],[40.46,"the"],[40.61,"very"],[40.95,"same"],[41.32,"people,"],[42.28,"again"],[43.13,"and"],[43.37,"again."],[44.44,"CRISPR's"],[45.01,"key"],[45.36,"component"],[46.03,"was"],[46.25,"found"],[46.57,"in"],[46.72,"bacteria"],[47.45,"back"],[47.68,"in"],[47.77,"the"],[47.91,"nineteen-eighties."],[49.35,"It"],[49.52,"took"],[49.74,"another"],[50.09,"twenty-five"],[50.94,"years"],[51.3,"for"],[51.49,"anyone"],[52.02,"to"],[52.2,"realize"],[52.79,"it"],[52.92,"could"],[53.15,"edit"],[53.54,"genes."],[54.79,"That"],[55.18,"gap,"],[56.04,"Amodei"],[56.64,"argues,"],[57.65,"is"],[57.85,"a"],[57.97,"gap"],[58.29,"of"],[58.42,"insight"],[59.2,"—"],[59.42,"not"],[59.66,"of"],[59.8,"money."],[60.6,"Which"],[60.88,"means"],[61.24,"hundreds"],[61.82,"more"],[62.12,"discoveries"],[62.8,"may"],[63.04,"be"],[63.19,"waiting"],[63.81,"—"],[64.02,"if"],[64.27,"only"],[64.81,"there"],[64.97,"were"],[65.13,"more"],[65.42,"brilliant,"],[66.04,"creative"],[66.66,"minds"],[67.06,"to"],[67.21,"find"],[67.55,"them."],[68.38,"The"],[68.58,"returns"],[69.3,"to"],[69.5,"intelligence,"],[70.8,"here,"],[71.64,"are"],[71.98,"enormous."]]},{"id":"s7","sub":"The compressed 21st century","text":"Put it all together — and you arrive at his central prediction. Powerful AI could deliver the next fifty to a hundred years of biological progress… in five to ten. He calls it — the compressed twenty-first century. Not a hundred years of progress crammed into one; experiments still carry an irreducible delay. But the whole arc of twenty-first-century medicine — arriving within a decade of powerful AI. So — what would that actually mean? For you?","cap":[[0,"Put"],[0.27,"it"],[0.37,"all"],[0.57,"together"],[1.14,"—"],[1.54,"and"],[1.87,"you"],[2.01,"arrive"],[2.44,"at"],[2.58,"his"],[2.75,"central"],[3.3,"prediction."],[4.66,"Powerful"],[5.19,"AI"],[5.63,"could"],[5.88,"deliver"],[6.22,"the"],[6.35,"next"],[6.7,"fifty"],[7.22,"to"],[7.42,"a"],[7.54,"hundred"],[7.98,"years"],[8.36,"of"],[8.57,"biological"],[9.35,"progress…"],[10.38,"in"],[10.65,"five"],[11.52,"to"],[11.8,"ten."],[13.04,"He"],[13.25,"calls"],[13.61,"it"],[13.89,"—"],[14.12,"the"],[14.27,"compressed"],[15.23,"twenty-first"],[16.14,"century."],[17.49,"Not"],[17.73,"a"],[17.83,"hundred"],[18.23,"years"],[18.55,"of"],[18.68,"progress"],[19.24,"crammed"],[19.67,"into"],[19.99,"one;"],[20.67,"experiments"],[21.42,"still"],[21.76,"carry"],[22.13,"an"],[22.29,"irreducible"],[23.37,"delay."],[24.46,"But"],[24.66,"the"],[24.81,"whole"],[25.29,"arc"],[26.11,"of"],[26.31,"twenty-first-century"],[27.78,"medicine"],[28.27,"—"],[28.6,"arriving"],[29.29,"within"],[29.59,"a"],[29.72,"decade"],[30.28,"of"],[30.46,"powerful"],[31.03,"AI."],[31.51,"So"],[31.87,"—"],[32.52,"what"],[32.75,"would"],[32.96,"that"],[33.19,"actually"],[33.67,"mean?"],[34.52,"For"],[34.73,"you?"]]},{"id":"s8","sub":"What medicine delivers","text":"His list is deliberately concrete. The reliable prevention and treatment of nearly all natural infectious disease — with mRNA and its successors pointing toward vaccines for almost anything. The elimination of most cancer. Death rates are already falling about two percent a year; with AI, reductions of ninety-five percent — in both deaths, and new cases — start to look possible. Especially with drugs that catch a cancer in its infancy. The prevention, and cure, of genetic disease — through better embryo screening, and safer descendants of CRISPR. The prevention of Alzheimer's, once we finally understand it. Better treatment of diabetes, obesity, heart disease. And what he calls biological freedom — real control over your own body: your weight, your appearance, your reproduction. And most radical of all — a doubling of the human lifespan. To around a hundred and fifty years. Life expectancy already nearly doubled in the twentieth century. Amodei thinks a compressed twenty-first could do it again — perhaps even reaching escape velocity. Where most people alive today… could live as long as they wish.","cap":[[0,"His"],[0.37,"list"],[0.82,"is"],[1.26,"deliberately"],[2.13,"concrete."],[3.25,"The"],[3.45,"reliable"],[4.16,"prevention"],[4.81,"and"],[4.96,"treatment"],[5.53,"of"],[5.67,"nearly"],[6,"all"],[6.29,"natural"],[6.75,"infectious"],[7.34,"disease"],[7.96,"—"],[8.24,"with"],[8.51,"mRNA"],[9.31,"and"],[9.53,"its"],[9.69,"successors"],[10.36,"pointing"],[10.87,"toward"],[11.24,"vaccines"],[11.9,"for"],[12.09,"almost"],[12.63,"anything."],[13.97,"The"],[14.15,"elimination"],[15.08,"of"],[15.35,"most"],[15.71,"cancer."],[17.09,"Death"],[17.43,"rates"],[17.76,"are"],[17.94,"already"],[18.46,"falling"],[18.9,"about"],[19.23,"two"],[19.46,"percent"],[19.93,"a"],[20.09,"year;"],[20.93,"with"],[21.18,"AI,"],[21.78,"reductions"],[22.42,"of"],[22.6,"ninety-five"],[23.5,"percent"],[24.24,"—"],[24.68,"in"],[24.89,"both"],[25.22,"deaths,"],[26.02,"and"],[26.49,"new"],[26.77,"cases"],[27.52,"—"],[27.75,"start"],[28.21,"to"],[28.36,"look"],[28.61,"possible."],[29.97,"Especially"],[30.63,"with"],[30.86,"drugs"],[31.39,"that"],[31.61,"catch"],[31.95,"a"],[32.04,"cancer"],[32.9,"in"],[33.11,"its"],[33.32,"infancy."],[34.78,"The"],[34.95,"prevention,"],[35.64,"and"],[35.99,"cure,"],[36.5,"of"],[36.72,"genetic"],[37.36,"disease"],[37.98,"—"],[38.16,"through"],[38.49,"better"],[38.85,"embryo"],[39.38,"screening,"],[40.29,"and"],[40.83,"safer"],[41.32,"descendants"],[42.02,"of"],[42.19,"CRISPR."],[43.47,"The"],[43.63,"prevention"],[44.18,"of"],[44.29,"Alzheimer's,"],[45.08,"once"],[45.38,"we"],[45.57,"finally"],[46.06,"understand"],[46.7,"it."],[47.24,"Better"],[47.61,"treatment"],[48.09,"of"],[48.27,"diabetes,"],[49.25,"obesity,"],[50.47,"heart"],[50.82,"disease."],[52.06,"And"],[52.36,"what"],[52.63,"he"],[52.79,"calls"],[53.52,"biological"],[54.59,"freedom"],[55.3,"—"],[55.51,"real"],[55.86,"control"],[56.46,"over"],[56.69,"your"],[56.88,"own"],[57.11,"body:"],[57.84,"your"],[58.1,"weight,"],[58.64,"your"],[58.85,"appearance,"],[59.73,"your"],[59.99,"reproduction."],[61.25,"And"],[61.56,"most"],[62,"radical"],[62.59,"of"],[62.72,"all"],[63.12,"—"],[63.24,"a"],[63.46,"doubling"],[64.17,"of"],[64.33,"the"],[64.46,"human"],[64.92,"lifespan."],[66.11,"To"],[66.34,"around"],[67.05,"a"],[67.29,"hundred"],[67.77,"and"],[67.98,"fifty"],[68.41,"years."],[69.47,"Life"],[69.97,"expectancy"],[71.12,"already"],[71.78,"nearly"],[72.18,"doubled"],[72.57,"in"],[72.68,"the"],[72.79,"twentieth"],[73.4,"century."],[74.51,"Amodei"],[75.09,"thinks"],[75.44,"a"],[75.53,"compressed"],[76.18,"twenty-first"],[77.25,"could"],[77.51,"do"],[77.69,"it"],[77.82,"again"],[78.32,"—"],[78.65,"perhaps"],[79.3,"even"],[79.62,"reaching"],[80.03,"escape"],[80.47,"velocity."],[81.65,"Where"],[81.95,"most"],[82.24,"people"],[82.58,"alive"],[82.99,"today…"],[83.91,"could"],[84.17,"live"],[84.4,"as"],[84.56,"long"],[84.79,"as"],[84.93,"they"],[85.14,"wish."]]},{"id":"s9","sub":"Neuroscience & mind","text":"The second domain — the brain. If anything, Amodei says, mental health shapes our well-being even more directly than physical health. Hundreds of millions of people live with depression, addiction, schizophrenia, PTSD. And the same framework applies. Neuroscience advances through measurement tools — like optogenetics — and its progress can be accelerated in exactly the same way. There's even a feedback loop. What we've learned building AI — interpretability, the science of reading a neural network's inner workings — may become a tool for understanding the biological brain. Which is far, far harder… to open up, and probe.","cap":[[0,"The"],[0.21,"second"],[0.56,"domain"],[1.12,"—"],[1.34,"the"],[1.49,"brain."],[2.65,"If"],[2.89,"anything,"],[3.58,"Amodei"],[4.09,"says,"],[4.55,"mental"],[4.97,"health"],[5.32,"shapes"],[5.74,"our"],[5.92,"well-being"],[6.53,"even"],[6.83,"more"],[7.09,"directly"],[7.9,"than"],[8.14,"physical"],[8.67,"health."],[9.69,"Hundreds"],[10.31,"of"],[10.5,"millions"],[11.04,"of"],[11.18,"people"],[11.66,"live"],[11.91,"with"],[12.12,"depression,"],[12.75,"addiction,"],[13.44,"schizophrenia,"],[14.79,"PTSD."],[16.68,"And"],[16.89,"the"],[17.08,"same"],[17.61,"framework"],[18.29,"applies."],[19.69,"Neuroscience"],[20.71,"advances"],[21.43,"through"],[21.78,"measurement"],[22.31,"tools"],[22.81,"—"],[22.94,"like"],[23.57,"optogenetics"],[24.86,"—"],[24.99,"and"],[25.21,"its"],[25.39,"progress"],[26.02,"can"],[26.23,"be"],[26.34,"accelerated"],[27.27,"in"],[27.45,"exactly"],[28.22,"the"],[28.39,"same"],[28.77,"way."],[29.93,"There's"],[30.22,"even"],[30.47,"a"],[30.57,"feedback"],[31.13,"loop."],[32.07,"What"],[32.37,"we've"],[32.61,"learned"],[33.01,"building"],[33.45,"AI"],[34.06,"—"],[34.32,"interpretability,"],[35.94,"the"],[36.13,"science"],[36.69,"of"],[36.87,"reading"],[37.29,"a"],[37.48,"neural"],[37.98,"network's"],[38.7,"inner"],[39.02,"workings"],[39.8,"—"],[40.03,"may"],[40.32,"become"],[40.69,"a"],[40.8,"tool"],[41.27,"for"],[41.48,"understanding"],[42.45,"the"],[42.57,"biological"],[43.34,"brain."],[44.13,"Which"],[44.39,"is"],[44.55,"far,"],[45.28,"far"],[45.72,"harder…"],[46.57,"to"],[46.79,"open"],[47.15,"up,"],[47.69,"and"],[47.97,"probe."]]},{"id":"s10","sub":"What the mind gains","text":"And his predictions here are just as radical. Most mental illness can probably be cured — PTSD, depression, schizophrenia, addiction — through some blend of molecular, genetic, and behavioral treatment. Plus what he calls an AI coach: something that helps you become the best version of yourself. Even structural conditions come within reach — and genetic prevention, too. But he goes further. The everyday troubles we don't call illness — being quick to anger, chronically anxious, unable to focus — those could be eased as well. And beyond that — the extraordinary states most of us reach only rarely. Moments of creative inspiration. Compassion. Transcendence. Peace. These, he imagines, could become a far larger part of ordinary life. The baseline of human experience — simply better.","cap":[[0,"And"],[0.24,"his"],[0.42,"predictions"],[1.06,"here"],[1.37,"are"],[1.65,"just"],[2.04,"as"],[2.24,"radical."],[3.46,"Most"],[3.86,"mental"],[4.25,"illness"],[4.67,"can"],[4.92,"probably"],[5.41,"be"],[5.55,"cured"],[6.12,"—"],[6.34,"PTSD,"],[7.86,"depression,"],[8.63,"schizophrenia,"],[9.93,"addiction"],[10.69,"—"],[10.8,"through"],[11.17,"some"],[11.54,"blend"],[12.06,"of"],[12.24,"molecular,"],[13.14,"genetic,"],[14.19,"and"],[14.44,"behavioral"],[15.08,"treatment."],[16.31,"Plus"],[17.13,"what"],[17.39,"he"],[17.52,"calls"],[18.22,"an"],[18.54,"AI"],[19.03,"coach:"],[20.2,"something"],[20.7,"that"],[20.89,"helps"],[21.24,"you"],[21.39,"become"],[21.75,"the"],[21.92,"best"],[22.31,"version"],[22.77,"of"],[22.9,"yourself."],[24.22,"Even"],[24.68,"structural"],[25.43,"conditions"],[26.12,"come"],[26.39,"within"],[26.77,"reach"],[27.26,"—"],[27.46,"and"],[27.64,"genetic"],[28.1,"prevention,"],[28.7,"too."],[29.7,"But"],[29.9,"he"],[30.01,"goes"],[30.31,"further."],[31.42,"The"],[31.65,"everyday"],[32.28,"troubles"],[32.8,"we"],[32.95,"don't"],[33.26,"call"],[33.69,"illness"],[34.39,"—"],[34.58,"being"],[34.9,"quick"],[35.21,"to"],[35.38,"anger,"],[35.89,"chronically"],[36.42,"anxious,"],[37.21,"unable"],[37.72,"to"],[37.91,"focus"],[38.6,"—"],[38.78,"those"],[39.1,"could"],[39.3,"be"],[39.43,"eased"],[39.73,"as"],[39.88,"well."],[40.77,"And"],[41.02,"beyond"],[41.33,"that"],[41.81,"—"],[42.02,"the"],[42.2,"extraordinary"],[43,"states"],[43.54,"most"],[43.87,"of"],[44,"us"],[44.22,"reach"],[44.54,"only"],[44.93,"rarely."],[46.09,"Moments"],[46.65,"of"],[46.85,"creative"],[47.55,"inspiration."],[48.8,"Compassion."],[49.93,"Transcendence."],[51.34,"Peace."],[52.88,"These,"],[53.28,"he"],[53.41,"imagines,"],[53.99,"could"],[54.18,"become"],[54.57,"a"],[54.72,"far"],[55.18,"larger"],[55.68,"part"],[56.13,"of"],[56.33,"ordinary"],[57.03,"life."],[57.79,"The"],[57.99,"baseline"],[58.68,"of"],[58.85,"human"],[59.3,"experience"],[60.22,"—"],[60.6,"simply"],[61.05,"better."]]},{"id":"s11","sub":"Economic development","text":"The third domain — is where Amodei grows more cautious. And more urgent. It is one thing to invent a cure. It is another thing entirely — to get it to everyone. Income per person is around two thousand dollars a year, in Sub-Saharan Africa. In the United States — seventy-five thousand. If AI supercharges the rich world, while the poor world is left behind — that, he says, would be a moral failure. A stain on everything else. He's less confident that AI can fix economies, than that it can transform biology. Economies are tangled up with human constraints — with corruption, weak institutions, the old socialist calculation problem. But he does see — real reasons for hope.","cap":[[0,"The"],[0.23,"third"],[0.55,"domain"],[0.98,"—"],[1.08,"is"],[1.21,"where"],[1.47,"Amodei"],[2,"grows"],[2.38,"more"],[2.61,"cautious."],[3.5,"And"],[3.82,"more"],[4.13,"urgent."],[5.32,"It"],[5.53,"is"],[5.74,"one"],[6.12,"thing"],[6.54,"to"],[6.75,"invent"],[7.27,"a"],[7.37,"cure."],[8.14,"It"],[8.38,"is"],[8.58,"another"],[9.07,"thing"],[9.37,"entirely"],[10.18,"—"],[10.36,"to"],[10.57,"get"],[10.84,"it"],[11,"to"],[11.2,"everyone."],[12.17,"Income"],[12.74,"per"],[12.9,"person"],[13.35,"is"],[13.48,"around"],[13.9,"two"],[14.14,"thousand"],[14.62,"dollars"],[14.95,"a"],[15.06,"year,"],[15.36,"in"],[15.51,"Sub-Saharan"],[16.29,"Africa."],[17.33,"In"],[17.51,"the"],[17.67,"United"],[18.24,"States"],[18.98,"—"],[19.17,"seventy-five"],[19.97,"thousand."],[21,"If"],[21.35,"AI"],[22.12,"supercharges"],[23.21,"the"],[23.37,"rich"],[23.66,"world,"],[24.31,"while"],[24.65,"the"],[24.79,"poor"],[25.1,"world"],[25.48,"is"],[25.64,"left"],[25.91,"behind"],[26.63,"—"],[26.87,"that,"],[27.6,"he"],[27.78,"says,"],[28.71,"would"],[28.94,"be"],[29.07,"a"],[29.18,"moral"],[29.57,"failure."],[30.5,"A"],[30.66,"stain"],[31.52,"on"],[31.75,"everything"],[32.18,"else."],[32.85,"He's"],[33.19,"less"],[33.48,"confident"],[34.44,"that"],[34.68,"AI"],[35.14,"can"],[35.43,"fix"],[35.84,"economies,"],[36.86,"than"],[37.17,"that"],[37.35,"it"],[37.49,"can"],[37.72,"transform"],[38.6,"biology."],[39.85,"Economies"],[40.47,"are"],[40.61,"tangled"],[41.12,"up"],[41.3,"with"],[41.48,"human"],[41.94,"constraints"],[42.86,"—"],[43.19,"with"],[43.43,"corruption,"],[44.37,"weak"],[44.7,"institutions,"],[46,"the"],[46.2,"old"],[46.61,"socialist"],[47.36,"calculation"],[48.17,"problem."],[49.03,"But"],[49.26,"he"],[49.44,"does"],[49.83,"see"],[50.42,"—"],[50.7,"real"],[51.03,"reasons"],[51.72,"for"],[51.97,"hope."]]},{"id":"s12","sub":"Closing the gap","text":"Diseases have been wiped out before — by determined, top-down campaigns. Smallpox. Very nearly polio. And new tools make it easier still. A one-shot malaria vaccine. Or gene drives, that eliminate the mosquitoes carrying a disease — replacing millions of individual treatments, with a few decisive actions. On growth, there's precedent too. Several East Asian economies sustained ten percent a year — and caught up with the West. Amodei imagines 'AI finance ministers and central bankers' matching that. Or beating it. A dream scenario of twenty percent annual growth — lifting Sub-Saharan Africa to China's level, within a decade. Add a second Green Revolution, for food. Add AI-driven progress, on climate. And the picture becomes a genuine catching-up. He's honest that none of this is the default. It will take enormous effort — and there's the opt-out problem, of people refusing the very benefits on offer. But we have to try, he insists. The moral imperative is simply too great.","cap":[[0,"Diseases"],[0.79,"have"],[0.95,"been"],[1.21,"wiped"],[1.63,"out"],[1.9,"before"],[2.49,"—"],[2.81,"by"],[3.05,"determined,"],[4.2,"top-down"],[5.13,"campaigns."],[6.42,"Smallpox."],[7.45,"Very"],[7.8,"nearly"],[8.16,"polio."],[9.07,"And"],[9.63,"new"],[9.99,"tools"],[10.53,"make"],[10.77,"it"],[10.89,"easier"],[11.29,"still."],[12.13,"A"],[12.34,"one-shot"],[13.12,"malaria"],[13.69,"vaccine."],[14.69,"Or"],[15.01,"gene"],[15.36,"drives,"],[15.91,"that"],[16.09,"eliminate"],[16.7,"the"],[16.82,"mosquitoes"],[17.58,"carrying"],[18.05,"a"],[18.14,"disease"],[18.67,"—"],[18.89,"replacing"],[19.58,"millions"],[20.17,"of"],[20.31,"individual"],[20.95,"treatments,"],[21.51,"with"],[21.69,"a"],[21.98,"few"],[22.43,"decisive"],[23.12,"actions."],[24.46,"On"],[24.73,"growth,"],[25.18,"there's"],[25.52,"precedent"],[26.14,"too."],[26.54,"Several"],[26.98,"East"],[27.25,"Asian"],[27.56,"economies"],[28.1,"sustained"],[28.6,"ten"],[29.04,"percent"],[29.49,"a"],[29.61,"year"],[30.06,"—"],[30.21,"and"],[30.45,"caught"],[30.8,"up"],[30.94,"with"],[31.08,"the"],[31.2,"West."],[32.31,"Amodei"],[32.85,"imagines"],[33.41,"'AI"],[33.89,"finance"],[34.49,"ministers"],[35.05,"and"],[35.26,"central"],[35.71,"bankers'"],[36.24,"matching"],[36.72,"that."],[37.42,"Or"],[37.74,"beating"],[38.2,"it."],[38.84,"A"],[39.02,"dream"],[39.49,"scenario"],[40.15,"of"],[40.29,"twenty"],[40.79,"percent"],[41.29,"annual"],[41.81,"growth"],[42.34,"—"],[42.56,"lifting"],[43.22,"Sub-Saharan"],[44.15,"Africa"],[44.83,"to"],[45.04,"China's"],[45.57,"level,"],[46.2,"within"],[46.57,"a"],[46.68,"decade."],[47.9,"Add"],[48.21,"a"],[48.36,"second"],[48.86,"Green"],[49.2,"Revolution,"],[49.92,"for"],[50.14,"food."],[50.99,"Add"],[51.4,"AI-driven"],[52.34,"progress,"],[53.33,"on"],[53.59,"climate."],[54.79,"And"],[55.07,"the"],[55.18,"picture"],[55.61,"becomes"],[56.11,"a"],[56.26,"genuine"],[56.9,"catching-up."],[58.17,"He's"],[58.55,"honest"],[59.32,"that"],[59.63,"none"],[60,"of"],[60.13,"this"],[60.65,"is"],[60.88,"the"],[61.03,"default."],[62.16,"It"],[62.33,"will"],[62.55,"take"],[62.86,"enormous"],[63.5,"effort"],[63.96,"—"],[64.22,"and"],[64.53,"there's"],[64.78,"the"],[64.93,"opt-out"],[65.46,"problem,"],[65.91,"of"],[66.05,"people"],[66.46,"refusing"],[67.21,"the"],[67.38,"very"],[67.73,"benefits"],[68.3,"on"],[68.45,"offer."],[69.19,"But"],[69.6,"we"],[69.82,"have"],[70.04,"to"],[70.17,"try,"],[70.96,"he"],[71.12,"insists."],[72.33,"The"],[72.54,"moral"],[72.93,"imperative"],[73.65,"is"],[73.81,"simply"],[74.49,"too"],[74.85,"great."]]},{"id":"s13","sub":"Peace & governance","text":"The fourth domain — is the one that worries him most. Suppose disease and poverty recede. Humans are still a danger — to each other. And here, Amodei sees no structural reason that AI favors democracy and peace — the way it favors human health. Conflict is adversarial. AI can serve the good guys — and the bad guys — alike. Worse — some forces tilt the wrong way. AI is superb at precisely the things an autocrat needs. Propaganda. And surveillance. The triumph of liberal democracy is not guaranteed. It may not even be likely. It will have to be won.","cap":[[0,"The"],[0.21,"fourth"],[0.56,"domain"],[1.01,"—"],[1.18,"is"],[1.31,"the"],[1.45,"one"],[1.7,"that"],[1.88,"worries"],[2.28,"him"],[2.49,"most."],[3.65,"Suppose"],[4.28,"disease"],[4.99,"and"],[5.2,"poverty"],[5.79,"recede."],[6.86,"Humans"],[7.45,"are"],[7.61,"still"],[7.94,"a"],[8.03,"danger"],[8.65,"—"],[8.84,"to"],[9.04,"each"],[9.27,"other."],[10.43,"And"],[10.69,"here,"],[11.09,"Amodei"],[11.62,"sees"],[12.04,"no"],[12.31,"structural"],[13.04,"reason"],[13.43,"that"],[13.62,"AI"],[14.11,"favors"],[14.58,"democracy"],[15.21,"and"],[15.36,"peace"],[15.87,"—"],[16.1,"the"],[16.27,"way"],[16.53,"it"],[16.68,"favors"],[17.19,"human"],[17.68,"health."],[18.82,"Conflict"],[19.9,"is"],[20.17,"adversarial."],[21.36,"AI"],[21.93,"can"],[22.18,"serve"],[22.54,"the"],[22.65,"good"],[22.87,"guys"],[23.31,"—"],[23.38,"and"],[23.67,"the"],[23.78,"bad"],[24.08,"guys"],[24.53,"—"],[24.6,"alike."],[25.74,"Worse"],[26.31,"—"],[26.46,"some"],[26.78,"forces"],[27.34,"tilt"],[27.7,"the"],[27.83,"wrong"],[28.12,"way."],[28.77,"AI"],[29.34,"is"],[29.59,"superb"],[30.31,"at"],[30.47,"precisely"],[31.28,"the"],[31.43,"things"],[31.79,"an"],[31.94,"autocrat"],[32.59,"needs."],[33.44,"Propaganda."],[34.51,"And"],[34.75,"surveillance."],[35.86,"The"],[36.03,"triumph"],[36.56,"of"],[36.76,"liberal"],[37.19,"democracy"],[37.92,"is"],[38.13,"not"],[38.41,"guaranteed."],[39.5,"It"],[39.73,"may"],[40.03,"not"],[40.31,"even"],[40.64,"be"],[40.8,"likely."],[41.75,"It"],[41.94,"will"],[42.14,"have"],[42.35,"to"],[42.47,"be"],[42.62,"won."]]},{"id":"s14","sub":"The entente strategy","text":"His proposed strategy — he calls an entente. A coalition of democracies secures the supply chain of powerful AI — the chips, and the machines that make the chips — and races to build a decisive lead. While denying those same resources, to its rivals. That coalition uses its AI advantage for military security — the stick. And, at the same time — it offers the benefits of powerful AI, to any nation that joins in defending democracy. The carrot. A little like 'Atoms for Peace'. The aim is to isolate the worst actors — until they, too, are better off taking the same bargain as everyone else. If it works — democracies lead the world stage, with an advantage that lasts. What Amodei calls, hopefully, an 'eternal nineteen ninety-one' — the moment liberal democracy seemed ascendant, made permanent. And within nations — an AI that no dictator can fully censor, a superhumanly persuasive voice for freedom in every pocket, could put the wind at the backs of dissidents everywhere. He even imagines AI making democracies better than they are today. Fairer courts. Less bias. More responsive government. Constitutions that are, in a sense — self-enforcing.","cap":[[0,"His"],[0.42,"proposed"],[1.02,"strategy"],[1.87,"—"],[2.02,"he"],[2.17,"calls"],[2.54,"an"],[2.67,"entente."],[3.7,"A"],[3.89,"coalition"],[4.54,"of"],[4.66,"democracies"],[5.38,"secures"],[5.91,"the"],[6.04,"supply"],[6.56,"chain"],[6.92,"of"],[7.06,"powerful"],[7.57,"AI"],[8.17,"—"],[8.34,"the"],[8.5,"chips,"],[9.3,"and"],[9.61,"the"],[9.73,"machines"],[10.33,"that"],[10.53,"make"],[10.86,"the"],[11.01,"chips"],[11.61,"—"],[11.7,"and"],[11.96,"races"],[12.48,"to"],[12.63,"build"],[12.92,"a"],[13.02,"decisive"],[13.75,"lead."],[14.76,"While"],[15.13,"denying"],[15.69,"those"],[15.98,"same"],[16.32,"resources,"],[17.22,"to"],[17.44,"its"],[17.62,"rivals."],[18.8,"That"],[19.12,"coalition"],[19.84,"uses"],[20.34,"its"],[20.55,"AI"],[20.99,"advantage"],[21.64,"for"],[21.82,"military"],[22.3,"security"],[23.14,"—"],[23.36,"the"],[23.51,"stick."],[24.56,"And,"],[25.19,"at"],[25.39,"the"],[25.53,"same"],[25.87,"time"],[26.47,"—"],[26.6,"it"],[26.77,"offers"],[27.12,"the"],[27.25,"benefits"],[27.79,"of"],[27.95,"powerful"],[28.5,"AI,"],[29.29,"to"],[29.5,"any"],[29.75,"nation"],[30.22,"that"],[30.42,"joins"],[30.87,"in"],[31.02,"defending"],[31.58,"democracy."],[33.12,"The"],[33.29,"carrot."],[34.41,"A"],[34.6,"little"],[34.92,"like"],[35.43,"'Atoms"],[36.04,"for"],[36.2,"Peace'."],[37.47,"The"],[37.66,"aim"],[37.98,"is"],[38.13,"to"],[38.31,"isolate"],[38.95,"the"],[39.11,"worst"],[39.57,"actors"],[40.25,"—"],[40.39,"until"],[40.8,"they,"],[41.24,"too,"],[41.65,"are"],[41.9,"better"],[42.26,"off"],[42.46,"taking"],[42.86,"the"],[43,"same"],[43.34,"bargain"],[43.79,"as"],[43.92,"everyone"],[44.33,"else."],[45.11,"If"],[45.35,"it"],[45.49,"works"],[46.13,"—"],[46.3,"democracies"],[47.11,"lead"],[47.5,"the"],[47.62,"world"],[48.01,"stage,"],[48.97,"with"],[49.18,"an"],[49.27,"advantage"],[49.96,"that"],[50.18,"lasts."],[51.21,"What"],[51.51,"Amodei"],[52.12,"calls,"],[52.81,"hopefully,"],[53.71,"an"],[54.09,"'eternal"],[55.15,"nineteen"],[55.91,"ninety-one'"],[56.83,"—"],[57.11,"the"],[57.27,"moment"],[57.77,"liberal"],[58.17,"democracy"],[58.85,"seemed"],[59.26,"ascendant,"],[60.38,"made"],[60.67,"permanent."],[62.42,"And"],[62.78,"within"],[63.09,"nations"],[63.7,"—"],[63.77,"an"],[63.89,"AI"],[64.31,"that"],[64.56,"no"],[64.88,"dictator"],[65.58,"can"],[65.84,"fully"],[66.21,"censor,"],[67.04,"a"],[67.27,"superhumanly"],[68.43,"persuasive"],[69.23,"voice"],[69.61,"for"],[69.82,"freedom"],[70.65,"in"],[70.87,"every"],[71.16,"pocket,"],[72.16,"could"],[72.35,"put"],[72.55,"the"],[72.71,"wind"],[73.19,"at"],[73.29,"the"],[73.44,"backs"],[73.84,"of"],[74.03,"dissidents"],[74.7,"everywhere."],[75.58,"He"],[75.81,"even"],[76.11,"imagines"],[76.67,"AI"],[77.16,"making"],[77.54,"democracies"],[78.45,"better"],[78.75,"than"],[78.91,"they"],[79.1,"are"],[79.32,"today."],[80.48,"Fairer"],[80.94,"courts."],[81.76,"Less"],[82.09,"bias."],[82.83,"More"],[83.09,"responsive"],[83.76,"government."],[84.74,"Constitutions"],[85.74,"that"],[85.93,"are,"],[86.25,"in"],[86.41,"a"],[86.53,"sense"],[87.17,"—"],[87.51,"self-enforcing."]]},{"id":"s15","sub":"Work & meaning","text":"Which leaves the final question. Perhaps the hardest of all. If AI can do everything — what are people for? On meaning, Amodei is reassuring. It's a mistake, he says — to think a task becomes meaningless, simply because an AI could do it better. Almost none of us is the best in the world at anything. And it never seems to trouble us. He plays video games. He bikes up mountains. He talks with his friends. All of it — economically worthless. All of it — worth doing. Meaning comes from human relationships, and connection. From effort, and accomplishment. Not from a paycheck.","cap":[[0,"Which"],[0.34,"leaves"],[0.67,"the"],[0.8,"final"],[1.22,"question."],[2.21,"Perhaps"],[2.64,"the"],[2.78,"hardest"],[3.23,"of"],[3.34,"all."],[4.16,"If"],[4.57,"AI"],[5.17,"can"],[5.42,"do"],[5.62,"everything"],[6.27,"—"],[6.5,"what"],[6.76,"are"],[6.87,"people"],[7.23,"for?"],[8.07,"On"],[8.32,"meaning,"],[8.93,"Amodei"],[9.53,"is"],[9.82,"reassuring."],[11.01,"It's"],[11.25,"a"],[11.34,"mistake,"],[12.18,"he"],[12.38,"says"],[12.85,"—"],[12.93,"to"],[13.07,"think"],[13.33,"a"],[13.43,"task"],[13.91,"becomes"],[14.42,"meaningless,"],[15.41,"simply"],[15.89,"because"],[16.34,"an"],[16.48,"AI"],[16.99,"could"],[17.23,"do"],[17.42,"it"],[17.55,"better."],[18.58,"Almost"],[19.4,"none"],[19.68,"of"],[19.81,"us"],[20.14,"is"],[20.38,"the"],[20.52,"best"],[20.88,"in"],[21,"the"],[21.13,"world"],[21.63,"at"],[21.98,"anything."],[23.22,"And"],[23.57,"it"],[23.75,"never"],[24.04,"seems"],[24.45,"to"],[24.6,"trouble"],[24.96,"us."],[25.51,"He"],[25.72,"plays"],[26.19,"video"],[26.58,"games."],[27.17,"He"],[27.38,"bikes"],[27.85,"up"],[28.08,"mountains."],[29.07,"He"],[29.27,"talks"],[29.66,"with"],[29.84,"his"],[30.02,"friends."],[30.85,"All"],[31.21,"of"],[31.32,"it"],[31.6,"—"],[31.77,"economically"],[32.52,"worthless."],[33.42,"All"],[33.76,"of"],[33.88,"it"],[34.25,"—"],[34.44,"worth"],[34.9,"doing."],[36.2,"Meaning"],[36.78,"comes"],[37.21,"from"],[37.52,"human"],[38.05,"relationships,"],[39.14,"and"],[39.58,"connection."],[40.52,"From"],[40.77,"effort,"],[41.17,"and"],[41.33,"accomplishment."],[42.1,"Not"],[42.3,"from"],[42.48,"a"],[42.56,"paycheck."]]},{"id":"s16","sub":"The economic question","text":"The economics are trickier — and he admits it freely. In the short term, comparative advantage protects us. As long as AI is better at ninety percent of a job — the remaining ten percent makes humans more valuable, not less. And that ten percent tends to expand, into brand-new kinds of work. But in the long run, he's candid. AI may become so cheap — and so capable — that our current economic arrangement simply stops making sense. And we will need a broader conversation. About how society itself should be organized. Universal basic income might be part of the answer. He suspects — only a small part. He doesn't pretend to know. What he is sure of, is that civilization has crossed these thresholds before. From hunting, to farming. From farming, to industry. And that the exploitative, dystopian versions of this future are possible too — and must be prevented.","cap":[[0,"The"],[0.22,"economics"],[0.73,"are"],[0.82,"trickier"],[1.46,"—"],[1.71,"and"],[2.1,"he"],[2.24,"admits"],[2.65,"it"],[2.81,"freely."],[4.61,"In"],[4.77,"the"],[4.9,"short"],[5.24,"term,"],[5.71,"comparative"],[6.3,"advantage"],[6.91,"protects"],[7.43,"us."],[8.07,"As"],[8.31,"long"],[8.59,"as"],[8.77,"AI"],[9.3,"is"],[9.5,"better"],[9.86,"at"],[10.01,"ninety"],[10.46,"percent"],[10.89,"of"],[11,"a"],[11.1,"job"],[11.6,"—"],[11.74,"the"],[11.9,"remaining"],[12.42,"ten"],[12.71,"percent"],[13.2,"makes"],[13.49,"humans"],[14.01,"more"],[14.28,"valuable,"],[14.83,"not"],[15.06,"less."],[15.84,"And"],[16.08,"that"],[16.35,"ten"],[16.67,"percent"],[17.11,"tends"],[17.46,"to"],[17.61,"expand,"],[18.25,"into"],[18.53,"brand-new"],[19.3,"kinds"],[19.75,"of"],[19.93,"work."],[20.92,"But"],[21.12,"in"],[21.24,"the"],[21.4,"long"],[21.71,"run,"],[22.01,"he's"],[22.29,"candid."],[23.39,"AI"],[23.95,"may"],[24.17,"become"],[24.73,"so"],[25.09,"cheap"],[25.64,"—"],[25.84,"and"],[26.26,"so"],[26.62,"capable"],[27.33,"—"],[27.52,"that"],[27.75,"our"],[28,"current"],[28.47,"economic"],[28.92,"arrangement"],[29.57,"simply"],[30.06,"stops"],[30.58,"making"],[31.03,"sense."],[32.25,"And"],[32.8,"we"],[32.98,"will"],[33.18,"need"],[33.46,"a"],[33.56,"broader"],[34.02,"conversation."],[35.63,"About"],[36.04,"how"],[36.41,"society"],[37.07,"itself"],[37.59,"should"],[37.85,"be"],[37.99,"organized."],[39.27,"Universal"],[39.97,"basic"],[40.44,"income"],[40.92,"might"],[41.24,"be"],[41.44,"part"],[41.8,"of"],[41.9,"the"],[42.05,"answer."],[43.31,"He"],[43.53,"suspects"],[44.55,"—"],[44.72,"only"],[45.02,"a"],[45.09,"small"],[45.43,"part."],[46.39,"He"],[46.56,"doesn't"],[46.88,"pretend"],[47.35,"to"],[47.49,"know."],[48.25,"What"],[48.58,"he"],[48.76,"is"],[48.96,"sure"],[49.38,"of,"],[49.62,"is"],[49.84,"that"],[50.09,"civilization"],[51.17,"has"],[51.39,"crossed"],[51.82,"these"],[52.12,"thresholds"],[52.9,"before."],[54.03,"From"],[54.32,"hunting,"],[54.93,"to"],[55.14,"farming."],[56.01,"From"],[56.38,"farming,"],[57.34,"to"],[57.61,"industry."],[59.03,"And"],[59.62,"that"],[59.85,"the"],[60.02,"exploitative,"],[61.13,"dystopian"],[62.07,"versions"],[62.64,"of"],[62.76,"this"],[63,"future"],[63.7,"are"],[63.96,"possible"],[64.52,"too"],[65,"—"],[65.53,"and"],[65.74,"must"],[65.98,"be"],[66.15,"prevented."]]},{"id":"s17","sub":"Taking stock","text":"So — taking stock. Amodei knows this vision is radical. That it may strike many people as an absurd fantasy. That not everyone will even want it. And yet — there's something blindingly obvious about it, too. As if every honest attempt to imagine a genuinely good world… keeps arriving, roughly — here. He points to Iain Banks's Culture novels. And to a simple idea: that our basic human intuitions — fairness, cooperation, curiosity, autonomy — are cumulative, in a way our darker impulses are not. It is easy to argue that children shouldn't die of disease. Easy, from there, to argue that everyone's children deserve that — equally. And not far, from there — to rule of law, democracy, and the values of the Enlightenment. This is where humanity was already heading. AI simply offers a chance to arrive sooner — to make the logic starker, and the destination clearer.","cap":[[0,"So"],[0.5,"—"],[0.87,"taking"],[1.46,"stock."],[2.45,"Amodei"],[3,"knows"],[3.36,"this"],[3.61,"vision"],[3.98,"is"],[4.19,"radical."],[5.07,"That"],[5.29,"it"],[5.42,"may"],[5.63,"strike"],[6.1,"many"],[6.46,"people"],[6.89,"as"],[7.05,"an"],[7.16,"absurd"],[7.85,"fantasy."],[9.17,"That"],[9.45,"not"],[9.69,"everyone"],[10.19,"will"],[10.4,"even"],[10.69,"want"],[11.05,"it."],[11.24,"And"],[11.56,"yet"],[12.07,"—"],[12.21,"there's"],[12.56,"something"],[13.07,"blindingly"],[13.85,"obvious"],[14.32,"about"],[14.68,"it,"],[14.83,"too."],[15.95,"As"],[16.21,"if"],[16.41,"every"],[16.79,"honest"],[17.25,"attempt"],[17.73,"to"],[17.89,"imagine"],[18.44,"a"],[18.62,"genuinely"],[19.56,"good"],[19.83,"world…"],[20.57,"keeps"],[20.91,"arriving,"],[21.75,"roughly"],[22.33,"—"],[22.49,"here."],[23.44,"He"],[23.64,"points"],[23.96,"to"],[24.11,"Iain"],[24.61,"Banks's"],[25.11,"Culture"],[25.53,"novels."],[26.01,"And"],[26.37,"to"],[26.56,"a"],[26.69,"simple"],[27.18,"idea:"],[28.05,"that"],[28.28,"our"],[28.55,"basic"],[29.06,"human"],[29.44,"intuitions"],[30.29,"—"],[30.38,"fairness,"],[31.29,"cooperation,"],[32.25,"curiosity,"],[33.49,"autonomy"],[34.44,"—"],[34.54,"are"],[34.76,"cumulative,"],[35.94,"in"],[36.14,"a"],[36.25,"way"],[36.62,"our"],[36.94,"darker"],[37.47,"impulses"],[38.3,"are"],[38.63,"not."],[39.42,"It"],[39.62,"is"],[39.82,"easy"],[40.22,"to"],[40.39,"argue"],[40.78,"that"],[40.96,"children"],[41.48,"shouldn't"],[41.94,"die"],[42.3,"of"],[42.43,"disease."],[43.43,"Easy,"],[44.28,"from"],[44.56,"there,"],[45.15,"to"],[45.38,"argue"],[45.86,"that"],[46.08,"everyone's"],[46.78,"children"],[47.32,"deserve"],[47.83,"that"],[48.27,"—"],[48.53,"equally."],[49.55,"And"],[49.77,"not"],[49.98,"far,"],[50.33,"from"],[50.57,"there"],[50.86,"—"],[51,"to"],[51.25,"rule"],[51.66,"of"],[51.84,"law,"],[52.57,"democracy,"],[53.79,"and"],[54.07,"the"],[54.21,"values"],[54.8,"of"],[54.9,"the"],[55.03,"Enlightenment."],[56.29,"This"],[56.95,"is"],[57.16,"where"],[57.43,"humanity"],[58.08,"was"],[58.28,"already"],[58.79,"heading."],[59.8,"AI"],[60.38,"simply"],[60.87,"offers"],[61.23,"a"],[61.32,"chance"],[61.79,"to"],[61.95,"arrive"],[62.46,"sooner"],[63.09,"—"],[63.43,"to"],[63.59,"make"],[63.84,"the"],[64.01,"logic"],[64.48,"starker,"],[65.54,"and"],[65.91,"the"],[66.04,"destination"],[67.13,"clearer."]]},{"id":"s18","sub":"Coda","text":"If it truly comes to pass — across five, or ten, years. The defeat of most disease. Billions, lifted out of poverty. A renaissance of liberal democracy, and human rights. Then Amodei suspects — that everyone watching will be surprised, by the effect it has on them. Not merely the experience of benefiting from it all — extraordinary as that will be. But the experience of watching a long-held set of ideals… materialize, in front of us — all at once. Many, he says, will be moved to tears. It is a thing of transcendent beauty. And we have the chance — to play some small part — in making it real.","cap":[[0,"If"],[0.21,"it"],[0.31,"truly"],[0.74,"comes"],[1.08,"to"],[1.22,"pass"],[1.67,"—"],[1.74,"across"],[2.28,"five,"],[2.83,"or"],[3.12,"ten,"],[3.66,"years."],[4.99,"The"],[5.18,"defeat"],[5.67,"of"],[5.84,"most"],[6.17,"disease."],[7.04,"Billions,"],[8.13,"lifted"],[8.56,"out"],[8.8,"of"],[8.95,"poverty."],[9.96,"A"],[10.15,"renaissance"],[10.82,"of"],[11.01,"liberal"],[11.46,"democracy,"],[12.59,"and"],[12.95,"human"],[13.38,"rights."],[14.66,"Then"],[15.09,"Amodei"],[15.74,"suspects"],[16.63,"—"],[16.7,"that"],[16.95,"everyone"],[17.52,"watching"],[17.98,"will"],[18.2,"be"],[18.34,"surprised,"],[19.34,"by"],[19.55,"the"],[19.69,"effect"],[20.2,"it"],[20.35,"has"],[20.63,"on"],[20.79,"them."],[21.43,"Not"],[21.7,"merely"],[22.12,"the"],[22.27,"experience"],[23.03,"of"],[23.23,"benefiting"],[24.01,"from"],[24.23,"it"],[24.38,"all"],[24.86,"—"],[25,"extraordinary"],[25.91,"as"],[26.09,"that"],[26.35,"will"],[26.65,"be."],[27.47,"But"],[27.68,"the"],[27.83,"experience"],[28.6,"of"],[28.76,"watching"],[29.25,"a"],[29.39,"long-held"],[30.34,"set"],[30.66,"of"],[30.84,"ideals…"],[32.31,"materialize,"],[33.92,"in"],[34.15,"front"],[34.47,"of"],[34.61,"us"],[35.03,"—"],[35.13,"all"],[35.46,"at"],[35.61,"once."],[36.7,"Many,"],[37.27,"he"],[37.43,"says,"],[38.22,"will"],[38.48,"be"],[38.61,"moved"],[39.01,"to"],[39.21,"tears."],[40.15,"It"],[40.33,"is"],[40.47,"a"],[40.59,"thing"],[40.89,"of"],[41.03,"transcendent"],[42.12,"beauty."],[43.07,"And"],[43.29,"we"],[43.46,"have"],[43.7,"the"],[43.84,"chance"],[44.34,"—"],[44.42,"to"],[44.55,"play"],[44.94,"some"],[45.24,"small"],[45.7,"part"],[46.29,"—"],[46.72,"in"],[46.95,"making"],[47.4,"it"],[47.59,"real."]]}];
+  var HAS_AUDIO = true;
+  var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var scenes = Array.prototype.slice.call(document.querySelectorAll(".scene"));
+
+  var ACCENTS = {gold:"#F2C879",green:"#7FC8A0",sky:"#8FB8E8",rose:"#E8927C",lav:"#C4AEE8",
+    amber:"#E4A85E",steel:"#86A9CC",violet:"#B49CF0",teal:"#66C6BE",crimson:"#DE8A86",sage:"#A7C08C"};
+  function hexRgb(h){ h=h.replace("#",""); if(h.length===3)h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
+    return {r:parseInt(h.substr(0,2),16),g:parseInt(h.substr(2,2),16),b:parseInt(h.substr(4,2),16)}; }
+  function mix(a,b,t){ return "rgb("+Math.round(a.r+(b.r-a.r)*t)+","+Math.round(a.g+(b.g-a.g)*t)+","+Math.round(a.b+(b.b-a.b)*t)+")"; }
+  var DARK1={r:9,g:10,b:14}, DARK2={r:11,g:13,b:18};
+  function hueFor(name){ var acc=ACCENTS[name]||ACCENTS.gold, rgb=hexRgb(acc);
+    return {accent:acc, a:mix(rgb,DARK1,0.90), b:"rgba("+rgb.r+","+rgb.g+","+rgb.b+",0.15)", c:mix(rgb,DARK2,0.83)}; }
+  var root=document.documentElement;
+  function applyHue(name){ var h=hueFor(name); root.style.setProperty("--accent",h.accent);
+    root.style.setProperty("--grad-a",h.a); root.style.setProperty("--grad-b",h.b); root.style.setProperty("--grad-c",h.c); }
+  applyHue(scenes[0]?scenes[0].getAttribute("data-hue"):"gold");
+
+  var io=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting) e.target.classList.add("revealed"); }); },{threshold:0.18});
+  scenes.forEach(function(s){ io.observe(s); });
+
+  function animateCount(el){ var from=parseFloat(el.getAttribute("data-count-from")), to=parseFloat(el.getAttribute("data-count-to"));
+    if(reduced){ el.textContent=to; return; } var dur=1400,start=null;
+    function step(ts){ if(start===null)start=ts; var p=Math.min((ts-start)/dur,1); var e=1-Math.pow(1-p,3);
+      el.textContent=Math.round(from+(to-from)*e); if(p<1) requestAnimationFrame(step); } requestAnimationFrame(step); }
+  var countIO=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ animateCount(e.target); countIO.unobserve(e.target); } }); },{threshold:0.6});
+  document.querySelectorAll("[data-count-to]").forEach(function(el){ countIO.observe(el); });
+
+  var canvas=document.getElementById("meadow"), ctx=canvas.getContext("2d"), W,H,pts=[],raf=null;
+  function size(){ var dpr=window.devicePixelRatio||1; W=canvas.width=innerWidth*dpr; H=canvas.height=innerHeight*dpr;
+    canvas.style.width=innerWidth+"px"; canvas.style.height=innerHeight+"px"; }
+  function seed(){ var dpr=window.devicePixelRatio||1, n=Math.min(90,Math.floor(innerWidth/14)); pts=[];
+    for(var i=0;i<n;i++) pts.push({x:Math.random()*W,y:Math.random()*H,r:(Math.random()*1.6+0.4)*dpr,
+      vx:(Math.random()-0.5)*0.12, vy:-(Math.random()*0.18+0.03), a:Math.random()*0.5+0.15, tw:Math.random()*6.28}); }
+  function accentRGB(){ var c=getComputedStyle(root).getPropertyValue("--accent").trim()||"#F2C879";
+    if(c[0]==="#"){ var m=hexRgb(c); return m.r+","+m.g+","+m.b; } return c.replace(/rgba?\(|\)/g,""); }
+  function draw(){ ctx.clearRect(0,0,W,H); var rgb=accentRGB();
+    for(var i=0;i<pts.length;i++){ var p=pts[i]; p.x+=p.vx; p.y+=p.vy; p.tw+=0.02;
+      if(p.y<-10){p.y=H+10;p.x=Math.random()*W;} if(p.x<-10)p.x=W+10; if(p.x>W+10)p.x=-10;
+      var f=p.a*(0.6+0.4*Math.sin(p.tw)); ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,6.2832);
+      ctx.fillStyle="rgba("+rgb+","+f.toFixed(3)+")"; ctx.fill(); }
+    raf=requestAnimationFrame(draw); }
+  function startMeadow(){ size(); seed(); if(!reduced){ if(raf)cancelAnimationFrame(raf); draw(); }
+    else { ctx.clearRect(0,0,W,H); var rgb=accentRGB(); pts.forEach(function(p){ ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,6.2832);
+      ctx.fillStyle="rgba("+rgb+","+p.a.toFixed(3)+")"; ctx.fill(); }); } }
+  addEventListener("resize",function(){ size(); seed(); }); startMeadow();
+
+  /* ---- narration engine ---- */
+  var audio=document.getElementById("narrator");
+  var synth=window.speechSynthesis, ttsOK=!!synth && typeof SpeechSynthesisUtterance!=="undefined";
+  var playing=false, paused=false, mode="idle", chosenVoice=null, voices=[];
+  var SPEEDS=[0.85,1,1.15,1.3,1.5], speed=parseFloat(localStorage.getItem("st-speed")||"1");
+  if(SPEEDS.indexOf(speed)===-1) speed=1;
+
+  var playBtn=document.getElementById("playBtn"), playIcon=document.getElementById("playIcon"), pauseIcon=document.getElementById("pauseIcon");
+  var nowTitle=document.getElementById("nowTitle"), nowSub=document.getElementById("nowSub"), seekFill=document.getElementById("seekFill");
+  var dotsWrap=document.getElementById("dots"), player=document.getElementById("player");
+  var capEl=document.getElementById("caption"), modeFlag=document.getElementById("modeFlag");
+  var speedBtn=document.getElementById("speedBtn"), showCaptions=true, activeIndex=0;
+
+  SC.forEach(function(s,i){ var b=document.createElement("button"); b.setAttribute("aria-label","Go to "+s.sub);
+    b.addEventListener("click",function(){ jumpTo(i,playing); }); dotsWrap.appendChild(b); });
+  var dotEls=Array.prototype.slice.call(dotsWrap.children);
+
+  function updateDots(){ dotEls.forEach(function(d,i){ d.classList.toggle("active",i===activeIndex); });
+    document.getElementById("topbar").style.width=(scenes.length>1?(activeIndex/(scenes.length-1))*100:0)+"%"; }
+  function setActive(idx,doScroll){ activeIndex=Math.max(0,Math.min(scenes.length-1,idx)); var s=scenes[activeIndex];
+    applyHue(s.getAttribute("data-hue")); nowTitle.textContent=SC[activeIndex].sub; nowSub.textContent=(activeIndex+1)+" / "+scenes.length;
+    updateDots(); if(doScroll) s.scrollIntoView({behavior:reduced?"auto":"smooth",block:"center"}); }
+  function setPlayIcon(on){ playIcon.style.display=on?"none":"block"; pauseIcon.style.display=on?"block":"none";
+    playBtn.setAttribute("aria-label",on?"Pause narration":"Play narration"); }
+
+  /* captions: one sentence window */
+  var capTokens=[], capSentences=[], capSentenceOf=[], capCurSent=-1, capSpans=[];
+  function buildCaption(i){ capEl.innerHTML=""; capSpans=[]; capCurSent=-1;
+    var data=SC[i]; if(!showCaptions){ capEl.classList.remove("show"); return; }
+    capTokens = data.cap ? data.cap.map(function(p){ return {t:p[0],w:p[1]}; })
+                         : data.text.split(/\s+/).map(function(w){ return {t:null,w:w}; });
+    capSentences=[]; capSentenceOf=[]; var cur=[];
+    for(var k=0;k<capTokens.length;k++){ cur.push(k); capSentenceOf[k]=capSentences.length;
+      if(/[.!?]["')]?$/.test(capTokens[k].w)){ capSentences.push(cur); cur=[]; } }
+    if(cur.length){ for(var m=0;m<cur.length;m++) capSentenceOf[cur[m]]=capSentences.length; capSentences.push(cur); }
+    capEl.classList.add("show"); renderSentence(0); }
+  function renderSentence(si){ capCurSent=si; capEl.innerHTML=""; capSpans=[];
+    (capSentences[si]||[]).forEach(function(gi){ var sp=document.createElement("span"); sp.className="w";
+      sp.setAttribute("data-gi",gi); sp.textContent=capTokens[gi].w+" "; capEl.appendChild(sp); capSpans.push(sp); }); }
+  function markToken(gi){ var si=capSentenceOf[gi]; if(si===undefined)return; if(si!==capCurSent) renderSentence(si);
+    for(var j=0;j<capSpans.length;j++){ var g=+capSpans[j].getAttribute("data-gi"); capSpans[j].className="w"+(g<gi?" spoken":g===gi?" active":""); } }
+  function highlightByTime(t){ if(!capTokens.length)return; var idx=0;
+    for(var i=0;i<capTokens.length;i++){ if(capTokens[i].t!==null&&capTokens[i].t<=t) idx=i; else if(capTokens[i].t!==null) break; } markToken(idx); }
+  function highlightByWordIndex(k){ if(k<capTokens.length) markToken(k); }
+
+  function srcFor(i){ return "audio/"+SC[i].id+".mp3"; }
+  function playScene(i){ setActive(i,true); playing=true; paused=false; setPlayIcon(true); buildCaption(i);
+    var useAudio=HAS_AUDIO && SC[i].cap;
+    if(useAudio){ mode="audio"; modeFlag.textContent="ElevenLabs"; audio.src=srcFor(i); audio.currentTime=0;
+      audio.playbackRate=speed; audio.volume=parseFloat(document.getElementById("vol").value);
+      var p=audio.play(); if(p&&p.catch) p.catch(function(){ ttsSpeak(i); }); }
+    else { ttsSpeak(i); } }
+  function advance(){ if(activeIndex<scenes.length-1) playScene(activeIndex+1); else stopNarration(); }
+  audio.addEventListener("ended",function(){ if(playing&&mode==="audio") advance(); });
+  audio.addEventListener("error",function(){ if(playing&&mode==="audio") ttsSpeak(activeIndex); });
+  audio.addEventListener("timeupdate",function(){ if(mode!=="audio")return;
+    if(audio.duration) seekFill.style.width=(audio.currentTime/audio.duration*100)+"%"; highlightByTime(audio.currentTime); });
+
+  function ttsSpeak(i){ mode="tts"; modeFlag.textContent=ttsOK?"Browser voice":"unavailable"; if(!ttsOK)return; synth.cancel();
+    var u=new SpeechSynthesisUtterance(SC[i].text); u.rate=0.98*speed; u.pitch=1.0;
+    u.volume=parseFloat(document.getElementById("vol").value); if(chosenVoice)u.voice=chosenVoice;
+    var wIdx=0; u.onboundary=function(ev){ if(ev.name==="word"||ev.charIndex!==undefined) highlightByWordIndex(wIdx++); };
+    u.onend=function(){ if(playing&&mode==="tts") advance(); };
+    setTimeout(function(){ if(playing) synth.speak(u); }, reduced?40:420); }
+
+  function startNarration(i){ playScene(typeof i==="number"?i:activeIndex); player.classList.add("show"); }
+  function stopNarration(){ playing=false; paused=false; setPlayIcon(false); try{ audio.pause(); }catch(e){}
+    if(ttsOK) synth.cancel(); capEl.classList.remove("show"); seekFill.style.width="0%"; }
+
+  playBtn.addEventListener("click",function(){
+    if(!playing){ startNarration(activeIndex); return; }
+    if(!paused){ paused=true; setPlayIcon(false); if(mode==="audio")audio.pause(); else if(ttsOK)synth.pause(); }
+    else { paused=false; setPlayIcon(true); if(mode==="audio")audio.play(); else if(ttsOK)synth.resume(); } });
+  document.getElementById("nextBtn").addEventListener("click",function(){ jumpTo(activeIndex+1,playing); });
+  document.getElementById("prevBtn").addEventListener("click",function(){ jumpTo(activeIndex-1,playing); });
+  function jumpTo(i,keep){ i=Math.max(0,Math.min(scenes.length-1,i));
+    if(mode==="audio"){ try{audio.pause();}catch(e){} } if(ttsOK) synth.cancel();
+    if(keep){ playScene(i); } else { stopNarration(); setActive(i,true); } }
+
+  var beginBtn=document.getElementById("beginBtn");
+  if(beginBtn) beginBtn.addEventListener("click",function(){ player.classList.add("show");
+    if(ttsOK){ try{ synth.resume(); }catch(e){} } startNarration(0); });
+  addEventListener("scroll",function(){ if(scrollY>innerHeight*0.5) player.classList.add("show"); },{passive:true});
+
+  var centerIO=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){
+    var idx=scenes.indexOf(e.target); if(idx!==activeIndex&&!playing) setActive(idx,false); } }); },{rootMargin:"-45% 0px -45% 0px",threshold:0});
+  scenes.forEach(function(s){ centerIO.observe(s); });
+
+  /* speed */
+  var speedsWrap=document.getElementById("speeds");
+  function applySpeed(v){ speed=v; localStorage.setItem("st-speed",String(v));
+    speedBtn.innerHTML=(v%1===0?v:v.toFixed(2).replace(/0$/,""))+"&times;";
+    if(mode==="audio") audio.playbackRate=v;
+    Array.prototype.forEach.call(speedsWrap.children,function(b){ b.classList.toggle("on",parseFloat(b.dataset.v)===v); }); }
+  SPEEDS.forEach(function(v){ var b=document.createElement("button"); b.dataset.v=v;
+    b.textContent=(v%1===0?v:v.toFixed(2).replace(/0$/,""))+"\u00d7";
+    b.addEventListener("click",function(){ applySpeed(v); }); speedsWrap.appendChild(b); });
+  speedBtn.addEventListener("click",function(){ var i=SPEEDS.indexOf(speed); applySpeed(SPEEDS[(i+1)%SPEEDS.length]); });
+  applySpeed(speed);
+
+  /* settings menu */
+  var voiceMenu=document.getElementById("voiceMenu");
+  document.getElementById("voiceToggle").addEventListener("click",function(e){ e.stopPropagation(); voiceMenu.classList.toggle("open"); });
+  document.addEventListener("click",function(e){ if(!voiceMenu.contains(e.target)&&e.target.id!=="voiceToggle") voiceMenu.classList.remove("open"); });
+  document.getElementById("vol").addEventListener("input",function(){ audio.volume=parseFloat(this.value); });
+  document.getElementById("capToggle").addEventListener("change",function(){ showCaptions=this.checked;
+    if(!showCaptions) capEl.classList.remove("show"); else if(playing) buildCaption(activeIndex); });
+
+  var voiceSelect=document.getElementById("voiceSelect"), ttsRow=document.getElementById("ttsRow");
+  var PREF=["Samantha","Serena","Allison","Ava","Daniel","Karen","Moira","Google UK English Female","Google US English","Microsoft Aria"];
+  function pickDefault(list){ for(var i=0;i<PREF.length;i++)for(var j=0;j<list.length;j++) if(list[j].name.indexOf(PREF[i])!==-1) return list[j];
+    for(var k=0;k<list.length;k++) if(/^en/i.test(list[k].lang)) return list[k]; return list[0]||null; }
+  function loadVoices(){ if(!ttsOK)return; voices=synth.getVoices().filter(function(v){return /^en/i.test(v.lang);}); if(!voices.length)voices=synth.getVoices();
+    voiceSelect.innerHTML=""; voices.forEach(function(v,i){ var o=document.createElement("option"); o.value=i; o.textContent=v.name; voiceSelect.appendChild(o); });
+    if(!chosenVoice)chosenVoice=pickDefault(voices); if(chosenVoice){ var ci=voices.indexOf(chosenVoice); if(ci>=0)voiceSelect.value=ci; } }
+  voiceSelect.addEventListener("change",function(){ chosenVoice=voices[parseInt(voiceSelect.value,10)]||chosenVoice; });
+  if(ttsOK){ loadVoices(); if(synth.onvoiceschanged!==undefined) synth.onvoiceschanged=loadVoices;
+    setInterval(function(){ if(playing&&!paused&&mode==="tts"&&synth.speaking){ synth.pause(); synth.resume(); } },12000); }
+  if(!HAS_AUDIO){ ttsRow.style.display="flex"; modeFlag.textContent=ttsOK?"Browser voice":"unavailable"; }
+  else { modeFlag.textContent="ElevenLabs"; }
+
+  addEventListener("beforeunload",function(){ if(ttsOK) synth.cancel(); try{audio.pause();}catch(e){} });
+  document.addEventListener("keydown",function(e){ if(e.code==="Space"&&player.classList.contains("show")&&e.target===document.body){ e.preventDefault(); playBtn.click(); } });
+  setActive(0,false);
+})();
+</script>
+</body>
+</html>

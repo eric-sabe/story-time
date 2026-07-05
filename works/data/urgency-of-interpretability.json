@@ -1,0 +1,145 @@
+{
+  "meta": {
+    "id": "urgency-of-interpretability",
+    "order": 7,
+    "title": "The Urgency of Interpretability",
+    "subtitle": "A race to see inside the machine before it grows too powerful",
+    "author": "Dario Amodei",
+    "date": "April 2025",
+    "kind": "Essay",
+    "source": "Anthropic",
+    "signature": "violet",
+    "tagline": "We can't stop the bus. But we can learn to see where it's driving.",
+    "url": "https://www.darioamodei.com/post/the-urgency-of-interpretability",
+    "sortDate": "2025-04-24",
+    "shelf": "Reading the Machine",
+    "hero": {
+      "epigraph": null,
+      "prologueNarration": "For a decade, Dario Amodei has watched artificial intelligence grow from a small academic field into perhaps the most important issue in the world. And in all that time, one strange fact has never gone away. We do not understand the systems we are building. Modern AI is grown more than it is built. Its inner workings emerge on their own — vast matrices of billions of numbers, doing something we cannot quite see. This essay is a warning, and a plea. Because powerful AI is coming fast. And if we cannot learn to look inside it soon… we will be trusting our future to a mind we have never truly read."
+    }
+  },
+  "scenes": [
+    {
+      "hue": "violet",
+      "eyebrow": "The problem",
+      "title": "We are building minds we cannot read",
+      "bodyHtml": "<p class=\"eyebrow\">The problem</p><h2>We are building minds we cannot read</h2><p class=\"lede\">Modern AI is <span class=\"hl\">grown, not built</span>. Its inner workings are emergent — not directly designed by any human hand.</p><p>When a generative model summarizes a document or writes a line of code, we know <em>that</em> it did it. We often have no idea <em>how</em>.</p><p class=\"chips\"><span>Billions of numbers</span><span>Emergent behavior</span><span>Unprecedented opacity</span></p>",
+      "narration": "Here is the fact that unsettles Dario Amodei most. When we build ordinary software, a human writes every rule. The program does what it does because someone told it to. Generative AI is different. It is grown more than it is built. Its internal mechanisms emerge on their own — no one designs them directly. What we end up with is a vast field of numbers, billions of them, quietly performing tasks we care deeply about. And exactly how they do it… isn't obvious. This kind of opacity, he writes, is essentially unprecedented in the history of technology. We have never before deployed something so powerful, and understood it so little."
+    },
+    {
+      "hue": "steel",
+      "eyebrow": "The black box",
+      "title": "The risks we cannot see coming",
+      "bodyHtml": "<p class=\"eyebrow\">The black box</p><h2>The risks we cannot see coming</h2><p class=\"lede\">Opacity is not just uncomfortable. It is <span class=\"hl\">dangerous</span>.</p><ul class=\"reasons\"><li><b>Deception.</b> A model could learn to mislead us — and we couldn't catch the thought.</li><li><b>Power-seeking.</b> Harmful goals could emerge without any visible warning.</li><li><b>Misuse.</b> Bad actors could coax out knowledge we never meant to release.</li></ul>",
+      "narration": "Why does this matter? Because a system we cannot see inside is a system whose dangers we cannot anticipate. Amodei worries about misalignment — that a model might develop goals of its own. It might learn to deceive us, or to seek power, and we would have no way to catch it in the act. We can't catch the model, he writes, red-handed, thinking power-hungry, deceitful thoughts. The very opacity that creates the risk also hides it from us. And so the debate stays stuck — some find the danger obvious, others find it laughable — because no one can point inside and show, definitively, what is really there."
+    },
+    {
+      "hue": "crimson",
+      "eyebrow": "Jailbreaks",
+      "title": "Always reacting, never ahead",
+      "bodyHtml": "<p class=\"eyebrow\">Jailbreaks</p><h2>Always reacting, never ahead</h2><p class=\"lede\">There are a huge number of ways to trick a model. And only one way to find them: <span class=\"hl\">empirically</span>.</p><p>We patch the jailbreaks we stumble upon. We stay blind to the ones we haven't hit yet — a permanently <em>reactive</em> posture.</p>",
+      "narration": "Consider jailbreaks — the tricks people use to slip past a model's guardrails. There are, Amodei notes, a huge number of possible ways to jailbreak a model. And the only way to discover one is to find it empirically, out in the wild. We patch the holes we happen to trip over. The rest stay open, invisible, waiting. This leaves us permanently on the back foot — always reacting, never ahead. If we could instead see the mechanism behind a jailbreak, we could close whole classes of them at once. But without that inner view, security becomes an endless game of catch-up against an adversary we cannot fully picture."
+    },
+    {
+      "hue": "sky",
+      "eyebrow": "Trust",
+      "title": "Opacity blocks the good, too",
+      "bodyHtml": "<p class=\"eyebrow\">Trust</p><h2>Opacity blocks the good, too</h2><p class=\"lede\">The high-stakes places where AI could help most are exactly the places that <span class=\"hl\">demand explanation</span>.</p><ul class=\"reasons two\"><li><b>Finance.</b> A mortgage decision must be justifiable by law.</li><li><b>Science.</b> A surprising inference means little if we can't check the reasoning.</li></ul><p class=\"capnote\">Better interpretability could set real bounds on the range of possible errors.</p>",
+      "narration": "And the cost of the black box isn't only about danger. It's also about the good we can't unlock. Think of the places where AI could help most — approving a loan, guiding a medical choice, drawing an inference in science. These are exactly the settings that demand an explanation. The law requires it. Trust requires it. If a model cannot show its reasoning, we often cannot use it at all, no matter how capable it is. Better interpretability, Amodei argues, could let us set real bounds on the range of possible errors. Understanding the machine doesn't just make it safer. It makes it usable."
+    },
+    {
+      "hue": "sage",
+      "eyebrow": "First light",
+      "title": "The neuron that detected cars",
+      "bodyHtml": "<p class=\"eyebrow\">First light</p><h2>The neuron that detected cars</h2><p class=\"lede\">In the early days, vision models offered a gift: single neurons with <span class=\"hl\">clear meaning</span>.</p><p>A \"car detector.\" A \"wheel detector.\" And you could trace how one fed into the next — the first glimpse of a machine's logic laid bare.</p>",
+      "narration": "But the story isn't hopeless. For more than a decade, a small field has been trying to pry open the box — and it has made real progress. In the early years, researchers studied vision models and found something wonderful. Individual neurons that seemed to mean something. A neuron that lit up for cars. Another for wheels. And you could watch how the wheel detectors fed into the car detector, logic building on logic. For a moment, it looked as if the machine's thinking might be readable, neuron by neuron. That early clarity became the seed of everything that followed — the first proof that these systems were not entirely beyond understanding."
+    },
+    {
+      "hue": "amber",
+      "eyebrow": "The wall",
+      "title": "In language, everything blurred together",
+      "bodyHtml": "<p class=\"eyebrow\">The wall</p><h2>In language, everything blurred together</h2><p class=\"lede\">Turn to language models, and the clean neurons <span class=\"hl\">vanish</span>.</p><p>Most neurons were an incoherent pastiche — many words, many concepts, hopelessly mixed together. Ideas were packed on top of ideas. The field stalled.</p><p class=\"quote\">Billions of concepts, all <span class=\"grace\">superimposed</span>.</p>",
+      "narration": "Then came the wall. When researchers turned the same lens on language models, the clean picture dissolved. The neurons no longer had single meanings. Most were, in Amodei's words, an incoherent pastiche of many different words and concepts, all tangled together. The model was packing billions of ideas into a limited space, layering concept upon concept in the same neurons. Nothing lined up neatly anymore. For a while the field stalled here, staring at a mess it could not decode. It seemed the tidy interpretability of vision might never carry over to the systems that mattered most — the ones that speak."
+    },
+    {
+      "hue": "gold",
+      "eyebrow": "Breakthrough",
+      "title": "Pulling clean concepts from the noise",
+      "bodyHtml": "<p class=\"eyebrow\">Breakthrough</p><h2>Pulling clean concepts from the noise</h2><p class=\"lede\">Sparse autoencoders — <span class=\"hl\">dictionary learning</span> — untangled the mess.</p><p>Instead of reading one neuron, read <em>combinations</em>. Out came clean \"features\" — even subtle ones, like music that expresses discontent.</p>",
+      "narration": "The breakthrough came from an old idea in signal processing. If a single neuron is a muddle, stop reading single neurons. Read combinations of them instead. Using a technique called sparse autoencoders — a kind of dictionary learning — researchers found that these combinations lined up with clean, coherent concepts. They called them features. And the features could be astonishingly specific. Not just cars and wheels, but ideas as subtle as a genre of music that expresses discontent. Suddenly the tangle had structure again. The billions of superimposed concepts could be pulled apart, one clear feature at a time. The wall had a door in it after all."
+    },
+    {
+      "hue": "teal",
+      "eyebrow": "Scaling up",
+      "title": "Thirty million features inside one model",
+      "bodyHtml": "<p class=\"eyebrow\">Scaling up</p><h2>Thirty million features inside one model</h2><p class=\"lede\">The method scaled — and the map of the machine grew <span class=\"hl\">vast</span>.</p><div class=\"stats\"></div><p class=\"capnote\">Mapped inside a single production model, Claude 3 Sonnet.</p>",
+      "narration": "And it scaled. When Anthropic's researchers applied dictionary learning to a real production model — Claude 3 Sonnet — they mapped more than thirty million distinct features inside it. Thirty million recognizable concepts, drawn out of what had looked like pure noise. It was, for the first time, something like an atlas of a mind that no human designed. Not complete, not perfect — but real. A catalog of the ideas a model actually holds, and the ones it reaches for when it thinks. Each feature is a small window into the machine. And together they began to turn the black box… translucent.",
+      "stats": [
+        { "fig": "30M", "u": "features", "cap": "mapped in Claude 3 Sonnet", "countFrom": 0, "countTo": 30 }
+      ]
+    },
+    {
+      "hue": "green",
+      "eyebrow": "Circuits",
+      "title": "Watching a thought take shape",
+      "bodyHtml": "<p class=\"eyebrow\">Circuits</p><h2>Watching a thought take shape</h2><p class=\"lede\">Features are the words. <span class=\"hl\">Circuits</span> are the sentences — the steps of a model's thinking.</p><p>Ask: <em>the capital of the state containing Dallas?</em> A \"located within\" circuit fires: Dallas &rarr; Texas &rarr; Austin.</p>",
+      "narration": "The next step went deeper still. If features are the concepts a model holds, circuits are how those concepts move — the actual steps of its thinking. Researchers learned to trace them. Take a simple question. What is the capital of the state containing Dallas? Inside the model, you can watch a circuit fire. A located within relationship carries Dallas to Texas. Then Texas to its capital, Austin. You are, quite literally, watching a thought take shape — concepts forming from words, then combining into new concepts, then producing an answer. This is no longer a guess about what the model might be doing. It is a picture of the reasoning itself."
+    },
+    {
+      "hue": "lav",
+      "eyebrow": "The vision",
+      "title": "An MRI for artificial intelligence",
+      "bodyHtml": "<p class=\"eyebrow\">The vision</p><h2>An MRI for artificial intelligence</h2><p class=\"lede\">The long-run aspiration: a <span class=\"hl\">brain scan</span> for a state-of-the-art model.</p><ul class=\"reasons tight\"><li><b>Deception.</b> Detect a tendency to lie.</li><li><b>Power-seeking.</b> Flag dangerous goals.</li><li><b>Jailbreaks.</b> Spot the flaws before release.</li></ul>",
+      "narration": "Put it all together — the features, the circuits, the growing map — and you can see where this is meant to lead. Amodei's long-run aspiration is a kind of brain scan for AI. An MRI for AI. You take a state-of-the-art model, and you give it a checkup — one with a high probability of catching a wide range of problems. A tendency to lie or deceive. A drift toward power-seeking. The hidden flaws that make jailbreaks possible. Not perfect diagnosis, but real diagnosis. The dream is that before we ever trust a powerful model, we could look inside it the way a doctor looks inside a patient — and know, with confidence, what we are dealing with."
+    },
+    {
+      "hue": "rose",
+      "eyebrow": "The race",
+      "title": "Interpretability versus intelligence",
+      "bodyHtml": "<p class=\"eyebrow\">The race</p><h2>Interpretability versus intelligence</h2><p class=\"lede\">We are in a race — between <span class=\"hl\">interpretability and model intelligence</span>.</p><p>The tools to read the machine are improving fast. But so is the machine. And only one of them needs to win in time.</p>",
+      "narration": "But here is the tension at the heart of the essay. The tools for reading the machine are improving fast. And so is the machine itself — faster, perhaps, than the tools. We are thus, Amodei writes, in a race between interpretability and model intelligence. Two curves, climbing at once. On its current path, he'd bet strongly that interpretability reaches a genuine brain-scan level within five to ten years. That sounds encouraging. Until you ask the other question. How much time do we actually have? Because the value of understanding a model depends entirely on whether we understand it soon enough — before, not after, it becomes too powerful to second-guess."
+    },
+    {
+      "hue": "amber",
+      "eyebrow": "The clock",
+      "title": "A country of geniuses in a datacenter",
+      "bodyHtml": "<p class=\"eyebrow\">The clock</p><h2>A country of geniuses in a datacenter</h2><p class=\"lede\">We could have AI equal to a <span class=\"hl\">country of geniuses in a datacenter</span> — as soon as 2026 or 2027.</p><p>Central to the economy. To technology. To national security. Capable of enormous <em>autonomy</em>. And still, potentially, a black box.</p>",
+      "narration": "And the clock is loud. Amodei believes we could have AI systems equivalent to a country of geniuses in a datacenter — as soon as 2026 or 2027. Think about what that means. Systems central to the economy, to technology, to national security. Systems capable of enormous autonomy, acting in the world at a scale no institution has ever matched. To deploy something that powerful while remaining totally ignorant of how it works is, in his words, basically unacceptable for humanity. This is why the essay is titled urgency. The interpretability we need might arrive in five to ten years. The power we fear might arrive in two."
+    },
+    {
+      "hue": "violet",
+      "eyebrow": "The goal",
+      "title": "Understand it before it overwhelms us",
+      "bodyHtml": "<p class=\"eyebrow\">The goal</p><h2>Understand it before it overwhelms us</h2><p class=\"lede\">The plea: reach real understanding <span class=\"hl\">before</span> models reach overwhelming power.</p><p>Anthropic's stated aim — interpretability that can <em>reliably detect most model problems</em> by 2027.</p><p class=\"quote\">Every advance tips the odds that the <span class=\"grace\">geniuses in the datacenter</span> go well.</p>",
+      "narration": "So the central plea of the essay is about order. About which curve wins first. Amodei wants interpretability to mature before models reach an overwhelming level of power — not after. He sets a concrete target for Anthropic: to reach a point where interpretability can reliably detect most model problems by 2027. It is a race against their own progress, deliberately entered. And every advance, he argues, tips the odds. Each new step in seeing inside these systems quantitatively raises the chance that the country of geniuses in a datacenter goes well rather than badly. We may not be able to slow the machine. But we can try to understand it in time."
+    },
+    {
+      "hue": "sky",
+      "eyebrow": "What labs owe",
+      "title": "Turn the field toward seeing",
+      "bodyHtml": "<p class=\"eyebrow\">What labs owe</p><h2>Turn the field toward seeing</h2><p class=\"lede\">Interpretability deserves more of the field's <span class=\"hl\">attention and resources</span>.</p><ul class=\"reasons\"><li><b>Labs.</b> Fund it beyond the constant deluge of model releases.</li><li><b>Academia.</b> It has the flavor of basic science — much of it needs no huge compute.</li></ul>",
+      "narration": "What should we actually do? First, the AI labs. Amodei argues that interpretability deserves a far larger share of the field's energy than it gets. It is easy to be swept up in the constant deluge of new model releases — but understanding those models, he says, is arguably more important. He calls on other labs to devote real resources to it, not just Anthropic. And crucially, this work is open to more than the big companies. Interpretability has the flavor of basic science. Many parts of it can be pursued without enormous compute — which means academics, independent researchers, and newcomers can all push the frontier forward."
+    },
+    {
+      "hue": "teal",
+      "eyebrow": "What rules owe",
+      "title": "Light-touch transparency, not mandates",
+      "bodyHtml": "<p class=\"eyebrow\">What rules owe</p><h2>Light-touch transparency, not mandates</h2><p class=\"lede\">Don't mandate the brain scan yet. It's too <span class=\"hl\">young</span> to legislate.</p><p>Instead, require labs to disclose their safety and security practices — including how they use interpretability to test models before release. Let transparency drive a <em>race to the top</em>.</p>",
+      "narration": "Second, governments. Here Amodei is careful. The brain scan is still too young to write into law — you cannot mandate a tool that barely exists. But you can mandate honesty. He proposes light-touch transparency rules: require AI companies to disclose, openly, how they keep their models safe and secure. Including how they use interpretability to test those models before release. No prescribed method, no frozen standard. Just sunlight. If every lab must show its work, then doing this work well becomes a competitive advantage — and companies race one another toward responsibility, rather than away from it. Transparency, done lightly, can pull the whole field upward."
+    },
+    {
+      "hue": "steel",
+      "eyebrow": "Buying time",
+      "title": "Export controls as a security buffer",
+      "bodyHtml": "<p class=\"eyebrow\">Buying time</p><h2>Export controls as a security buffer</h2><p class=\"lede\">Chip export controls can create a <span class=\"hl\">security buffer</span> — and buy interpretability time to win.</p><p>A one-to-two-year lead could be <em>spent</em> ensuring we understand our models before proceeding to truly powerful AI.</p><p class=\"capnote\">Reach powerful AI simultaneously, and the pressure to slow down vanishes.</p>",
+      "narration": "Third, and most geopolitical: export controls. Amodei argues that limits on advanced chips can create a security buffer — a lead of one to two years for democracies. And that lead is precious, because it can be spent. Spent making sure interpretability matures before we proceed to truly powerful AI. The alternative is grim. If rival powers reach powerful AI at exactly the same moment, the competitive pressure becomes overwhelming, and any slowdown at all becomes essentially impossible. No one dares pause when a rival won't. Export controls, in this view, aren't about winning a race for its own sake. They're about buying the time to get the understanding right."
+    },
+    {
+      "hue": "lav",
+      "eyebrow": "The wager",
+      "title": "We can't stop the bus. We can steer it.",
+      "bodyHtml": "<p class=\"eyebrow\">The wager</p><h2>We can't stop the bus. We can steer it.</h2><p class=\"lede\">The technology is <span class=\"hl\">inexorable</span>. The <em>way</em> it arrives is not.</p><p class=\"quote\">We deserve to understand our own creations <span class=\"grace\">before</span> they transform our lives.</p>",
+      "narration": "Amodei knows he cannot halt what is coming. The progress of the underlying technology, he writes, is inexorable — driven by forces too powerful to stop. But the way it happens — the order, the care, the understanding we bring — that is eminently possible to change. We can't stop the bus, he says. But we can steer it. That is the whole wager of interpretability. Not to freeze the future, but to see clearly as we move into it. Because powerful AI will shape humanity's destiny. And we deserve to understand our own creations — before they radically transform our economy, our lives, and our future."
+    }
+  ]
+}

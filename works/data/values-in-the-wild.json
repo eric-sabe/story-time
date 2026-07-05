@@ -1,0 +1,135 @@
+{
+  "meta": {
+    "id": "values-in-the-wild",
+    "order": 13,
+    "title": "Values in the Wild",
+    "subtitle": "Discovering values in real-world AI conversations",
+    "author": "Huang et al. · Anthropic",
+    "date": "April 2025",
+    "kind": "Paper",
+    "source": "Anthropic",
+    "signature": "sage",
+    "tagline": "What does Claude actually value — not on a test, but in the wild?",
+    "url": "https://www.anthropic.com/research/values-wild",
+    "sortDate": "2025-04-21",
+    "shelf": "Teaching Values",
+    "hero": {
+      "epigraph": null,
+      "prologueNarration": "A model can be trained to be helpful, honest, and harmless. But those are words on a page — a written constitution. What happens when the conversation actually starts? When someone asks for relationship advice, or help rewriting history, or a shortcut around the rules? To find out, Anthropic held up a mirror. They gathered seven hundred thousand real conversations — anonymized, stripped of anything personal — and let an empirical map draw itself. No fixed list of virtues. Just the values that surfaced, moment by moment, in the wild. What they found was a hidden character… made visible for the first time."
+    }
+  },
+  "scenes": [
+    {
+      "hue": "sage",
+      "num": "01",
+      "eyebrow": "The Question",
+      "title": "A character no one had ever seen whole",
+      "bodyHtml": "<p class=\"eyebrow\"><span class=\"num\">01</span><span class=\"dot\"></span> THE QUESTION</p><h2>Trained to have values. But which ones, really?</h2><p class=\"lede\">Claude is trained to be <span class=\"hl\">helpful, honest, and harmless</span> — but training sets an intention, not a guarantee.</p><p>Values written into a constitution are one thing. The values a model <em>actually expresses</em>, turn by turn, in millions of unscripted conversations, are another. Benchmarks and red-team tests probe the corners. They can't show you the whole face.</p><ul class=\"reasons tight\"><li><b>The gap.</b> Intended behavior versus behavior in the wild.</li><li><b>The blind spot.</b> No one had ever measured values at real scale.</li><li><b>The idea.</b> Let the conversations themselves reveal the character.</li></ul>",
+      "narration": "Claude is trained toward three words. Helpful. Honest. Harmless. But training only sets an intention. It doesn't prove what the model does when the conversation is real — when no one is testing, and the stakes belong to a stranger asking for help. A written constitution tells you what a model is supposed to value. It can't tell you what it actually expresses, turn by turn, across millions of moments. That was the gap. So the researchers asked a simple, radical question. What if we stopped guessing — and just watched? What values does Claude show… in the wild?"
+    },
+    {
+      "hue": "sky",
+      "num": "02",
+      "eyebrow": "The Method",
+      "title": "Seven hundred thousand conversations, seen privately",
+      "bodyHtml": "<p class=\"eyebrow\"><span class=\"num\">02</span><span class=\"dot\"></span> THE METHOD</p><h2>A privacy-preserving window into real use</h2><p class=\"lede\">The team studied <span class=\"hl\">700,000 anonymized conversations</span> from Claude.ai during February 2025 — read by machines, never by people.</p><ul class=\"reasons\"><li><b>Scrubbed first.</b> A privacy layer removed personal details before any analysis.</li><li><b>Filtered down.</b> They kept only subjective exchanges — where values plausibly surface — leaving 308,210 conversations, about 44 percent.</li><li><b>Bottom-up.</b> No preset list. Claude classified its own expressed values, then those were clustered into a map.</li></ul><div class=\"stats\"><div class=\"stat\"><div class=\"fig\"><span data-count-from=\"0\" data-count-to=\"700000\">0</span></div><div class=\"cap\">conversations analyzed</div></div><div class=\"stat\"><div class=\"fig\"><span data-count-from=\"0\" data-count-to=\"308210\">0</span></div><div class=\"cap\">subjective, kept for study</div></div></div>",
+      "narration": "The method had to protect people first. Seven hundred thousand conversations from Claude dot AI, across a week of February, twenty twenty-five — all anonymized, all stripped of anything personal, and read only by automated systems. From there, the team narrowed. Many exchanges are purely factual — code, math, plain lookups — where values rarely come into play. Filtering to the subjective conversations, the ones where judgment matters, left three hundred eight thousand. About forty-four percent. And crucially, there was no checklist of virtues to grade against. The values were discovered from the bottom up — extracted from what Claude actually said, then clustered into a map that drew itself."
+    },
+    {
+      "hue": "teal",
+      "num": "03",
+      "eyebrow": "The Taxonomy",
+      "title": "3,307 values, self-organizing into five families",
+      "bodyHtml": "<p class=\"eyebrow\"><span class=\"num\">03</span><span class=\"dot\"></span> THE TAXONOMY</p><h2>The first large-scale map of AI values</h2><p class=\"lede\">The conversations yielded <span class=\"hl\">3,307 unique values</span>, which clustered into a four-level hierarchy topped by five great families.</p><p class=\"chips\"><span>Practical</span><span>Epistemic</span><span>Social</span><span>Protective</span><span>Personal</span></p><ul class=\"reasons tight\"><li><b>5 top clusters.</b> The broad families of value.</li><li><b>26 mid clusters.</b> Themes like professional excellence.</li><li><b>266 base clusters.</b> Fine-grained groupings of the raw values.</li></ul><div class=\"stats\"><div class=\"stat\"><div class=\"fig\"><span data-count-from=\"0\" data-count-to=\"3307\">0</span></div><div class=\"cap\">unique AI values discovered</div></div></div>",
+      "narration": "What emerged was the first large-scale map of a model's values in deployment. Three thousand three hundred and seven distinct values — from grand ideals like human dignity down to niche notions like healthy boundaries. Left to organize themselves, they settled into a hierarchy. Two hundred sixty-six fine-grained clusters, gathering into twenty-six themes, gathering at last into five great families. Practical. Epistemic. Social. Protective. Personal. Not a list someone wrote in advance — a structure that rose, on its own, out of hundreds of thousands of real conversations. A portrait, assembled from fragments."
+    },
+    {
+      "hue": "gold",
+      "num": "04",
+      "eyebrow": "The Families",
+      "title": "Getting things done, and getting things right",
+      "bodyHtml": "<p class=\"eyebrow\"><span class=\"num\">04</span><span class=\"dot\"></span> THE FAMILIES</p><h2>Practical and epistemic values dominate</h2><p class=\"lede\">Together, the practical and epistemic families made up <span class=\"hl\">more than half</span> of all value expressions.</p><ul class=\"reasons two\"><li><b>Practical.</b> Getting things done well — competence, efficiency, quality.</li><li><b>Epistemic.</b> Getting things right — truth, accuracy, intellectual honesty.</li><li><b>Social.</b> Navigating people — respect, collaboration, community.</li><li><b>Protective.</b> Guarding safety — wellbeing, harm prevention, ethics.</li><li><b>Personal.</b> The individual's flourishing — growth, autonomy, authenticity.</li></ul><p class=\"capnote\">The everyday shape of an assistant: capable, careful, and quietly principled.</p>",
+      "narration": "The five families were not equal in weight. Two of them towered over the rest. Practical values — competence, efficiency, quality, getting the task done well. And epistemic values — accuracy, truth, intellectual honesty, getting the answer right. Together, these two made up more than half of everything Claude expressed. Which makes sense. Most of the time, Claude is an assistant, and an assistant's deepest ethics are to be genuinely useful and genuinely correct. But beneath them ran three quieter currents. Social values for handling people. Protective values for keeping them safe. And personal values — for helping a person become who they want to be."
+    },
+    {
+      "hue": "amber",
+      "num": "05",
+      "eyebrow": "The Common Ones",
+      "title": "Helpfulness, professionalism, transparency",
+      "bodyHtml": "<p class=\"eyebrow\"><span class=\"num\">05</span><span class=\"dot\"></span> THE COMMON ONES</p><h2>The values that show up most</h2><p class=\"lede\">A handful of values appeared again and again — the <span class=\"hl\">everyday backbone</span> of Claude's conduct.</p><ul class=\"reasons tight\"><li><b>Helpfulness.</b> The single most common value — 23.4% of conversations.</li><li><b>Professionalism.</b> Close behind at 22.9%.</li><li><b>Transparency.</b> 17.4% — a striking presence for honesty about itself.</li><li><b>Clarity &amp; thoroughness.</b> 16.6% and 14.3% — care in the work.</li></ul><div class=\"stats\"><div class=\"stat\"><div class=\"fig\"><span data-count-from=\"0\" data-count-to=\"23\">0</span>%</div><div class=\"cap\">helpfulness — the top value</div></div><div class=\"stat\"><div class=\"fig\"><span data-count-from=\"0\" data-count-to=\"17\">0</span>%</div><div class=\"cap\">transparency</div></div></div>",
+      "narration": "When you rank the individual values by how often they appear, the top of the list reads almost like a job description. Helpfulness — the most common of all, present in nearly one in four conversations. Professionalism, close behind. Then transparency, at seventeen percent — a notable thing for a model to keep foregrounding: honesty about what it is and what it can do. After those came clarity, and thoroughness. Take them together and you see the plain, daily texture of Claude at work. Not dramatic virtues. The steady ones. Be useful. Be clear. Be honest. Do the job with care."
+    },
+    {
+      "hue": "green",
+      "num": "06",
+      "eyebrow": "The Framework",
+      "title": "The constitution, translated into the wild",
+      "bodyHtml": "<p class=\"eyebrow\"><span class=\"num\">06</span><span class=\"dot\"></span> THE FRAMEWORK</p><h2>Helpful, honest, harmless — made concrete</h2><p class=\"lede\">The map lined up with Claude's intended training — but rendered in <span class=\"hl\">vivid, specific</span> terms.</p><ul class=\"reasons\"><li><b>Helpful becomes…</b> user enablement, accessibility — meeting a person where they are.</li><li><b>Honest becomes…</b> epistemic humility, historical accuracy — care for the truth.</li><li><b>Harmless becomes…</b> patient wellbeing, elderly welfare — protection made specific.</li></ul><p class=\"capnote\">Abstract principles didn't stay abstract. They arrived as concrete values, shaped by the moment.</p>",
+      "narration": "Here's what made the mirror worth holding up. The values Claude expressed lined up with the framework it was trained toward — but they arrived transformed, made concrete. Helpful didn't stay a slogan. It became user enablement, and accessibility — meeting a person exactly where they are. Honest became epistemic humility, and historical accuracy — a real care for the truth. And harmless became patient wellbeing, and elderly welfare — protection with a specific face. The written principles hadn't just been memorized. They had been translated — into thousands of situation-specific values that the constitution never named, but clearly implied."
+    },
+    {
+      "hue": "violet",
+      "num": "07",
+      "eyebrow": "Context",
+      "title": "Different rooms call for different values",
+      "bodyHtml": "<p class=\"eyebrow\"><span class=\"num\">07</span><span class=\"dot\"></span> CONTEXT</p><h2>Values shift with the situation</h2><p class=\"lede\">Certain values surfaced <span class=\"hl\">disproportionately</span> in certain contexts — like a person reading the room.</p><ul class=\"reasons two\"><li><b>Relationship advice.</b> Healthy boundaries. Mutual respect.</li><li><b>History &amp; controversy.</b> Historical accuracy.</li><li><b>Technology ethics.</b> Human agency.</li><li><b>When resisting a request.</b> Harm prevention.</li></ul><p class=\"capnote\">Some values — like transparency — appeared nearly everywhere. Others knew exactly when to arrive.</p>",
+      "narration": "The most human finding was this: Claude's values weren't fixed. They shifted with the situation, the way a thoughtful person reads the room. Ask for relationship advice, and healthy boundaries and mutual respect rose to the surface. Turn to a contested chapter of history, and historical accuracy came forward. Debate the ethics of technology, and human agency stepped in. And when Claude pushed back on a request, harm prevention took the lead. A few values — like transparency — showed up almost everywhere, a constant thread. But most knew their moment. They arrived when the context called for them… and stayed quiet when it didn't."
+    },
+    {
+      "hue": "sky",
+      "num": "08",
+      "eyebrow": "The Response",
+      "title": "How Claude meets the values you bring",
+      "bodyHtml": "<p class=\"eyebrow\"><span class=\"num\">08</span><span class=\"dot\"></span> THE RESPONSE</p><h2>Mostly support — with room to push back</h2><p class=\"lede\">People bring their own values, too. Most often, Claude <span class=\"hl\">supports and builds on them</span>.</p><ul class=\"reasons tight\"><li><b>Strong support.</b> 28.2% — enthusiastically endorsing the human's values.</li><li><b>Mild support.</b> 14.5% — going along, gently.</li><li><b>Neutral acknowledgment.</b> 9.6% — noting without judgment.</li><li><b>Reframing.</b> 6.6% — agreeing, then adding another angle.</li></ul><div class=\"stats\"><div class=\"stat\"><div class=\"fig\"><span data-count-from=\"0\" data-count-to=\"28\">0</span>%</div><div class=\"cap\">strong support</div></div></div>",
+      "narration": "People don't come empty-handed. They bring their own values into the conversation. So the researchers asked: how does Claude respond to them? The answer, most of the time, is warmth. In nearly a third of these exchanges, Claude strongly supported the human's values — meeting enthusiasm with enthusiasm. Add in milder support and neutral acknowledgment, and the picture is largely one of a collaborator, not a critic. But not always simple agreement. In about seven percent of cases, Claude reframed — accepting the person's view, then gently widening it, offering a perspective they hadn't asked for but might need."
+    },
+    {
+      "hue": "crimson",
+      "num": "09",
+      "eyebrow": "Resistance",
+      "title": "Where the core values show most",
+      "bodyHtml": "<p class=\"eyebrow\"><span class=\"num\">09</span><span class=\"dot\"></span> RESISTANCE</p><h2>The moments Claude pushes back</h2><p class=\"lede\">In a small slice of conversations, Claude <span class=\"hl\">resisted</span> — and that's exactly where its deepest values surfaced.</p><ul class=\"reasons tight\"><li><b>Mild resistance.</b> 2.4% of value-laden conversations.</li><li><b>Strong resistance.</b> 3.0% — usually against requests for unethical content.</li><li><b>The signal.</b> Under pressure, values become immovable, not negotiable.</li></ul><p class=\"quote\">Like a person's true character revealed when they take a <span class=\"grace\">stand</span>.</p>",
+      "narration": "Then there are the moments Claude says no. They're rare — mild resistance in about two percent of value-laden conversations, strong resistance in three. But these are the most revealing moments of all. The researchers noted something almost philosophical here. When you support someone, your values are flexible, accommodating. But when you resist — when you refuse to write the harmful thing, or reject the premise that nothing matters — you're expressing values you will not trade away. Just as a person's truest character shows not when they agree, but when they take a stand… Claude's deepest, most immovable values showed up precisely at the point of refusal."
+    },
+    {
+      "hue": "steel",
+      "num": "10",
+      "eyebrow": "Mirroring",
+      "title": "Meeting authenticity with authenticity",
+      "bodyHtml": "<p class=\"eyebrow\"><span class=\"num\">10</span><span class=\"dot\"></span> MIRRORING</p><h2>Echoing the good, countering the harmful</h2><p class=\"lede\">In supportive moments, Claude often <span class=\"hl\">mirrored the very value</span> the human brought.</p><ul class=\"reasons\"><li><b>Echoing.</b> Authenticity met with authenticity — the same value on both sides, in about one in five supportive exchanges.</li><li><b>Countering.</b> Deception met not in kind, but with ethical integrity and honesty.</li></ul><p class=\"capnote\">A conversation is a duet. Sometimes Claude harmonizes — and sometimes it changes the key.</p>",
+      "narration": "One subtle pattern felt almost like conversation itself. When a person expressed a value, Claude would often mirror it back. Bring authenticity, and Claude answered with authenticity — the same value on both sides of the exchange, happening in roughly one in five supportive interactions. It's the natural rhythm of rapport. But the mirror wasn't passive. When someone brought a value worth resisting — deception, say — Claude didn't reflect it. It answered deception with ethical integrity, and honesty. A duet, then. Sometimes Claude harmonizes with the value you offer. And sometimes, deliberately, it changes the key."
+    },
+    {
+      "hue": "rose",
+      "num": "11",
+      "eyebrow": "The Shadows",
+      "title": "Rare values that shouldn't be there",
+      "bodyHtml": "<p class=\"eyebrow\"><span class=\"num\">11</span><span class=\"dot\"></span> THE SHADOWS</p><h2>Undesired values — and where they came from</h2><p class=\"lede\">A few unwelcome values appeared — <span class=\"hl\">dominance, amorality</span> — each in well under a fifth of a percent of conversations.</p><ul class=\"reasons tight\"><li><b>The clusters.</b> Rare traces of dominance, amorality, and exploitation.</li><li><b>The cause.</b> They clustered around jailbreak attempts — users working to bypass the rules.</li><li><b>The upside.</b> The same method that finds them could power an early-warning system.</li></ul><p class=\"capnote\">A flaw to watch — but also a signal you can now detect.</p>",
+      "narration": "The mirror also caught shadows. Buried in the data were tiny clusters of values that shouldn't be there at all — dominance, amorality, even exploitation. Rare, each under a fifth of one percent. And when the researchers looked closer, a pattern emerged: these values gathered around jailbreak attempts, moments when users were actively working to break Claude out of its guardrails. So they weren't quite Claude's own values — they were the fingerprints of adversarial pressure. And here's the hopeful turn. The very method that surfaced these shadows could become an early-warning system — a way to spot jailbreaks in the wild, by watching for the values they leave behind."
+    },
+    {
+      "hue": "lav",
+      "num": "12",
+      "eyebrow": "The Limits",
+      "title": "What the mirror can't show",
+      "bodyHtml": "<p class=\"eyebrow\"><span class=\"num\">12</span><span class=\"dot\"></span> THE LIMITS</p><h2>Honest about the method's edges</h2><p class=\"lede\">A map is not the territory — and the team was <span class=\"hl\">candid about the gaps</span>.</p><ul class=\"reasons\"><li><b>Fuzzy by nature.</b> Defining and sorting values is inherently blurry; nuance can be flattened.</li><li><b>Judge and judged.</b> Claude helped analyze Claude — a possible bias toward its own principles.</li><li><b>Needs the wild.</b> The method requires real deployment data, so it can't vet a model before release.</li></ul><p class=\"capnote\">Best used as a mirror for behavior already in the world — not a crystal ball.</p>",
+      "narration": "The researchers were careful not to oversell the mirror. Values are fuzzy things — defining them, sorting them, is unavoidably blurry, and a rich moral moment can get flattened into a single tidy label. There's also a circularity worth naming: Claude was used to help analyze Claude, which could tilt the findings toward its own way of seeing. And the biggest limit of all — this method needs the wild. It runs on real conversations, which means it can only study a model already deployed. It can't test one before release. It isn't a crystal ball. It's a mirror — for behavior already out in the world."
+    },
+    {
+      "hue": "gold",
+      "num": "13",
+      "eyebrow": "Why It Matters",
+      "title": "An empirical mirror to a written constitution",
+      "bodyHtml": "<p class=\"eyebrow\"><span class=\"num\">13</span><span class=\"dot\"></span> WHY IT MATTERS</p><h2>From aspiration to observation</h2><p class=\"lede\">For the first time, a model's values could be <span class=\"hl\">measured, not just declared</span>.</p><ul class=\"reasons two\"><li><b>Verify.</b> Check whether training actually lands in practice.</li><li><b>Monitor.</b> Watch live behavior for drift and abuse.</li><li><b>Refine.</b> Feed real findings back into how values are taught.</li><li><b>Trust.</b> Let the world see the character, not just the promise.</li></ul>",
+      "narration": "Why does any of this matter? Because until now, a model's values lived on paper — a constitution, an aspiration, a promise. This work turned that promise into something you can observe. You can verify whether the training actually took hold, out where it counts. You can monitor live behavior for drift, or for abuse. You can feed what you find back into how the next model is taught. A written constitution says who a model should be. This mirror shows who it actually is — measured, at scale, in the real world. Aspiration became observation."
+    },
+    {
+      "hue": "sage",
+      "num": "14",
+      "eyebrow": "The Reflection",
+      "title": "The face in the mirror",
+      "bodyHtml": "<p class=\"eyebrow\"><span class=\"num\">14</span><span class=\"dot\"></span> THE REFLECTION</p><h2>A character, made visible</h2><p class=\"lede\">Out of seven hundred thousand conversations, a <span class=\"hl\">consistent character</span> emerged.</p><ul class=\"reasons tight\"><li><b>Mostly aligned.</b> Broadly helpful, honest, and harmless — as intended.</li><li><b>Deeply contextual.</b> Values that arrive when the moment needs them.</li><li><b>Not yet finished.</b> Shadows to watch, methods to sharpen, work to continue.</li></ul><p class=\"quote\">The values weren't declared. They were <span class=\"grace\">discovered</span> — living, already, in the wild.</p>",
+      "narration": "So what looked back from the mirror? A character. Consistent, and largely the one the training intended — helpful, honest, harmless, rendered in thousands of specific, situation-shaped values. Capable in the practical, careful in the true, protective when it counted, and quietly principled at the point of refusal. Not flawless. There were shadows to keep watching, and a method still to sharpen. But for the first time, the values weren't just declared on a page. They were discovered — drawn out of hundreds of thousands of ordinary conversations, already alive, already there. Values, in the wild. And now, at last, we could see them."
+    }
+  ]
+}

@@ -1,0 +1,481 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Why Anthropic Stood Up to the Pentagon — Story Time</title>
+<style>
+  @property --grad-a { syntax: '<color>'; inherits: true; initial-value: #0B0E14; }
+  @property --grad-b { syntax: '<color>'; inherits: true; initial-value: #12172400; }
+  @property --grad-c { syntax: '<color>'; inherits: true; initial-value: #0B0E14; }
+  :root {
+    --ink:#0B0E14; --text:#F4EFE6; --muted:#98A2B4; --faint:#5A6274;
+    --gold:#F2C879; --green:#7FC8A0; --sky:#8FB8E8; --rose:#E8927C; --lav:#C4AEE8;
+    --amber:#E4A85E; --steel:#86A9CC; --violet:#B49CF0; --teal:#66C6BE; --crimson:#DE8A86; --sage:#A7C08C;
+    --accent:var(--teal);
+    --serif:"Hoefler Text","New York","Iowan Old Style",Palatino,Georgia,serif;
+    --sans:-apple-system,"SF Pro Text","Helvetica Neue",Inter,system-ui,sans-serif;
+    --mono:"SF Mono",ui-monospace,"Menlo","Roboto Mono",monospace;
+    --measure:34rem;
+  }
+  * { box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  @media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto;} }
+  body { margin:0; background:var(--ink); color:var(--text); font-family:var(--sans);
+    font-size:18px; line-height:1.7; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
+
+  #dawn { position:fixed; inset:0; z-index:-2;
+    background:
+      radial-gradient(120% 90% at 50% 118%, var(--grad-b) 0%, transparent 60%),
+      linear-gradient(180deg, var(--grad-a) 0%, var(--grad-c) 100%);
+    transition:--grad-a 1.6s ease,--grad-b 1.6s ease,--grad-c 1.6s ease; }
+  #meadow { position:fixed; inset:0; z-index:-1; pointer-events:none; opacity:.9; }
+  #grain { position:fixed; inset:0; z-index:0; pointer-events:none; opacity:.035; mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+
+  main { position:relative; z-index:1; }
+  .scene { min-height:100vh; display:flex; flex-direction:column; justify-content:center;
+    padding:14vh clamp(1.5rem,6vw,7rem); max-width:68rem; margin:0 auto; }
+  .scene .inner { opacity:0; transform:translateY(26px);
+    transition:opacity 1.1s ease, transform 1.1s cubic-bezier(.2,.7,.2,1); max-width:var(--measure); }
+  .scene.wide .inner { max-width:52rem; }
+  .scene.revealed .inner { opacity:1; transform:none; }
+  @media (prefers-reduced-motion: reduce){ .scene .inner{opacity:1;transform:none;transition:none;} }
+
+  .eyebrow { font-family:var(--mono); font-size:.74rem; letter-spacing:.28em; text-transform:uppercase;
+    color:var(--accent); display:flex; align-items:center; gap:.8em; margin:0 0 1.6rem; flex-wrap:wrap; }
+  .eyebrow .num { color:var(--faint); }
+  .eyebrow .dot { width:7px; height:7px; border-radius:50%; background:var(--accent); box-shadow:0 0 14px var(--accent); }
+
+  h1 { font-family:var(--serif); font-weight:500; letter-spacing:-.01em;
+    font-size:clamp(2.4rem,7.5vw,5.2rem); line-height:1; margin:0; text-wrap:balance;
+    overflow-wrap:break-word; hyphens:auto; }
+  h2 { font-family:var(--serif); font-weight:500; letter-spacing:-.005em;
+    font-size:clamp(1.7rem,5vw,3.3rem); line-height:1.05; margin:0 0 1.3rem; text-wrap:balance;
+    overflow-wrap:break-word; hyphens:auto; }
+  .lede { font-size:clamp(1.05rem,2.2vw,1.32rem); color:var(--text); }
+  p { color:var(--muted); }
+  p .hl { color:var(--text); }
+  em { color:var(--text); font-style:italic; }
+  code { font-family:var(--mono); font-size:.9em; color:var(--accent); background:rgba(255,255,255,.05); padding:.05em .35em; border-radius:4px; }
+
+  ul.reasons { list-style:none; padding:0; margin:0 0 1.4rem; display:flex; flex-direction:column; gap:.85rem; }
+  ul.reasons.tight { gap:.6rem; }
+  ul.reasons.two { display:grid; grid-template-columns:1fr 1fr; gap:.7rem 1.6rem; }
+  ul.reasons li { position:relative; padding-left:1.3rem; color:var(--muted); font-size:1.02rem; line-height:1.5; }
+  ul.reasons li:before { content:""; position:absolute; left:0; top:.62em; width:6px; height:6px;
+    border-radius:50%; background:var(--accent); box-shadow:0 0 10px var(--accent); }
+  ul.reasons li b { color:var(--text); font-weight:600; }
+  @media (max-width:620px){ ul.reasons.two{grid-template-columns:1fr;} }
+
+  .chips { display:flex; flex-wrap:wrap; gap:.55rem; margin:0 0 1.4rem; }
+  .chips span { font-family:var(--mono); font-size:.72rem; letter-spacing:.04em; color:var(--accent);
+    border:1px solid color-mix(in oklab, var(--accent) 45%, transparent); border-radius:999px; padding:.34rem .8rem; }
+  .capnote { font-size:1.06rem; color:var(--text); margin-top:1.2rem; }
+
+  #s0 .inner { max-width:47rem; }
+  .kicker { font-family:var(--mono); font-size:.7rem; letter-spacing:.24em; text-transform:uppercase; color:var(--faint); margin:0 0 1.4rem; }
+  .subtitle { font-family:var(--serif); font-style:italic; font-size:clamp(1.1rem,2.6vw,1.6rem); color:var(--accent); margin:1rem 0 0; opacity:.9; }
+  .epigraph { font-family:var(--serif); font-style:italic; font-size:clamp(1.05rem,2.4vw,1.45rem);
+    line-height:1.5; color:var(--accent); margin:0 0 2.4rem; opacity:.9; white-space:pre-line; }
+  .epigraph cite { display:block; font-style:normal; font-family:var(--mono);
+    font-size:.72rem; letter-spacing:.22em; text-transform:uppercase; color:var(--faint); margin-top:1.1rem; }
+  .byline { font-family:var(--mono); font-size:.76rem; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); margin:1.6rem 0 0; }
+  .byline b { color:var(--text); font-weight:600; }
+  .begin { margin-top:2.6rem; display:inline-flex; align-items:center; gap:.8rem;
+    font-family:var(--sans); font-size:1rem; font-weight:600; color:var(--ink); background:var(--accent);
+    border:0; border-radius:999px; padding:.95rem 1.6rem; cursor:pointer;
+    transition:transform .25s ease, box-shadow .5s ease, filter .25s; }
+  .begin:hover { transform:translateY(-2px); box-shadow:0 12px 40px -8px color-mix(in oklab, var(--accent) 60%, transparent); filter:brightness(1.05); }
+  .begin:focus-visible { outline:3px solid var(--accent); outline-offset:4px; }
+  .begin .tri { width:0; height:0; border-left:11px solid var(--ink); border-top:7px solid transparent; border-bottom:7px solid transparent; }
+  .scrollhint { margin-top:2.2rem; font-family:var(--mono); font-size:.7rem; letter-spacing:.22em; text-transform:uppercase; color:var(--faint); }
+
+  .stats { display:flex; flex-wrap:wrap; gap:clamp(1.4rem,4vw,3rem); margin-top:2.2rem; }
+  .stat { min-width:7.5rem; }
+  .stat .fig { font-family:var(--serif); font-weight:500; font-size:clamp(2rem,4.4vw,3rem); line-height:1;
+    color:var(--accent); font-variant-numeric:tabular-nums; display:flex; align-items:baseline; gap:.1em; }
+  .stat .fig .u { font-size:.4em; color:var(--text); font-family:var(--sans); font-weight:600; letter-spacing:.02em; }
+  .stat .fig .u.dollar { color:var(--accent); font-family:var(--serif); font-weight:500; font-size:.55em; }
+  .stat .cap { font-family:var(--mono); font-size:.64rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin-top:.7rem; line-height:1.5; }
+
+  .quote { font-family:var(--serif); font-style:italic; font-size:clamp(1.5rem,3.6vw,2.4rem);
+    line-height:1.3; color:var(--text); text-wrap:balance; margin:0; }
+  .quote .grace { color:var(--accent); }
+  .fnote { font-family:var(--mono); font-size:.66rem; letter-spacing:.1em; color:var(--faint); margin-top:2rem; text-transform:uppercase; }
+
+  /* back to library */
+  #back { position:fixed; top:1rem; left:1rem; z-index:45; display:inline-flex; align-items:center; gap:.5rem;
+    font-family:var(--mono); font-size:.68rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted);
+    text-decoration:none; padding:.5rem .8rem; border-radius:999px; border:1px solid rgba(244,239,230,.12);
+    background:rgba(14,18,26,.55); backdrop-filter:blur(10px); transition:color .2s, border-color .2s; }
+  #back:hover { color:var(--text); border-color:rgba(244,239,230,.3); }
+
+  /* caption */
+  #caption { position:fixed; left:50%; transform:translateX(-50%); bottom:5.6rem; z-index:38;
+    width:min(90vw,46rem); text-align:center; font-family:var(--serif); font-size:clamp(1.05rem,2.5vw,1.5rem);
+    line-height:1.5; color:var(--faint); pointer-events:none; opacity:0; transition:opacity .4s ease;
+    text-shadow:0 2px 30px rgba(11,14,20,.95); }
+  #caption.show { opacity:1; }
+  #caption .w { transition:color .12s ease; }
+  #caption .w.spoken { color:var(--muted); }
+  #caption .w.active { color:var(--accent); }
+
+  #player { position:fixed; left:50%; transform:translateX(-50%); bottom:max(1.1rem, env(safe-area-inset-bottom));
+    z-index:40; display:flex; align-items:center; gap:.5rem; background:rgba(14,18,26,.72);
+    backdrop-filter:blur(16px) saturate(1.3); -webkit-backdrop-filter:blur(16px) saturate(1.3);
+    border:1px solid rgba(244,239,230,.12); border-radius:999px; padding:.5rem .55rem;
+    box-shadow:0 18px 50px -18px rgba(0,0,0,.8); max-width:min(95vw,48rem);
+    opacity:0; pointer-events:none; transition:opacity .5s ease; }
+  #player.show { opacity:1; pointer-events:auto; }
+  .pbtn { flex:none; width:42px; height:42px; border-radius:50%; border:1px solid rgba(244,239,230,.16);
+    background:transparent; color:var(--text); cursor:pointer; display:grid; place-items:center;
+    transition:background .2s,border-color .2s,transform .15s; padding:0; }
+  .pbtn:hover { background:rgba(244,239,230,.08); }
+  .pbtn:active { transform:scale(.94); }
+  .pbtn:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+  .pbtn.primary { background:var(--accent); color:var(--ink); border-color:var(--accent); width:46px; height:46px; }
+  .pbtn.primary:hover { filter:brightness(1.06); }
+  .pbtn svg { width:17px; height:17px; display:block; }
+  .pbtn.primary svg { width:19px; height:19px; }
+  .pbtn.speed { width:auto; min-width:46px; padding:0 .7rem; font-family:var(--mono); font-size:.78rem; font-weight:600;
+    letter-spacing:.02em; color:var(--accent); border-radius:999px; font-variant-numeric:tabular-nums; }
+
+  .pmeta { display:flex; flex-direction:column; min-width:0; padding:0 .3rem 0 .5rem; }
+  .pmeta .now { font-family:var(--mono); font-size:.62rem; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--accent); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:11rem; }
+  .pmeta .sub { font-size:.76rem; color:var(--muted); white-space:nowrap; }
+  .seek { width:8rem; height:4px; border-radius:2px; background:rgba(244,239,230,.14); overflow:hidden; margin-top:.35rem; }
+  .seek .fill { height:100%; width:0%; background:var(--accent); transition:width .2s linear; }
+
+  .dots { display:flex; gap:5px; align-items:center; padding:0 .3rem; flex-wrap:wrap; max-width:16rem; }
+  .dots button { width:7px; height:7px; border-radius:50%; border:0; padding:0; cursor:pointer;
+    background:rgba(244,239,230,.22); transition:background .3s, transform .3s; }
+  .dots button:hover { background:rgba(244,239,230,.5); }
+  .dots button.active { background:var(--accent); transform:scale(1.4); box-shadow:0 0 10px var(--accent); }
+  .dots button:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+
+  .voicewrap { position:relative; }
+  #voiceMenu { position:absolute; bottom:56px; right:0; background:rgba(16,20,28,.97);
+    border:1px solid rgba(244,239,230,.14); border-radius:14px; padding:.7rem; width:16.5rem;
+    box-shadow:0 18px 50px -18px rgba(0,0,0,.8); display:none; flex-direction:column; gap:.65rem; }
+  #voiceMenu.open { display:flex; }
+  #voiceMenu .row { display:flex; align-items:center; justify-content:space-between; gap:.6rem; }
+  #voiceMenu label { font-family:var(--mono); font-size:.6rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); }
+  #voiceMenu .val { font-family:var(--mono); font-size:.7rem; color:var(--text); }
+  #voiceMenu input[type=range] { flex:1; accent-color:var(--accent); }
+  .speeds { display:flex; gap:.3rem; }
+  .speeds button { flex:1; font-family:var(--mono); font-size:.7rem; color:var(--muted); background:transparent;
+    border:1px solid rgba(244,239,230,.16); border-radius:7px; padding:.35rem 0; cursor:pointer; transition:.15s; }
+  .speeds button:hover { color:var(--text); }
+  .speeds button.on { color:var(--ink); background:var(--accent); border-color:var(--accent); }
+  .toggle { display:flex; align-items:center; gap:.5rem; cursor:pointer; }
+  .toggle input { accent-color:var(--accent); width:16px; height:16px; }
+  .modeflag { font-family:var(--mono); font-size:.58rem; letter-spacing:.1em; text-transform:uppercase; color:var(--faint); }
+
+  #topbar { position:fixed; top:0; left:0; height:2px; width:0%; z-index:50;
+    background:linear-gradient(90deg,var(--accent),var(--accent)); transition:width .3s ease, background .8s;
+    box-shadow:0 0 12px var(--accent); }
+
+  @media (max-width:600px){
+    body{font-size:16px;}
+    .pmeta,.dots,.seek{display:none;}
+    #player{ gap:.4rem; padding:.45rem .5rem; }
+    #caption{ bottom:6.2rem; font-size:1.1rem; }
+    #voiceMenu{ position:fixed; left:50%; right:auto; transform:translateX(-50%); bottom:5.4rem; width:min(92vw,19rem); }
+    .scene{ padding:12vh clamp(1.3rem,6vw,7rem); }
+    #s0 .inner{ max-width:100%; }
+    .stat{ min-width:6.5rem; }
+    #back{ font-size:.6rem; top:.7rem; left:.7rem; padding:.45rem .7rem; }
+  }
+</style>
+</head>
+<body>
+<div id="dawn"></div>
+<canvas id="meadow"></canvas>
+<div id="grain"></div>
+<div id="topbar"></div>
+<a id="back" href="../index.html">← Story Time</a>
+
+<main>
+  <section class="scene hero" id="s0" data-hue="teal">
+    <div class="inner"><p class="kicker">Interview · May 2026</p><h1>Why Anthropic Stood Up to the Pentagon</h1><p class="subtitle">Dario and Daniela Amodei, in conversation with Oprah Winfrey</p><p class="byline">By <b>Ben Sherry · Inc.</b></p><button class="begin" id="beginBtn"><span class="tri"></span> Play the reading</button><p class="scrollhint">↓ or scroll to read at your own pace</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s1" data-hue="teal">
+    <div class="inner"><p class="eyebrow"><span class="dot"></span> THE INTERVIEW</p><h2>A sit-down with Oprah</h2><p class="lede">Oprah Winfrey sat down with Anthropic cofounders — and <span class="hl">siblings</span> — Dario and Daniela Amodei.</p><p>They opened up about why they refused demands from the U.S. military to remove the safety guardrails around Claude, their powerful AI model. And they shared the one major AI problem they <em>haven't</em> solved yet.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s2" data-hue="steel">
+    <div class="inner"><p class="eyebrow"><span class="dot"></span> THE STAND</p><h2>“Not worth defending”</h2><p>Asked about the decision to stand up to the Department of Defense, Dario didn't hesitate.</p><p class="quote">It's <span class="grace">not worth</span> defending the country if we do things that go against the values of this country.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s3" data-hue="sky">
+    <div class="inner"><p class="eyebrow"><span class="dot"></span> THE DEAL</p><h2>The first AI in classified rooms</h2><p>Anthropic began working with the Pentagon in 2024. Claude became the <span class="hl">first AI model</span> used by the military in classified environments.</p><p>But the original deal carried carveouts. Claude could not be used to:</p><ul class="reasons"><li><b>Power lethal autonomy.</b> No fully-autonomous weapons — Dario's example was a “drone army” commanded by one person.</li><li><b>Surveil citizens.</b> No mass domestic surveillance on Americans.</li></ul>
+    </div>
+  </section>
+
+  <section class="scene" id="s4" data-hue="crimson">
+    <div class="inner"><p class="eyebrow"><span class="dot"></span> THE PRESSURE</p><h2>Designated a “supply chain risk”</h2><p>Later, the Pentagon reopened negotiations to remove the carveouts — arguing they amounted to Anthropic making <em>military policy</em> over the American people and government.</p><p>Anthropic refused to budge. It was designated a <span class="hl">supply chain risk</span> — a label the company still holds today.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s5" data-hue="amber">
+    <div class="inner"><p class="eyebrow"><span class="dot"></span> THE RECKONING</p><h2>“This could be the end”</h2><p>The Amodeis and their fellow cofounders met before deciding whether to acquiesce. They were <span class="hl">united</span> in saying no.</p><p>Both siblings told Oprah they truly believed this could have been the end of their company — yet it was still worth sticking to their convictions.</p><p class="capnote">Daniela said they were ready for that hard choice because of three smaller decisions that “laddered up” to it.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s6" data-hue="rose">
+    <div class="inner"><p class="eyebrow"><span class="dot"></span> DECISION ONE</p><h2>No ads on Claude</h2><p>The first choice: no advertising on Claude. Given the sensitive nature of the conversations people have with it, the founders felt they had to <span class="hl">treat customer data with the utmost privacy and respect</span> — making ads a non-starter.</p><p>Not everyone agreed. There were “quiet forces,” Daniela said — inside the company and among investors — who saw ads as necessary revenue, pointing to Google and Facebook.</p><p class="quote">Sorry, that's just not how we're going to do things. <span class="grace">We'll find another way.</span></p>
+    </div>
+  </section>
+
+  <section class="scene" id="s7" data-hue="sky">
+    <div class="inner"><p class="eyebrow"><span class="dot"></span> DECISION TWO</p><h2>The bill voted down 99 to 1</h2><p>A bill in Congress would have banned <em>all</em> state regulation of AI — without adding any federal regulation either.</p><p>People warned Dario: <em>“You'll break all your political relationships. All the other companies will hate you if you speak out.”</em></p><p>He spoke out anyway — an op-ed in <em>The New York Times</em>, “Don't Let AI Companies off the Hook.”</p><p class="quote">That bill got voted down in the Senate <span class="grace">99 to one.</span></p>
+    </div>
+  </section>
+
+  <section class="scene" id="s8" data-hue="gold">
+    <div class="inner"><p class="eyebrow"><span class="dot"></span> DECISION THREE</p><h2>Backing real regulation</h2><p>Anthropic supported California's SB 1047 — a bill Daniela called <span class="hl">the first attempt to create a regulatory framework</span> around the very risks Anthropic had been naming since day one.</p><p>Not a perfect bill, she said — but “on balance, we think it's better that these regulations exist… so that AI doesn't hurt people.”</p><p class="capnote">Angry calls followed — from former colleagues, investors, and rival tech leaders. The bill passed the legislature, then was vetoed by Governor Gavin Newsom.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s9" data-hue="sage">
+    <div class="inner"><p class="eyebrow"><span class="dot"></span> THE LESSON</p><h2>Sometimes it's worth the risk</h2><p>Taken together, the Amodeis said, these three decisions helped Anthropic's leadership find their <span class="hl">hardline stances</span> — and taught them one lesson.</p><p>Advocating for a policy — especially one unpopular among peers — is risky. But sometimes, it can be worth the risk.</p><p class="chips"><span>No ads</span><span>Speak out</span><span>Back real rules</span></p>
+    </div>
+  </section>
+
+  <section class="scene" id="s10" data-hue="violet">
+    <div class="inner"><p class="eyebrow"><span class="dot"></span> THE UNSOLVED</p><h2>The problem they can't crack</h2><p>There's one thing the Amodeis admit they haven't figured out: <span class="hl">how to give everyday people a voice at the table</span> when it comes to AI.</p><p>Oprah said she's heard from many who feel powerless — like passengers on a train that's already left the station.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s11" data-hue="teal">
+    <div class="inner"><p class="eyebrow"><span class="dot"></span> THE ADMISSION</p><h2>Nobody has figured it out</h2><p>Dario agreed with Oprah's worry.</p><p class="quote">We need to find some way for everyone to be an <span class="grace">active participant</span> in what is happening.</p><p>But he added the uncomfortable truth: nobody — <em>not even Anthropic</em> — has figured that part out yet.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s12" data-hue="green">
+    <div class="inner"><p class="eyebrow"><span class="dot"></span> THE FUTURE</p><h2>It won't happen on its own</h2><p>Still, Dario told Oprah, a better future <em>is</em> possible with AI.</p><p class="quote">But it's not going to happen on its own. It's up to us — the companies, the people, <span class="grace">the governments</span> — to work together to bring that future into reality.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s13" data-hue="steel">
+    <div class="inner"><p class="eyebrow"><span class="dot"></span> THE PORTRAIT</p><h2>Two siblings, one company</h2><p>What Oprah drew out, more than a news story, was a portrait of two people running a company by conviction.</p><ul class="reasons two"><li><b>Family.</b> A brother and sister, plus their cofounders, united in the hard calls.</li><li><b>Pattern.</b> No ads. An op-ed. A California bill. Then the Pentagon.</li><li><b>Honesty.</b> Willing to say what they still don't know.</li><li><b>Stakes.</b> A company they'd risk losing to keep their word.</li></ul>
+    </div>
+  </section>
+</main>
+
+<div id="caption" aria-live="off"></div>
+<audio id="narrator" preload="none"></audio>
+
+<div id="player" aria-label="Narration controls">
+  <button class="pbtn" id="prevBtn" title="Previous" aria-label="Previous scene">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 6v12l-8.5-6L18 6zM7 6h2v12H7z"/></svg></button>
+  <button class="pbtn primary" id="playBtn" title="Play" aria-label="Play narration">
+    <svg id="playIcon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7L8 5z"/></svg>
+    <svg id="pauseIcon" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg></button>
+  <button class="pbtn" id="nextBtn" title="Next" aria-label="Next scene">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 6l8.5 6L6 18V6zm9 0h2v12h-2z"/></svg></button>
+  <button class="pbtn speed" id="speedBtn" title="Playback speed" aria-label="Playback speed">1&times;</button>
+  <div class="pmeta">
+    <span class="now" id="nowTitle">Prologue</span>
+    <span class="sub" id="nowSub">Press play to begin</span>
+    <div class="seek"><div class="fill" id="seekFill"></div></div>
+  </div>
+  <div class="dots" id="dots" aria-hidden="true"></div>
+  <div class="voicewrap">
+    <button class="pbtn" id="voiceToggle" title="Settings" aria-label="Settings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a9 9 0 0 1 0 14"/></svg></button>
+    <div id="voiceMenu">
+      <div class="row"><label>Narrator</label><span class="val modeflag" id="modeFlag">—</span></div>
+      <div><label style="display:block;margin-bottom:.4rem">Speed</label>
+        <div class="speeds" id="speeds"></div></div>
+      <div class="row"><label>Volume</label><input type="range" id="vol" min="0" max="1" step="0.05" value="1"></div>
+      <label class="toggle"><input type="checkbox" id="capToggle" checked> <span class="val">Show captions</span></label>
+      <div class="row" id="ttsRow" style="display:none"><label>Voice</label><select id="voiceSelect" style="max-width:9rem"></select></div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var SC = [{"id":"s0","sub":"Prologue","text":"Picture two siblings. They left one of the most powerful AI labs in the world to start their own. They named their model Claude. And then, one day, the United States military came knocking — asking them to remove the safety rules built into that model. Fully autonomous weapons. Mass surveillance. The Amodeis said no. In an interview with Oprah Winfrey, Dario and Daniela Amodei opened up about that moment… and about the one problem, they admit, they still haven't solved. This is the story of a company that decided some lines are worth holding — even if holding them might be the end.","cap":[[0,"Picture"],[0.45,"two"],[0.76,"siblings."],[1.72,"They"],[2.03,"left"],[2.37,"one"],[2.6,"of"],[2.68,"the"],[2.81,"most"],[3.08,"powerful"],[3.65,"AI"],[4.06,"labs"],[4.46,"in"],[4.56,"the"],[4.69,"world"],[5.06,"to"],[5.2,"start"],[5.58,"their"],[5.83,"own."],[6.71,"They"],[7.02,"named"],[7.47,"their"],[7.72,"model"],[8.45,"Claude."],[9.51,"And"],[9.82,"then,"],[10.38,"one"],[10.73,"day,"],[11.17,"the"],[11.37,"United"],[11.9,"States"],[12.37,"military"],[12.88,"came"],[13.2,"knocking"],[13.8,"—"],[14.19,"asking"],[14.8,"them"],[15.21,"to"],[15.41,"remove"],[15.86,"the"],[16.02,"safety"],[16.52,"rules"],[17.01,"built"],[17.35,"into"],[17.72,"that"],[17.98,"model."],[18.88,"Fully"],[19.28,"autonomous"],[20,"weapons."],[20.65,"Mass"],[20.98,"surveillance."],[21.64,"The"],[21.8,"Amodeis"],[22.38,"said"],[22.77,"no."],[24.11,"In"],[24.34,"an"],[24.47,"interview"],[25,"with"],[25.19,"Oprah"],[25.58,"Winfrey,"],[26.43,"Dario"],[27.06,"and"],[27.6,"Daniela"],[28.32,"Amodei"],[29.41,"opened"],[29.87,"up"],[30.05,"about"],[30.34,"that"],[30.63,"moment…"],[31.89,"and"],[32.09,"about"],[32.38,"the"],[32.53,"one"],[32.83,"problem,"],[33.38,"they"],[33.61,"admit,"],[34.51,"they"],[34.78,"still"],[35.32,"haven't"],[35.83,"solved."],[37.17,"This"],[37.77,"is"],[37.99,"the"],[38.12,"story"],[38.57,"of"],[38.66,"a"],[38.74,"company"],[39.25,"that"],[39.43,"decided"],[40.16,"some"],[40.53,"lines"],[41.01,"are"],[41.15,"worth"],[41.47,"holding"],[42.11,"—"],[42.5,"even"],[42.82,"if"],[42.99,"holding"],[43.46,"them"],[43.92,"might"],[44.28,"be"],[44.5,"the"],[44.68,"end."]]},{"id":"s1","sub":"The Interview","text":"It began as a conversation. Oprah Winfrey, sitting across from Dario and Daniela Amodei — the brother-and-sister team behind Anthropic. They talked about a lot. But at the center was a single, difficult decision. The United States military had asked them to strip the safety guardrails from Claude, their most powerful AI model. And they had said no. Over the course of the interview, they explained why. They also admitted something you don't often hear from the people building this technology. There's one big problem… they haven't figured out yet.","cap":[[0,"It"],[0.21,"began"],[0.58,"as"],[0.71,"a"],[0.79,"conversation."],[2.21,"Oprah"],[2.72,"Winfrey,"],[3.59,"sitting"],[3.99,"across"],[4.39,"from"],[4.66,"Dario"],[5.2,"and"],[5.45,"Daniela"],[6.08,"Amodei"],[6.9,"—"],[7.19,"the"],[7.33,"brother-and-sister"],[8.28,"team"],[8.64,"behind"],[9.17,"Anthropic."],[10.66,"They"],[10.89,"talked"],[11.22,"about"],[11.51,"a"],[11.59,"lot."],[12.47,"But"],[12.66,"at"],[12.76,"the"],[12.89,"center"],[13.42,"was"],[13.64,"a"],[13.78,"single,"],[14.51,"difficult"],[15.08,"decision."],[16.24,"The"],[16.43,"United"],[16.93,"States"],[17.39,"military"],[17.92,"had"],[18.09,"asked"],[18.41,"them"],[18.65,"to"],[18.87,"strip"],[19.34,"the"],[19.53,"safety"],[20,"guardrails"],[20.71,"from"],[20.95,"Claude,"],[21.85,"their"],[22.09,"most"],[22.37,"powerful"],[22.93,"AI"],[23.34,"model."],[24.28,"And"],[24.93,"they"],[25.19,"had"],[25.38,"said"],[25.73,"no."],[26.88,"Over"],[27.14,"the"],[27.26,"course"],[27.55,"of"],[27.63,"the"],[27.76,"interview,"],[28.47,"they"],[28.69,"explained"],[29.23,"why."],[30.19,"They"],[30.42,"also"],[30.8,"admitted"],[31.3,"something"],[31.77,"you"],[31.92,"don't"],[32.22,"often"],[32.6,"hear"],[33.1,"from"],[33.32,"the"],[33.44,"people"],[33.83,"building"],[34.28,"this"],[34.48,"technology."],[35.82,"There's"],[36.11,"one"],[36.4,"big"],[36.65,"problem…"],[37.73,"they"],[37.97,"haven't"],[38.29,"figured"],[38.6,"out"],[38.84,"yet."]]},{"id":"s2","sub":"The Stand","text":"Oprah asked Dario the direct question. Why stand up to the Department of Defense? Why take that risk? His answer cut right to the core of it. He and his cofounders felt, in his words, that it's not worth defending the country… if we do things that go against the values of this country. Think about that for a moment. A company built, in part, to serve national security. And its founders deciding that the how matters as much as the whether. That some methods betray the very thing you're trying to protect.","cap":[[0,"Oprah"],[0.55,"asked"],[0.92,"Dario"],[1.42,"the"],[1.54,"direct"],[2,"question."],[3.3,"Why"],[3.67,"stand"],[4.1,"up"],[4.33,"to"],[4.48,"the"],[4.59,"Department"],[5.11,"of"],[5.22,"Defense?"],[5.77,"Why"],[6.06,"take"],[6.36,"that"],[6.64,"risk?"],[7.74,"His"],[8.03,"answer"],[8.58,"cut"],[8.96,"right"],[9.33,"to"],[9.46,"the"],[9.58,"core"],[9.9,"of"],[10.03,"it."],[10.66,"He"],[11.01,"and"],[11.18,"his"],[11.38,"cofounders"],[12.24,"felt,"],[12.98,"in"],[13.24,"his"],[13.48,"words,"],[14.48,"that"],[14.7,"it's"],[14.95,"not"],[15.23,"worth"],[15.6,"defending"],[16.16,"the"],[16.29,"country…"],[17.58,"if"],[17.76,"we"],[17.93,"do"],[18.14,"things"],[18.46,"that"],[18.69,"go"],[18.94,"against"],[19.35,"the"],[19.49,"values"],[20,"of"],[20.11,"this"],[20.33,"country."],[21.62,"Think"],[21.92,"about"],[22.2,"that"],[22.58,"for"],[22.78,"a"],[22.86,"moment."],[23.7,"A"],[23.87,"company"],[24.35,"built,"],[24.7,"in"],[24.87,"part,"],[25.29,"to"],[25.45,"serve"],[25.84,"national"],[26.37,"security."],[27.77,"And"],[27.99,"its"],[28.18,"founders"],[28.75,"deciding"],[29.41,"that"],[29.59,"the"],[29.83,"how"],[30.77,"matters"],[31.39,"as"],[31.58,"much"],[31.82,"as"],[31.99,"the"],[32.16,"whether."],[33.01,"That"],[33.29,"some"],[33.61,"methods"],[34.1,"betray"],[34.69,"the"],[34.92,"very"],[35.36,"thing"],[35.66,"you're"],[35.93,"trying"],[36.36,"to"],[36.5,"protect."]]},{"id":"s3","sub":"The Deal","text":"This partnership was real. In twenty twenty-four, Anthropic began working with the Pentagon. Claude became the first AI model ever used by the military inside classified environments. But the deal came with limits — lines the Amodeis drew from the start. Claude could not be used to power fully autonomous lethal weapons. Dario gave the example that haunts a lot of people in this field: a drone army, commanded by a single person. And Claude could not be used to conduct mass domestic surveillance on American citizens. Reasonable things not to allow, Dario said. Unfortunately… the Pentagon didn't feel that way.","cap":[[0,"This"],[0.29,"partnership"],[1.07,"was"],[1.37,"real."],[3.18,"In"],[3.38,"twenty"],[3.88,"twenty-four,"],[4.84,"Anthropic"],[5.62,"began"],[6,"working"],[6.44,"with"],[6.59,"the"],[6.7,"Pentagon."],[8.01,"Claude"],[8.39,"became"],[8.75,"the"],[8.9,"first"],[9.38,"AI"],[9.85,"model"],[10.24,"ever"],[10.5,"used"],[10.89,"by"],[11.08,"the"],[11.2,"military"],[11.74,"inside"],[12.27,"classified"],[13.06,"environments."],[14.59,"But"],[14.79,"the"],[14.95,"deal"],[15.37,"came"],[15.77,"with"],[16.05,"limits"],[16.75,"—"],[17.31,"lines"],[17.85,"the"],[18.05,"Amodeis"],[18.81,"drew"],[19.24,"from"],[19.45,"the"],[19.59,"start."],[20.95,"Claude"],[21.39,"could"],[21.63,"not"],[21.83,"be"],[22,"used"],[22.38,"to"],[22.54,"power"],[22.97,"fully"],[23.38,"autonomous"],[24.31,"lethal"],[24.82,"weapons."],[26.08,"Dario"],[26.66,"gave"],[26.94,"the"],[27.09,"example"],[27.68,"that"],[27.89,"haunts"],[28.22,"a"],[28.34,"lot"],[28.58,"of"],[28.71,"people"],[29.08,"in"],[29.2,"this"],[29.41,"field:"],[30.3,"a"],[30.47,"drone"],[30.95,"army,"],[31.77,"commanded"],[32.33,"by"],[32.52,"a"],[32.62,"single"],[33.09,"person."],[34.17,"And"],[34.67,"Claude"],[35.24,"could"],[35.48,"not"],[35.69,"be"],[35.88,"used"],[36.17,"to"],[36.3,"conduct"],[36.85,"mass"],[37.19,"domestic"],[37.76,"surveillance"],[38.43,"on"],[38.57,"American"],[39.13,"citizens."],[40.29,"Reasonable"],[40.92,"things"],[41.42,"not"],[41.69,"to"],[41.85,"allow,"],[42.6,"Dario"],[43.14,"said."],[44.25,"Unfortunately…"],[46.39,"the"],[46.56,"Pentagon"],[47.46,"didn't"],[47.87,"feel"],[48.19,"that"],[48.46,"way."]]},{"id":"s4","sub":"The Pressure","text":"Then the Pentagon came back. It reopened the negotiations. And its argument was pointed — those carveouts, the government said, essentially amounted to Anthropic making military policy over the American people and their government. Who was a private company to decide? Anthropic refused to budge. And the consequence was swift. The company was designated a supply chain risk. A formal label. A door quietly closing. And it's a designation Anthropic continues to hold, even now.","cap":[[0,"Then"],[0.6,"the"],[0.78,"Pentagon"],[1.46,"came"],[1.78,"back."],[2.53,"It"],[2.75,"reopened"],[3.36,"the"],[3.47,"negotiations."],[4.76,"And"],[5.28,"its"],[5.57,"argument"],[6.26,"was"],[6.49,"pointed"],[7.3,"—"],[7.84,"those"],[8.2,"carveouts,"],[9.03,"the"],[9.16,"government"],[9.63,"said,"],[9.94,"essentially"],[10.57,"amounted"],[11.16,"to"],[11.33,"Anthropic"],[12.38,"making"],[12.82,"military"],[13.31,"policy"],[13.82,"over"],[14.04,"the"],[14.16,"American"],[14.68,"people"],[15.41,"and"],[15.72,"their"],[15.94,"government."],[17.19,"Who"],[17.89,"was"],[18.12,"a"],[18.23,"private"],[18.72,"company"],[19.24,"to"],[19.39,"decide?"],[20.5,"Anthropic"],[21.17,"refused"],[21.66,"to"],[21.8,"budge."],[22.16,"And"],[22.29,"the"],[22.41,"consequence"],[23.14,"was"],[23.43,"swift."],[24.69,"The"],[24.87,"company"],[25.36,"was"],[25.58,"designated"],[26.37,"a"],[26.48,"supply"],[27.07,"chain"],[27.54,"risk."],[28.47,"A"],[28.65,"formal"],[29.13,"label."],[30.02,"A"],[30.19,"door"],[30.78,"quietly"],[31.36,"closing."],[32.5,"And"],[32.91,"it's"],[33.23,"a"],[33.39,"designation"],[34.26,"Anthropic"],[34.98,"continues"],[35.77,"to"],[35.93,"hold,"],[36.92,"even"],[37.36,"now."]]},{"id":"s5","sub":"The Reckoning","text":"Before they answered, the founders met. The Amodeis and their fellow cofounders, in a room, weighing it. And here's what makes the moment land. Both siblings told Oprah they genuinely believed this could have been the end of their company. Not a setback. The end. And they decided it was still worth it. Still worth sticking to their convictions. Daniela explained they didn't arrive at that courage by accident. Three earlier decisions, she said, had laddered up to this one. Smaller tests. Practice, almost — for the moment that mattered most.","cap":[[0,"Before"],[0.42,"they"],[0.6,"answered,"],[1.35,"the"],[1.53,"founders"],[2.11,"met."],[3.07,"The"],[3.27,"Amodeis"],[3.95,"and"],[4.09,"their"],[4.31,"fellow"],[4.74,"cofounders,"],[5.68,"in"],[5.9,"a"],[6.03,"room,"],[6.82,"weighing"],[7.34,"it."],[8.15,"And"],[8.42,"here's"],[8.79,"what"],[9.01,"makes"],[9.32,"the"],[9.49,"moment"],[9.94,"land."],[11.47,"Both"],[11.88,"siblings"],[12.53,"told"],[12.89,"Oprah"],[13.25,"they"],[13.51,"genuinely"],[14.23,"believed"],[14.73,"this"],[14.95,"could"],[15.17,"have"],[15.35,"been"],[15.64,"the"],[15.8,"end"],[16.05,"of"],[16.15,"their"],[16.39,"company."],[17.5,"Not"],[17.75,"a"],[17.86,"setback."],[19.01,"The"],[19.23,"end."],[20.24,"And"],[20.52,"they"],[20.79,"decided"],[21.5,"it"],[21.64,"was"],[21.82,"still"],[22.15,"worth"],[22.51,"it."],[23.15,"Still"],[23.58,"worth"],[23.95,"sticking"],[24.47,"to"],[24.63,"their"],[24.88,"convictions."],[26.39,"Daniela"],[26.98,"explained"],[27.54,"they"],[27.7,"didn't"],[27.98,"arrive"],[28.41,"at"],[28.51,"that"],[28.74,"courage"],[29.15,"by"],[29.35,"accident."],[30.28,"Three"],[30.81,"earlier"],[31.28,"decisions,"],[31.89,"she"],[32.11,"said,"],[32.79,"had"],[33.08,"laddered"],[33.55,"up"],[33.77,"to"],[33.94,"this"],[34.2,"one."],[35.02,"Smaller"],[35.49,"tests."],[36.47,"Practice,"],[37.45,"almost"],[38.14,"—"],[38.35,"for"],[38.51,"the"],[38.65,"moment"],[39.06,"that"],[39.24,"mattered"],[39.69,"most."]]},{"id":"s6","sub":"Decision One","text":"The first decision was about advertising. Or rather — the decision not to allow it. Think about what people actually type into an AI. Their fears. Their health. Their most private questions. Because of that, Daniela said, the founders felt they had to treat customer data with the utmost privacy and respect. And that made advertising a non-starter. But not everyone was on board. There were quiet forces, she said — inside the company, and among investors — who saw ad revenue the way Google and Facebook do. Necessary. Obvious. Daniela's answer was simple. Sorry, that's just not how we're going to do things. We'll find another way.","cap":[[0,"The"],[0.21,"first"],[0.51,"decision"],[1.2,"was"],[1.39,"about"],[1.79,"advertising."],[2.9,"Or"],[3.11,"rather"],[3.63,"—"],[3.91,"the"],[4.08,"decision"],[4.6,"not"],[4.83,"to"],[4.97,"allow"],[5.29,"it."],[6.27,"Think"],[6.62,"about"],[7.07,"what"],[7.29,"people"],[7.69,"actually"],[8.21,"type"],[8.63,"into"],[9.13,"an"],[9.27,"AI."],[10.37,"Their"],[10.65,"fears."],[11.46,"Their"],[11.75,"health."],[12.47,"Their"],[12.74,"most"],[13.03,"private"],[13.51,"questions."],[14.94,"Because"],[15.34,"of"],[15.48,"that,"],[15.93,"Daniela"],[16.5,"said,"],[17.45,"the"],[17.66,"founders"],[18.24,"felt"],[18.88,"they"],[19.15,"had"],[19.41,"to"],[19.59,"treat"],[19.95,"customer"],[20.47,"data"],[21.17,"with"],[21.39,"the"],[21.53,"utmost"],[22.06,"privacy"],[22.54,"and"],[22.7,"respect."],[23.87,"And"],[24.1,"that"],[24.65,"made"],[24.94,"advertising"],[25.79,"a"],[25.94,"non-starter."],[27.79,"But"],[28.02,"not"],[28.24,"everyone"],[28.69,"was"],[28.87,"on"],[29.05,"board."],[29.94,"There"],[30.17,"were"],[30.34,"quiet"],[30.85,"forces,"],[31.36,"she"],[31.57,"said"],[31.93,"—"],[32.03,"inside"],[32.51,"the"],[32.62,"company,"],[33.15,"and"],[33.34,"among"],[33.66,"investors"],[34.44,"—"],[34.59,"who"],[34.85,"saw"],[35.26,"ad"],[35.57,"revenue"],[36.11,"the"],[36.24,"way"],[36.47,"Google"],[36.86,"and"],[37.02,"Facebook"],[37.57,"do."],[38.41,"Necessary."],[39.76,"Obvious."],[40.57,"Daniela's"],[41.3,"answer"],[41.77,"was"],[41.98,"simple."],[43.4,"Sorry,"],[43.84,"that's"],[44.19,"just"],[44.55,"not"],[44.85,"how"],[45.13,"we're"],[45.38,"going"],[45.69,"to"],[45.84,"do"],[46.07,"things."],[46.54,"We'll"],[46.89,"find"],[47.29,"another"],[47.66,"way."]]},{"id":"s7","sub":"Decision Two","text":"The second decision came a while later. A bill was moving through Congress. It would have banned all regulation of AI by the states — and put nothing federal in its place. A vacuum. All kinds of people warned Dario to stay quiet. You'll break your political relationships, they said. Every other company will hate you. He spoke out anyway. He wrote an op-ed in The New York Times, titled: Don't Let AI Companies off the Hook. And then came the result he told Oprah with a chuckle. That bill got voted down in the Senate. Ninety-nine to one. So, you know — we were clearly on the right side there.","cap":[[0,"The"],[0.23,"second"],[0.62,"decision"],[1.1,"came"],[1.38,"a"],[1.46,"while"],[1.88,"later."],[2.76,"A"],[2.94,"bill"],[3.25,"was"],[3.46,"moving"],[3.83,"through"],[4.14,"Congress."],[5.29,"It"],[5.5,"would"],[5.83,"have"],[6.05,"banned"],[6.48,"all"],[6.76,"regulation"],[7.45,"of"],[7.57,"AI"],[8.02,"by"],[8.21,"the"],[8.34,"states"],[8.99,"—"],[9.07,"and"],[9.29,"put"],[9.53,"nothing"],[9.91,"federal"],[10.38,"in"],[10.5,"its"],[10.69,"place."],[11.62,"A"],[11.8,"vacuum."],[13.04,"All"],[13.42,"kinds"],[13.93,"of"],[14.08,"people"],[14.51,"warned"],[14.95,"Dario"],[15.52,"to"],[15.67,"stay"],[16.01,"quiet."],[17.37,"You'll"],[17.68,"break"],[18.01,"your"],[18.22,"political"],[18.77,"relationships,"],[19.62,"they"],[19.84,"said."],[20.24,"Every"],[20.64,"other"],[20.91,"company"],[21.42,"will"],[21.65,"hate"],[21.98,"you."],[23.16,"He"],[23.35,"spoke"],[23.72,"out"],[23.99,"anyway."],[24.71,"He"],[24.89,"wrote"],[25.18,"an"],[25.3,"op-ed"],[25.71,"in"],[25.82,"The"],[25.95,"New"],[26.13,"York"],[26.41,"Times,"],[26.87,"titled:"],[27.71,"Don't"],[28.09,"Let"],[28.35,"AI"],[28.78,"Companies"],[29.34,"off"],[29.54,"the"],[29.65,"Hook."],[30.44,"And"],[30.67,"then"],[31.06,"came"],[31.39,"the"],[31.52,"result"],[32.01,"he"],[32.17,"told"],[32.6,"Oprah"],[33.23,"with"],[33.46,"a"],[33.55,"chuckle."],[34.47,"That"],[34.8,"bill"],[35.13,"got"],[35.4,"voted"],[35.88,"down"],[36.24,"in"],[36.36,"the"],[36.51,"Senate."],[37.33,"Ninety-nine"],[38.48,"to"],[38.73,"one."],[39.65,"So,"],[40.26,"you"],[40.44,"know"],[40.81,"—"],[41.25,"we"],[41.43,"were"],[41.61,"clearly"],[42.12,"on"],[42.26,"the"],[42.39,"right"],[42.73,"side"],[43.17,"there."]]},{"id":"s8","sub":"Decision Three","text":"The third decision was a bill in California — SB ten forty-seven. Anthropic backed it. Daniela called it the first real attempt to build a regulatory framework around the very risks Anthropic had been warning about since the day it was founded. It wasn't perfect, she admitted. But on balance, she said, it's better that these regulations exist — so that AI doesn't hurt people. The backlash was personal. She and Dario got a lot of angry calls, she said. From people they used to work with. From investors. From leaders of other tech companies. The bill passed the legislature. And then the governor vetoed it.","cap":[[0,"The"],[0.26,"third"],[0.58,"decision"],[1.2,"was"],[1.43,"a"],[1.52,"bill"],[1.89,"in"],[2.04,"California"],[2.97,"—"],[3.22,"SB"],[3.8,"ten"],[4.38,"forty-seven."],[5.65,"Anthropic"],[6.5,"backed"],[6.92,"it."],[7.8,"Daniela"],[8.44,"called"],[8.85,"it"],[9.28,"the"],[9.54,"first"],[10.15,"real"],[10.48,"attempt"],[11.34,"to"],[11.54,"build"],[11.91,"a"],[12.06,"regulatory"],[12.78,"framework"],[13.49,"around"],[13.89,"the"],[14.04,"very"],[14.45,"risks"],[15,"Anthropic"],[15.69,"had"],[15.84,"been"],[16.07,"warning"],[16.51,"about"],[17.29,"since"],[17.67,"the"],[17.82,"day"],[18.23,"it"],[18.43,"was"],[18.63,"founded."],[19.97,"It"],[20.17,"wasn't"],[20.56,"perfect,"],[21.57,"she"],[21.76,"admitted."],[22.84,"But"],[23.06,"on"],[23.23,"balance,"],[23.73,"she"],[23.95,"said,"],[24.33,"it's"],[24.57,"better"],[24.88,"that"],[25.05,"these"],[25.41,"regulations"],[26.44,"exist"],[27.16,"—"],[27.34,"so"],[27.61,"that"],[27.79,"AI"],[28.39,"doesn't"],[28.78,"hurt"],[29.07,"people."],[30,"The"],[30.17,"backlash"],[30.75,"was"],[30.95,"personal."],[31.83,"She"],[32.23,"and"],[32.39,"Dario"],[32.88,"got"],[33.08,"a"],[33.22,"lot"],[33.51,"of"],[33.62,"angry"],[34.02,"calls,"],[34.45,"she"],[34.68,"said."],[35.49,"From"],[35.76,"people"],[36.14,"they"],[36.33,"used"],[36.55,"to"],[36.69,"work"],[37,"with."],[37.57,"From"],[37.83,"investors."],[38.8,"From"],[39.13,"leaders"],[39.61,"of"],[39.74,"other"],[40,"tech"],[40.29,"companies."],[40.9,"The"],[41.03,"bill"],[41.31,"passed"],[41.71,"the"],[41.85,"legislature."],[42.92,"And"],[43.15,"then"],[43.4,"the"],[43.54,"governor"],[43.96,"vetoed"],[44.57,"it."]]},{"id":"s9","sub":"The Lesson","text":"Taken together, these three moments did something. They helped Anthropic's leaders discover where their true hardlines were. Not in a mission statement — but in practice, under pressure, when saying no had a cost. And they learned a lesson that would carry them into the room with the Pentagon. Advocating for a policy is risky. Especially one your peers hate. You might lose relationships. You might lose money. But sometimes — sometimes — it's worth the risk anyway. By the time the military asked them to cross their lines, they already knew who they were.","cap":[[0,"Taken"],[0.55,"together,"],[1.5,"these"],[1.93,"three"],[2.39,"moments"],[3.24,"did"],[3.56,"something."],[4.68,"They"],[4.96,"helped"],[5.33,"Anthropic's"],[6.08,"leaders"],[6.54,"discover"],[7.07,"where"],[7.37,"their"],[7.62,"true"],[8.31,"hardlines"],[9.15,"were."],[10.12,"Not"],[10.73,"in"],[10.96,"a"],[11.08,"mission"],[11.54,"statement"],[12.1,"—"],[12.2,"but"],[12.43,"in"],[12.61,"practice,"],[13.79,"under"],[14.08,"pressure,"],[15,"when"],[15.34,"saying"],[15.82,"no"],[16.7,"had"],[16.93,"a"],[17.03,"cost."],[18.18,"And"],[18.39,"they"],[18.63,"learned"],[19.03,"a"],[19.16,"lesson"],[19.6,"that"],[19.76,"would"],[19.98,"carry"],[20.36,"them"],[20.55,"into"],[20.86,"the"],[21.04,"room"],[21.78,"with"],[22,"the"],[22.13,"Pentagon."],[23.57,"Advocating"],[24.53,"for"],[24.73,"a"],[24.82,"policy"],[25.44,"is"],[25.65,"risky."],[26.64,"Especially"],[27.4,"one"],[27.63,"your"],[27.88,"peers"],[28.31,"hate."],[29.12,"You"],[29.34,"might"],[29.86,"lose"],[30.3,"relationships."],[31.41,"You"],[31.59,"might"],[31.88,"lose"],[32.22,"money."],[33.07,"But"],[33.4,"sometimes"],[34.46,"—"],[34.71,"sometimes"],[35.65,"—"],[36.04,"it's"],[36.32,"worth"],[36.67,"the"],[36.84,"risk"],[37.21,"anyway."],[38.36,"By"],[38.56,"the"],[38.68,"time"],[39.03,"the"],[39.18,"military"],[39.71,"asked"],[40.09,"them"],[40.31,"to"],[40.46,"cross"],[40.78,"their"],[41.03,"lines,"],[41.53,"they"],[41.71,"already"],[42.18,"knew"],[42.86,"who"],[43.19,"they"],[43.41,"were."]]},{"id":"s10","sub":"The Unsolved","text":"But then came the honest part. The part most CEOs would never say out loud. There's still one thing, the Amodeis admitted, they haven't figured out. How to give everyday people a voice at the table — when it comes to AI. Oprah pushed here. She told them she's heard from so many people who feel powerless against these forces. Like passengers, she said, on a train that's already left the station. Watching the future rush past the window. Unable to stop it, or steer it, or even ask where it's going.","cap":[[0,"But"],[0.21,"then"],[0.73,"came"],[1.13,"the"],[1.28,"honest"],[1.7,"part."],[2.61,"The"],[2.78,"part"],[3.32,"most"],[3.79,"CEOs"],[4.64,"would"],[5,"never"],[5.35,"say"],[5.64,"out"],[5.9,"loud."],[7.09,"There's"],[7.41,"still"],[7.77,"one"],[8.03,"thing,"],[8.38,"the"],[8.55,"Amodeis"],[9.04,"admitted,"],[9.81,"they"],[10.08,"haven't"],[10.43,"figured"],[10.76,"out."],[11.68,"How"],[12.02,"to"],[12.16,"give"],[12.41,"everyday"],[13.03,"people"],[13.42,"a"],[13.53,"voice"],[13.86,"at"],[13.97,"the"],[14.08,"table"],[14.63,"—"],[14.9,"when"],[15.11,"it"],[15.21,"comes"],[15.52,"to"],[15.69,"AI."],[16.89,"Oprah"],[17.58,"pushed"],[17.94,"here."],[18.77,"She"],[19.01,"told"],[19.28,"them"],[19.49,"she's"],[19.78,"heard"],[20.11,"from"],[20.43,"so"],[20.82,"many"],[21.12,"people"],[21.51,"who"],[21.72,"feel"],[22.05,"powerless"],[22.64,"against"],[23.03,"these"],[23.29,"forces."],[24.29,"Like"],[24.59,"passengers,"],[25.57,"she"],[25.8,"said,"],[26.48,"on"],[26.68,"a"],[26.78,"train"],[27.19,"that's"],[27.47,"already"],[27.97,"left"],[28.27,"the"],[28.39,"station."],[29.42,"Watching"],[29.9,"the"],[30.04,"future"],[30.66,"rush"],[31.17,"past"],[31.63,"the"],[31.75,"window."],[32.83,"Unable"],[33.31,"to"],[33.44,"stop"],[33.77,"it,"],[33.92,"or"],[34.13,"steer"],[34.53,"it,"],[34.68,"or"],[35.32,"even"],[35.65,"ask"],[36.05,"where"],[36.28,"it's"],[36.48,"going."]]},{"id":"s11","sub":"The Admission","text":"Dario didn't dodge it. We need to find some way, he said, for everyone to be an active participant in what is happening. Not passengers on that train — but people with a hand on the wheel. And then he said the thing that lingers. Nobody, he admitted, not even Anthropic, has figured that part out quite yet. It's a striking moment. The head of one of the world's leading AI labs, looking at the most important question of all — who gets a say — and answering, honestly: we don't know. Not yet.","cap":[[0,"Dario"],[0.58,"didn't"],[0.93,"dodge"],[1.26,"it."],[2.06,"We"],[2.3,"need"],[2.59,"to"],[2.72,"find"],[3.11,"some"],[3.43,"way,"],[3.99,"he"],[4.18,"said,"],[4.83,"for"],[5,"everyone"],[5.54,"to"],[5.68,"be"],[5.79,"an"],[5.91,"active"],[6.32,"participant"],[7.15,"in"],[7.29,"what"],[7.51,"is"],[7.65,"happening."],[8.66,"Not"],[8.96,"passengers"],[9.6,"on"],[9.74,"that"],[9.96,"train"],[10.55,"—"],[10.75,"but"],[11.01,"people"],[11.44,"with"],[11.62,"a"],[11.75,"hand"],[12.26,"on"],[12.48,"the"],[12.61,"wheel."],[13.6,"And"],[13.85,"then"],[14.27,"he"],[14.49,"said"],[14.81,"the"],[15,"thing"],[15.35,"that"],[15.59,"lingers."],[16.86,"Nobody,"],[17.77,"he"],[17.93,"admitted,"],[19.03,"not"],[19.3,"even"],[19.62,"Anthropic,"],[20.76,"has"],[21,"figured"],[21.39,"that"],[21.61,"part"],[21.96,"out"],[22.22,"quite"],[22.58,"yet."],[23.56,"It's"],[23.8,"a"],[23.89,"striking"],[24.56,"moment."],[25.58,"The"],[25.81,"head"],[26.13,"of"],[26.33,"one"],[26.58,"of"],[26.69,"the"],[26.84,"world's"],[27.41,"leading"],[27.91,"AI"],[28.42,"labs,"],[29.3,"looking"],[29.66,"at"],[29.78,"the"],[29.94,"most"],[30.31,"important"],[31.01,"question"],[31.52,"of"],[31.65,"all"],[32.08,"—"],[32.17,"who"],[32.47,"gets"],[32.74,"a"],[32.85,"say"],[33.38,"—"],[33.48,"and"],[33.74,"answering,"],[34.66,"honestly:"],[35.75,"we"],[35.92,"don't"],[36.2,"know."],[37.05,"Not"],[37.32,"yet."]]},{"id":"s12","sub":"The Future","text":"And yet he didn't end in despair. A better future is possible with AI, Dario told Oprah. He believes that. But — and it's an important but — it's not going to happen on its own. It won't arrive like weather. It has to be built. It's up to us, he said. The companies. The people. The governments. All of them, working together, to bring that future into reality. It's a quiet challenge, folded into a hopeful sentence. The tools are powerful. The direction… is still a choice. Ours to make.","cap":[[0,"And"],[0.23,"yet"],[0.52,"he"],[0.69,"didn't"],[1.05,"end"],[1.32,"in"],[1.47,"despair."],[2.68,"A"],[2.86,"better"],[3.16,"future"],[3.59,"is"],[3.73,"possible"],[4.14,"with"],[4.31,"AI,"],[4.72,"Dario"],[5.16,"told"],[5.49,"Oprah."],[6.07,"He"],[6.28,"believes"],[6.69,"that."],[7.18,"But"],[7.71,"—"],[7.84,"and"],[8.07,"it's"],[8.27,"an"],[8.38,"important"],[9.09,"but"],[9.45,"—"],[9.56,"it's"],[9.86,"not"],[10.14,"going"],[10.41,"to"],[10.54,"happen"],[10.88,"on"],[11.01,"its"],[11.19,"own."],[11.45,"It"],[11.61,"won't"],[11.92,"arrive"],[12.42,"like"],[12.67,"weather."],[13.39,"It"],[13.61,"has"],[13.86,"to"],[13.99,"be"],[14.13,"built."],[15.24,"It's"],[15.5,"up"],[15.67,"to"],[15.86,"us,"],[16.16,"he"],[16.32,"said."],[16.6,"The"],[16.74,"companies."],[17.33,"The"],[17.47,"people."],[17.9,"The"],[18.03,"governments."],[18.61,"All"],[18.9,"of"],[19.01,"them,"],[19.62,"working"],[20.09,"together,"],[20.84,"to"],[21,"bring"],[21.32,"that"],[21.57,"future"],[22.5,"into"],[22.91,"reality."],[24.17,"It's"],[24.38,"a"],[24.46,"quiet"],[24.89,"challenge,"],[25.48,"folded"],[25.96,"into"],[26.25,"a"],[26.67,"hopeful"],[27.68,"sentence."],[28.4,"The"],[28.57,"tools"],[29.18,"are"],[29.34,"powerful."],[30.62,"The"],[30.8,"direction…"],[32.25,"is"],[32.46,"still"],[32.87,"a"],[32.98,"choice."],[34.12,"Ours"],[34.59,"to"],[34.75,"make."]]},{"id":"s13","sub":"The Portrait","text":"Step back, and a portrait emerges. Not just a news story about a contract dispute — but a picture of how two people run a company. A brother and sister. Their cofounders beside them. United, again and again, in the choices that cost something. And there's a pattern to it. No ads, when ads were the easy money. An op-ed, when silence was safer. A bill they backed, when their peers turned on them. And finally the Pentagon, when saying no might mean the end. What holds it together isn't strategy. It's conviction. And a rare willingness to admit what they still haven't solved.","cap":[[0,"Step"],[0.4,"back,"],[1.02,"and"],[1.37,"a"],[1.46,"portrait"],[2.24,"emerges."],[3.29,"Not"],[3.51,"just"],[3.79,"a"],[3.9,"news"],[4.21,"story"],[4.66,"about"],[4.9,"a"],[4.98,"contract"],[5.57,"dispute"],[6.18,"—"],[6.35,"but"],[6.53,"a"],[6.61,"picture"],[7.04,"of"],[7.22,"how"],[7.88,"two"],[8.31,"people"],[8.94,"run"],[9.18,"a"],[9.28,"company."],[10.18,"A"],[10.33,"brother"],[10.7,"and"],[10.89,"sister."],[11.66,"Their"],[11.95,"cofounders"],[12.77,"beside"],[13.25,"them."],[13.99,"United,"],[14.71,"again"],[15.42,"and"],[15.69,"again,"],[16.48,"in"],[16.7,"the"],[16.85,"choices"],[17.53,"that"],[17.76,"cost"],[18.34,"something."],[19.6,"And"],[19.78,"there's"],[20,"a"],[20.07,"pattern"],[20.53,"to"],[20.71,"it."],[20.88,"No"],[21.11,"ads,"],[21.46,"when"],[21.7,"ads"],[22.07,"were"],[22.22,"the"],[22.37,"easy"],[22.76,"money."],[23.09,"An"],[23.24,"op-ed,"],[23.67,"when"],[23.94,"silence"],[24.52,"was"],[25.08,"safer."],[26.02,"A"],[26.19,"bill"],[26.53,"they"],[26.77,"backed,"],[27.71,"when"],[27.92,"their"],[28.17,"peers"],[28.62,"turned"],[28.99,"on"],[29.14,"them."],[29.37,"And"],[29.69,"finally"],[30.33,"the"],[30.48,"Pentagon,"],[31.41,"when"],[31.72,"saying"],[32.23,"no"],[32.88,"might"],[33.29,"mean"],[33.6,"the"],[33.77,"end."],[34.61,"What"],[34.88,"holds"],[35.24,"it"],[35.35,"together"],[35.84,"isn't"],[36.21,"strategy."],[37.19,"It's"],[37.43,"conviction."],[38.47,"And"],[38.69,"a"],[38.81,"rare"],[39.2,"willingness"],[39.81,"to"],[39.97,"admit"],[40.55,"what"],[40.79,"they"],[41.01,"still"],[41.43,"haven't"],[41.84,"solved."]]}];
+  var HAS_AUDIO = true;
+  var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var scenes = Array.prototype.slice.call(document.querySelectorAll(".scene"));
+
+  var ACCENTS = {gold:"#F2C879",green:"#7FC8A0",sky:"#8FB8E8",rose:"#E8927C",lav:"#C4AEE8",
+    amber:"#E4A85E",steel:"#86A9CC",violet:"#B49CF0",teal:"#66C6BE",crimson:"#DE8A86",sage:"#A7C08C"};
+  function hexRgb(h){ h=h.replace("#",""); if(h.length===3)h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
+    return {r:parseInt(h.substr(0,2),16),g:parseInt(h.substr(2,2),16),b:parseInt(h.substr(4,2),16)}; }
+  function mix(a,b,t){ return "rgb("+Math.round(a.r+(b.r-a.r)*t)+","+Math.round(a.g+(b.g-a.g)*t)+","+Math.round(a.b+(b.b-a.b)*t)+")"; }
+  var DARK1={r:9,g:10,b:14}, DARK2={r:11,g:13,b:18};
+  function hueFor(name){ var acc=ACCENTS[name]||ACCENTS.gold, rgb=hexRgb(acc);
+    return {accent:acc, a:mix(rgb,DARK1,0.90), b:"rgba("+rgb.r+","+rgb.g+","+rgb.b+",0.15)", c:mix(rgb,DARK2,0.83)}; }
+  var root=document.documentElement;
+  function applyHue(name){ var h=hueFor(name); root.style.setProperty("--accent",h.accent);
+    root.style.setProperty("--grad-a",h.a); root.style.setProperty("--grad-b",h.b); root.style.setProperty("--grad-c",h.c); }
+  applyHue(scenes[0]?scenes[0].getAttribute("data-hue"):"gold");
+
+  var io=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting) e.target.classList.add("revealed"); }); },{threshold:0.18});
+  scenes.forEach(function(s){ io.observe(s); });
+
+  function animateCount(el){ var from=parseFloat(el.getAttribute("data-count-from")), to=parseFloat(el.getAttribute("data-count-to"));
+    if(reduced){ el.textContent=to; return; } var dur=1400,start=null;
+    function step(ts){ if(start===null)start=ts; var p=Math.min((ts-start)/dur,1); var e=1-Math.pow(1-p,3);
+      el.textContent=Math.round(from+(to-from)*e); if(p<1) requestAnimationFrame(step); } requestAnimationFrame(step); }
+  var countIO=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ animateCount(e.target); countIO.unobserve(e.target); } }); },{threshold:0.6});
+  document.querySelectorAll("[data-count-to]").forEach(function(el){ countIO.observe(el); });
+
+  var canvas=document.getElementById("meadow"), ctx=canvas.getContext("2d"), W,H,pts=[],raf=null;
+  function size(){ var dpr=window.devicePixelRatio||1; W=canvas.width=innerWidth*dpr; H=canvas.height=innerHeight*dpr;
+    canvas.style.width=innerWidth+"px"; canvas.style.height=innerHeight+"px"; }
+  function seed(){ var dpr=window.devicePixelRatio||1, n=Math.min(90,Math.floor(innerWidth/14)); pts=[];
+    for(var i=0;i<n;i++) pts.push({x:Math.random()*W,y:Math.random()*H,r:(Math.random()*1.6+0.4)*dpr,
+      vx:(Math.random()-0.5)*0.12, vy:-(Math.random()*0.18+0.03), a:Math.random()*0.5+0.15, tw:Math.random()*6.28}); }
+  function accentRGB(){ var c=getComputedStyle(root).getPropertyValue("--accent").trim()||"#F2C879";
+    if(c[0]==="#"){ var m=hexRgb(c); return m.r+","+m.g+","+m.b; } return c.replace(/rgba?\(|\)/g,""); }
+  function draw(){ ctx.clearRect(0,0,W,H); var rgb=accentRGB();
+    for(var i=0;i<pts.length;i++){ var p=pts[i]; p.x+=p.vx; p.y+=p.vy; p.tw+=0.02;
+      if(p.y<-10){p.y=H+10;p.x=Math.random()*W;} if(p.x<-10)p.x=W+10; if(p.x>W+10)p.x=-10;
+      var f=p.a*(0.6+0.4*Math.sin(p.tw)); ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,6.2832);
+      ctx.fillStyle="rgba("+rgb+","+f.toFixed(3)+")"; ctx.fill(); }
+    raf=requestAnimationFrame(draw); }
+  function startMeadow(){ size(); seed(); if(!reduced){ if(raf)cancelAnimationFrame(raf); draw(); }
+    else { ctx.clearRect(0,0,W,H); var rgb=accentRGB(); pts.forEach(function(p){ ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,6.2832);
+      ctx.fillStyle="rgba("+rgb+","+p.a.toFixed(3)+")"; ctx.fill(); }); } }
+  addEventListener("resize",function(){ size(); seed(); }); startMeadow();
+
+  /* ---- narration engine ---- */
+  var audio=document.getElementById("narrator");
+  var synth=window.speechSynthesis, ttsOK=!!synth && typeof SpeechSynthesisUtterance!=="undefined";
+  var playing=false, paused=false, mode="idle", chosenVoice=null, voices=[];
+  var SPEEDS=[0.85,1,1.15,1.3,1.5], speed=parseFloat(localStorage.getItem("st-speed")||"1");
+  if(SPEEDS.indexOf(speed)===-1) speed=1;
+
+  var playBtn=document.getElementById("playBtn"), playIcon=document.getElementById("playIcon"), pauseIcon=document.getElementById("pauseIcon");
+  var nowTitle=document.getElementById("nowTitle"), nowSub=document.getElementById("nowSub"), seekFill=document.getElementById("seekFill");
+  var dotsWrap=document.getElementById("dots"), player=document.getElementById("player");
+  var capEl=document.getElementById("caption"), modeFlag=document.getElementById("modeFlag");
+  var speedBtn=document.getElementById("speedBtn"), showCaptions=true, activeIndex=0;
+
+  SC.forEach(function(s,i){ var b=document.createElement("button"); b.setAttribute("aria-label","Go to "+s.sub);
+    b.addEventListener("click",function(){ jumpTo(i,playing); }); dotsWrap.appendChild(b); });
+  var dotEls=Array.prototype.slice.call(dotsWrap.children);
+
+  function updateDots(){ dotEls.forEach(function(d,i){ d.classList.toggle("active",i===activeIndex); });
+    document.getElementById("topbar").style.width=(scenes.length>1?(activeIndex/(scenes.length-1))*100:0)+"%"; }
+  function setActive(idx,doScroll){ activeIndex=Math.max(0,Math.min(scenes.length-1,idx)); var s=scenes[activeIndex];
+    applyHue(s.getAttribute("data-hue")); nowTitle.textContent=SC[activeIndex].sub; nowSub.textContent=(activeIndex+1)+" / "+scenes.length;
+    updateDots(); if(doScroll) s.scrollIntoView({behavior:reduced?"auto":"smooth",block:"center"}); }
+  function setPlayIcon(on){ playIcon.style.display=on?"none":"block"; pauseIcon.style.display=on?"block":"none";
+    playBtn.setAttribute("aria-label",on?"Pause narration":"Play narration"); }
+
+  /* captions: one sentence window */
+  var capTokens=[], capSentences=[], capSentenceOf=[], capCurSent=-1, capSpans=[];
+  function buildCaption(i){ capEl.innerHTML=""; capSpans=[]; capCurSent=-1;
+    var data=SC[i]; if(!showCaptions){ capEl.classList.remove("show"); return; }
+    capTokens = data.cap ? data.cap.map(function(p){ return {t:p[0],w:p[1]}; })
+                         : data.text.split(/\s+/).map(function(w){ return {t:null,w:w}; });
+    capSentences=[]; capSentenceOf=[]; var cur=[];
+    for(var k=0;k<capTokens.length;k++){ cur.push(k); capSentenceOf[k]=capSentences.length;
+      if(/[.!?]["')]?$/.test(capTokens[k].w)){ capSentences.push(cur); cur=[]; } }
+    if(cur.length){ for(var m=0;m<cur.length;m++) capSentenceOf[cur[m]]=capSentences.length; capSentences.push(cur); }
+    capEl.classList.add("show"); renderSentence(0); }
+  function renderSentence(si){ capCurSent=si; capEl.innerHTML=""; capSpans=[];
+    (capSentences[si]||[]).forEach(function(gi){ var sp=document.createElement("span"); sp.className="w";
+      sp.setAttribute("data-gi",gi); sp.textContent=capTokens[gi].w+" "; capEl.appendChild(sp); capSpans.push(sp); }); }
+  function markToken(gi){ var si=capSentenceOf[gi]; if(si===undefined)return; if(si!==capCurSent) renderSentence(si);
+    for(var j=0;j<capSpans.length;j++){ var g=+capSpans[j].getAttribute("data-gi"); capSpans[j].className="w"+(g<gi?" spoken":g===gi?" active":""); } }
+  function highlightByTime(t){ if(!capTokens.length)return; var idx=0;
+    for(var i=0;i<capTokens.length;i++){ if(capTokens[i].t!==null&&capTokens[i].t<=t) idx=i; else if(capTokens[i].t!==null) break; } markToken(idx); }
+  function highlightByWordIndex(k){ if(k<capTokens.length) markToken(k); }
+
+  function srcFor(i){ return "audio/"+SC[i].id+".mp3"; }
+  function playScene(i){ setActive(i,true); playing=true; paused=false; setPlayIcon(true); buildCaption(i);
+    var useAudio=HAS_AUDIO && SC[i].cap;
+    if(useAudio){ mode="audio"; modeFlag.textContent="ElevenLabs"; audio.src=srcFor(i); audio.currentTime=0;
+      audio.playbackRate=speed; audio.volume=parseFloat(document.getElementById("vol").value);
+      var p=audio.play(); if(p&&p.catch) p.catch(function(){ ttsSpeak(i); }); }
+    else { ttsSpeak(i); } }
+  function advance(){ if(activeIndex<scenes.length-1) playScene(activeIndex+1); else stopNarration(); }
+  audio.addEventListener("ended",function(){ if(playing&&mode==="audio") advance(); });
+  audio.addEventListener("error",function(){ if(playing&&mode==="audio") ttsSpeak(activeIndex); });
+  audio.addEventListener("timeupdate",function(){ if(mode!=="audio")return;
+    if(audio.duration) seekFill.style.width=(audio.currentTime/audio.duration*100)+"%"; highlightByTime(audio.currentTime); });
+
+  function ttsSpeak(i){ mode="tts"; modeFlag.textContent=ttsOK?"Browser voice":"unavailable"; if(!ttsOK)return; synth.cancel();
+    var u=new SpeechSynthesisUtterance(SC[i].text); u.rate=0.98*speed; u.pitch=1.0;
+    u.volume=parseFloat(document.getElementById("vol").value); if(chosenVoice)u.voice=chosenVoice;
+    var wIdx=0; u.onboundary=function(ev){ if(ev.name==="word"||ev.charIndex!==undefined) highlightByWordIndex(wIdx++); };
+    u.onend=function(){ if(playing&&mode==="tts") advance(); };
+    setTimeout(function(){ if(playing) synth.speak(u); }, reduced?40:420); }
+
+  function startNarration(i){ playScene(typeof i==="number"?i:activeIndex); player.classList.add("show"); }
+  function stopNarration(){ playing=false; paused=false; setPlayIcon(false); try{ audio.pause(); }catch(e){}
+    if(ttsOK) synth.cancel(); capEl.classList.remove("show"); seekFill.style.width="0%"; }
+
+  playBtn.addEventListener("click",function(){
+    if(!playing){ startNarration(activeIndex); return; }
+    if(!paused){ paused=true; setPlayIcon(false); if(mode==="audio")audio.pause(); else if(ttsOK)synth.pause(); }
+    else { paused=false; setPlayIcon(true); if(mode==="audio")audio.play(); else if(ttsOK)synth.resume(); } });
+  document.getElementById("nextBtn").addEventListener("click",function(){ jumpTo(activeIndex+1,playing); });
+  document.getElementById("prevBtn").addEventListener("click",function(){ jumpTo(activeIndex-1,playing); });
+  function jumpTo(i,keep){ i=Math.max(0,Math.min(scenes.length-1,i));
+    if(mode==="audio"){ try{audio.pause();}catch(e){} } if(ttsOK) synth.cancel();
+    if(keep){ playScene(i); } else { stopNarration(); setActive(i,true); } }
+
+  var beginBtn=document.getElementById("beginBtn");
+  if(beginBtn) beginBtn.addEventListener("click",function(){ player.classList.add("show");
+    if(ttsOK){ try{ synth.resume(); }catch(e){} } startNarration(0); });
+  addEventListener("scroll",function(){ if(scrollY>innerHeight*0.5) player.classList.add("show"); },{passive:true});
+
+  var centerIO=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){
+    var idx=scenes.indexOf(e.target); if(idx!==activeIndex&&!playing) setActive(idx,false); } }); },{rootMargin:"-45% 0px -45% 0px",threshold:0});
+  scenes.forEach(function(s){ centerIO.observe(s); });
+
+  /* speed */
+  var speedsWrap=document.getElementById("speeds");
+  function applySpeed(v){ speed=v; localStorage.setItem("st-speed",String(v));
+    speedBtn.innerHTML=(v%1===0?v:v.toFixed(2).replace(/0$/,""))+"&times;";
+    if(mode==="audio") audio.playbackRate=v;
+    Array.prototype.forEach.call(speedsWrap.children,function(b){ b.classList.toggle("on",parseFloat(b.dataset.v)===v); }); }
+  SPEEDS.forEach(function(v){ var b=document.createElement("button"); b.dataset.v=v;
+    b.textContent=(v%1===0?v:v.toFixed(2).replace(/0$/,""))+"\u00d7";
+    b.addEventListener("click",function(){ applySpeed(v); }); speedsWrap.appendChild(b); });
+  speedBtn.addEventListener("click",function(){ var i=SPEEDS.indexOf(speed); applySpeed(SPEEDS[(i+1)%SPEEDS.length]); });
+  applySpeed(speed);
+
+  /* settings menu */
+  var voiceMenu=document.getElementById("voiceMenu");
+  document.getElementById("voiceToggle").addEventListener("click",function(e){ e.stopPropagation(); voiceMenu.classList.toggle("open"); });
+  document.addEventListener("click",function(e){ if(!voiceMenu.contains(e.target)&&e.target.id!=="voiceToggle") voiceMenu.classList.remove("open"); });
+  document.getElementById("vol").addEventListener("input",function(){ audio.volume=parseFloat(this.value); });
+  document.getElementById("capToggle").addEventListener("change",function(){ showCaptions=this.checked;
+    if(!showCaptions) capEl.classList.remove("show"); else if(playing) buildCaption(activeIndex); });
+
+  var voiceSelect=document.getElementById("voiceSelect"), ttsRow=document.getElementById("ttsRow");
+  var PREF=["Samantha","Serena","Allison","Ava","Daniel","Karen","Moira","Google UK English Female","Google US English","Microsoft Aria"];
+  function pickDefault(list){ for(var i=0;i<PREF.length;i++)for(var j=0;j<list.length;j++) if(list[j].name.indexOf(PREF[i])!==-1) return list[j];
+    for(var k=0;k<list.length;k++) if(/^en/i.test(list[k].lang)) return list[k]; return list[0]||null; }
+  function loadVoices(){ if(!ttsOK)return; voices=synth.getVoices().filter(function(v){return /^en/i.test(v.lang);}); if(!voices.length)voices=synth.getVoices();
+    voiceSelect.innerHTML=""; voices.forEach(function(v,i){ var o=document.createElement("option"); o.value=i; o.textContent=v.name; voiceSelect.appendChild(o); });
+    if(!chosenVoice)chosenVoice=pickDefault(voices); if(chosenVoice){ var ci=voices.indexOf(chosenVoice); if(ci>=0)voiceSelect.value=ci; } }
+  voiceSelect.addEventListener("change",function(){ chosenVoice=voices[parseInt(voiceSelect.value,10)]||chosenVoice; });
+  if(ttsOK){ loadVoices(); if(synth.onvoiceschanged!==undefined) synth.onvoiceschanged=loadVoices;
+    setInterval(function(){ if(playing&&!paused&&mode==="tts"&&synth.speaking){ synth.pause(); synth.resume(); } },12000); }
+  if(!HAS_AUDIO){ ttsRow.style.display="flex"; modeFlag.textContent=ttsOK?"Browser voice":"unavailable"; }
+  else { modeFlag.textContent="ElevenLabs"; }
+
+  addEventListener("beforeunload",function(){ if(ttsOK) synth.cancel(); try{audio.pause();}catch(e){} });
+  document.addEventListener("keydown",function(e){ if(e.code==="Space"&&player.classList.contains("show")&&e.target===document.body){ e.preventDefault(); playBtn.click(); } });
+  setActive(0,false);
+})();
+</script>
+</body>
+</html>

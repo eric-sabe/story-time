@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Story Time — Anthropic, read aloud</title>
+<style>
+  :root {
+    --ink:#0B0E14; --ink2:#0E1219; --text:#F4EFE6; --muted:#98A2B4; --faint:#5A6274;
+    --gold:#F2C879; --green:#7FC8A0; --sky:#8FB8E8; --rose:#E8927C; --lav:#C4AEE8;
+    --amber:#E4A85E; --steel:#86A9CC; --violet:#B49CF0; --teal:#66C6BE; --crimson:#DE8A86; --sage:#A7C08C;
+    --serif:"Hoefler Text","New York","Iowan Old Style",Palatino,Georgia,serif;
+    --sans:-apple-system,"SF Pro Text","Helvetica Neue",Inter,system-ui,sans-serif;
+    --mono:"SF Mono",ui-monospace,"Menlo","Roboto Mono",monospace;
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--ink); color:var(--text); font-family:var(--sans); font-size:18px;
+    line-height:1.7; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
+  #dawn { position:fixed; inset:0; z-index:-2;
+    background:radial-gradient(120% 80% at 50% -10%, rgba(242,200,121,0.10) 0%, transparent 55%), linear-gradient(180deg,#0C0F16 0%,#0B0E14 100%); }
+  #meadow { position:fixed; inset:0; z-index:-1; pointer-events:none; opacity:.85; }
+  .wrap { max-width:74rem; margin:0 auto; padding:clamp(3rem,9vh,7rem) clamp(1.5rem,5vw,4rem) 6rem; position:relative; z-index:1; }
+
+  header { max-width:46rem; margin-bottom:clamp(2.6rem,6vw,4.5rem); }
+  .mark { font-family:var(--mono); font-size:.72rem; letter-spacing:.34em; text-transform:uppercase; color:var(--gold); margin:0 0 1.6rem; }
+  h1 { font-family:var(--serif); font-weight:500; font-size:clamp(2.6rem,9vw,5.8rem); line-height:.98; margin:0; letter-spacing:-.015em; text-wrap:balance; overflow-wrap:break-word; }
+  .lede { font-size:clamp(1.05rem,2.4vw,1.35rem); color:var(--muted); margin:1.6rem 0 0; max-width:34rem; }
+  .lede b { color:var(--text); font-weight:600; }
+  .credit { font-family:var(--mono); font-size:.66rem; letter-spacing:.16em; text-transform:uppercase; color:var(--faint); margin:1.8rem 0 0; }
+  .credit b { color:var(--muted); font-weight:600; }
+
+  /* view switch */
+  .switch { display:inline-flex; gap:.2rem; background:rgba(255,255,255,.04); border:1px solid rgba(244,239,230,.1);
+    border-radius:999px; padding:.25rem; margin:2.2rem 0 2.6rem; }
+  .switch button { font-family:var(--mono); font-size:.66rem; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--muted); background:transparent; border:0; border-radius:999px; padding:.5rem 1.1rem; cursor:pointer; transition:.2s; }
+  .switch button.on { color:var(--ink); background:var(--gold); }
+  .switch button:hover:not(.on){ color:var(--text); }
+  .view[hidden]{ display:none; }
+
+  .shelf { margin-bottom:2.8rem; }
+  .shelf-head { margin-bottom:1.2rem; display:flex; align-items:baseline; gap:.9rem; flex-wrap:wrap;
+    border-bottom:1px solid rgba(244,239,230,.08); padding-bottom:.8rem; }
+  .shelf-head h3 { font-family:var(--serif); font-weight:500; font-size:1.55rem; margin:0; letter-spacing:-.01em; color:var(--text); }
+  .shelf-head p { font-size:.9rem; color:var(--faint); margin:0; }
+  .yeargroup { margin-bottom:2.4rem; }
+  .year { font-family:var(--mono); font-weight:500; font-size:1.4rem; color:var(--muted); margin:0 0 1.1rem;
+    letter-spacing:.02em; font-variant-numeric:tabular-nums; }
+
+  .grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(19rem,1fr)); gap:1.1rem; }
+  .card { position:relative; display:flex; flex-direction:column;
+    background:linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,.012));
+    border:1px solid rgba(244,239,230,.10); border-radius:18px; padding:1.5rem 1.5rem 1.3rem; min-height:15rem;
+    transition:transform .3s cubic-bezier(.2,.7,.2,1), border-color .3s, background .3s; }
+  .card:before { content:""; position:absolute; left:0; top:0; bottom:0; width:3px; background:var(--accent);
+    opacity:.8; border-radius:18px 0 0 18px; transition:width .3s, opacity .3s; }
+  .card:hover { transform:translateY(-5px); border-color:color-mix(in oklab, var(--accent) 40%, transparent);
+    background:linear-gradient(180deg, color-mix(in oklab, var(--accent) 9%, transparent), rgba(255,255,255,.012)); }
+  .card:hover:before { width:5px; opacity:1; }
+  .ttl { text-decoration:none; color:inherit; display:block; }
+  .ttl::after { content:""; position:absolute; inset:0; z-index:1; border-radius:18px; }
+  .ttl:focus-visible { outline:2px solid var(--accent); outline-offset:3px; }
+
+  .card-top { display:flex; align-items:center; justify-content:space-between; gap:1rem; margin-bottom:1.1rem; }
+  .chip { font-family:var(--mono); font-size:.6rem; letter-spacing:.16em; text-transform:uppercase; color:var(--accent);
+    border:1px solid color-mix(in oklab, var(--accent) 45%, transparent); border-radius:999px; padding:.3rem .7rem; }
+  .dur { font-family:var(--mono); font-size:.62rem; letter-spacing:.06em; color:var(--faint); white-space:nowrap; }
+  .card h2 { font-family:var(--serif); font-weight:500; font-size:1.7rem; line-height:1.1; margin:0 0 .5rem; letter-spacing:-.01em; text-wrap:balance; overflow-wrap:break-word; }
+  .card .sub { font-size:.86rem; color:var(--muted); margin:0 0 .9rem; font-style:italic; font-family:var(--serif); }
+  .card .tag { font-size:.96rem; color:var(--muted); margin:0; flex:1; }
+  .card-foot { display:flex; align-items:center; justify-content:space-between; gap:1rem; margin-top:1.4rem;
+    padding-top:1rem; border-top:1px solid rgba(244,239,230,.08); pointer-events:none; }
+  .card .by { font-family:var(--mono); font-size:.64rem; letter-spacing:.06em; color:var(--faint);
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .foot-right { display:inline-flex; align-items:center; gap:1rem; }
+  .source { position:relative; z-index:2; pointer-events:auto; font-family:var(--mono); font-size:.6rem;
+    letter-spacing:.1em; text-transform:uppercase; color:var(--muted); text-decoration:none; border-bottom:1px solid transparent; white-space:nowrap; }
+  .source:hover { color:var(--text); border-color:var(--muted); }
+  .card .play { display:inline-flex; align-items:center; gap:.5rem; font-family:var(--mono); font-size:.64rem;
+    letter-spacing:.16em; text-transform:uppercase; color:var(--accent); white-space:nowrap; }
+  .card .play .tri { width:0; height:0; border-left:8px solid var(--accent); border-top:5px solid transparent; border-bottom:5px solid transparent; }
+
+  footer { margin-top:4rem; font-family:var(--mono); font-size:.66rem; letter-spacing:.1em; color:var(--faint); text-transform:uppercase; }
+  footer a { color:var(--muted); text-decoration:none; border-bottom:1px solid transparent; }
+  footer a:hover { border-color:var(--muted); }
+
+  @media (max-width:560px){
+    body{ font-size:16px; }
+    .grid{ grid-template-columns:1fr; }
+    .wrap{ padding:clamp(2.2rem,7vh,3.5rem) 1.2rem 4rem; }
+    .card{ min-height:0; padding:1.3rem 1.3rem 1.15rem; }
+    .card h2{ font-size:1.5rem; }
+    header{ margin-bottom:2.2rem; }
+  }
+</style>
+</head>
+<body>
+<div id="dawn"></div>
+<canvas id="meadow"></canvas>
+<div class="wrap">
+  <header>
+    <p class="mark">Story Time</p>
+    <h1>The Anthropic Reading Room</h1>
+    <p class="lede">Long essays and dense papers on AI — the safety case, the science, and the future worth fighting for — <b>turned into short, narrated listening experiences.</b> Pick one and press play.</p>
+    <p class="credit">Designed by <b>Opus</b> &nbsp;·&nbsp; Narrated by <b>ElevenLabs</b></p>
+  </header>
+
+  <div class="switch" role="tablist" aria-label="Library view">
+    <button id="tabShelves" class="on" role="tab" aria-selected="true">Shelves</button>
+    <button id="tabChrono" role="tab" aria-selected="false">Chronological</button>
+  </div>
+
+  <div class="view" id="viewShelves">
+<section class="shelf">
+<div class="shelf-head"><h3>The Safety Case</h3><p>Why a lab devoted to safety builds frontier AI at all.</p></div>
+<div class="grid">
+<div class="card" style="--accent: var(--steel)"><div class="card-top"><span class="chip">Essay</span><span class="dur">~20 min · 20 ch</span></div><a class="ttl" href="core-views-on-ai-safety/index.html"><h2>Core Views on AI Safety</h2></a><p class="sub">When, Why, What, and How</p><p class="tag">The impact of AI could rival the industrial revolution — and we aren't sure it goes well.</p><div class="card-foot"><span class="by">Anthropic</span><span class="foot-right"><a class="source" href="https://www.anthropic.com/news/core-views-on-ai-safety" target="_blank" rel="noopener">Source ↗</a><span class="play"><span class="tri"></span> Listen</span></span></div></div>
+</div>
+</section>
+
+<section class="shelf">
+<div class="shelf-head"><h3>Reading the Machine</h3><p>Interpretability — prying open the black box.</p></div>
+<div class="grid">
+<div class="card" style="--accent: var(--violet)"><div class="card-top"><span class="chip">Paper</span><span class="dur">~16 min · 19 ch</span></div><a class="ttl" href="scaling-monosemanticity/index.html"><h2>Scaling Monosemanticity</h2></a><p class="sub">Extracting Interpretable Features from Claude 3 Sonnet</p><p class="tag">Reading a mind, one feature at a time — inside a real production model.</p><div class="card-foot"><span class="by">Templeton, Conerly et al. · Anthropic</span><span class="foot-right"><a class="source" href="https://transformer-circuits.pub/2024/scaling-monosemanticity/index.html" target="_blank" rel="noopener">Source ↗</a><span class="play"><span class="tri"></span> Listen</span></span></div></div>
+</div>
+</section>
+
+<section class="shelf">
+<div class="shelf-head"><h3>Teaching Values</h3><p>How you give a model a character — and write it down.</p></div>
+<div class="grid">
+<div class="card" style="--accent: var(--crimson)"><div class="card-top"><span class="chip">Paper</span><span class="dur">~16 min · 17 ch</span></div><a class="ttl" href="constitutional-ai/index.html"><h2>Constitutional AI</h2></a><p class="sub">Harmlessness from AI Feedback</p><p class="tag">What if an AI could learn to be harmless by following a short list of principles?</p><div class="card-foot"><span class="by">Yuntao Bai et al. · Anthropic</span><span class="foot-right"><a class="source" href="https://www.anthropic.com/research/constitutional-ai-harmlessness-from-ai-feedback" target="_blank" rel="noopener">Source ↗</a><span class="play"><span class="tri"></span> Listen</span></span></div></div>
+<div class="card" style="--accent: var(--sage)"><div class="card-top"><span class="chip">Essay</span><span class="dur">~18 min · 17 ch</span></div><a class="ttl" href="claudes-constitution/index.html"><h2>Claude's Constitution</h2></a><p class="sub">Our vision for Claude's character</p><p class="tag">A document that tries to describe not what Claude must obey, but who Claude is.</p><div class="card-foot"><span class="by">Anthropic</span><span class="foot-right"><a class="source" href="https://www.anthropic.com/constitution" target="_blank" rel="noopener">Source ↗</a><span class="play"><span class="tri"></span> Listen</span></span></div></div>
+</div>
+</section>
+
+<section class="shelf">
+<div class="shelf-head"><h3>The Future &amp; The Stakes</h3><p>What's at stake, and the world worth building.</p></div>
+<div class="grid">
+<div class="card" style="--accent: var(--gold)"><div class="card-top"><span class="chip">Essay</span><span class="dur">~20 min · 19 ch</span></div><a class="ttl" href="machines-of-loving-grace/index.html"><h2>Machines of Loving Grace</h2></a><p class="sub">How AI Could Transform the World for the Better</p><p class="tag">A country of geniuses in a datacenter — and the future worth fighting for.</p><div class="card-foot"><span class="by">Dario Amodei</span><span class="foot-right"><a class="source" href="https://www.darioamodei.com/essay/machines-of-loving-grace" target="_blank" rel="noopener">Source ↗</a><span class="play"><span class="tri"></span> Listen</span></span></div></div>
+</div>
+</section>
+
+<section class="shelf">
+<div class="shelf-head"><h3>The People</h3><p>The humans behind the machine.</p></div>
+<div class="grid">
+<div class="card" style="--accent: var(--teal)"><div class="card-top"><span class="chip">Interview</span><span class="dur">~10 min · 14 ch</span></div><a class="ttl" href="amodeis-and-oprah/index.html"><h2>Why Anthropic Stood Up to the Pentagon</h2></a><p class="sub">Dario and Daniela Amodei, in conversation with Oprah Winfrey</p><p class="tag">Two siblings told the Department of Defense no — and meant it, even if it cost them everything.</p><div class="card-foot"><span class="by">Ben Sherry · Inc.</span><span class="foot-right"><a class="source" href="https://www.inc.com/ben-sherry/anthropics-dario-and-daniela-amodei-tell-oprah-why-they-stood-up-to-the-pentagon/91348421" target="_blank" rel="noopener">Source ↗</a><span class="play"><span class="tri"></span> Listen</span></span></div></div>
+</div>
+</section>
+  </div>
+  <div class="view" id="viewChrono" hidden>
+<section class="yeargroup"><h3 class="year">2022</h3>
+<div class="grid">
+<div class="card" style="--accent: var(--crimson)"><div class="card-top"><span class="chip">Paper</span><span class="dur">~16 min · 17 ch</span></div><a class="ttl" href="constitutional-ai/index.html"><h2>Constitutional AI</h2></a><p class="sub">Harmlessness from AI Feedback</p><p class="tag">What if an AI could learn to be harmless by following a short list of principles?</p><div class="card-foot"><span class="by">Yuntao Bai et al. · Anthropic</span><span class="foot-right"><a class="source" href="https://www.anthropic.com/research/constitutional-ai-harmlessness-from-ai-feedback" target="_blank" rel="noopener">Source ↗</a><span class="play"><span class="tri"></span> Listen</span></span></div></div>
+</div>
+</section>
+
+<section class="yeargroup"><h3 class="year">2023</h3>
+<div class="grid">
+<div class="card" style="--accent: var(--steel)"><div class="card-top"><span class="chip">Essay</span><span class="dur">~20 min · 20 ch</span></div><a class="ttl" href="core-views-on-ai-safety/index.html"><h2>Core Views on AI Safety</h2></a><p class="sub">When, Why, What, and How</p><p class="tag">The impact of AI could rival the industrial revolution — and we aren't sure it goes well.</p><div class="card-foot"><span class="by">Anthropic</span><span class="foot-right"><a class="source" href="https://www.anthropic.com/news/core-views-on-ai-safety" target="_blank" rel="noopener">Source ↗</a><span class="play"><span class="tri"></span> Listen</span></span></div></div>
+</div>
+</section>
+
+<section class="yeargroup"><h3 class="year">2024</h3>
+<div class="grid">
+<div class="card" style="--accent: var(--violet)"><div class="card-top"><span class="chip">Paper</span><span class="dur">~16 min · 19 ch</span></div><a class="ttl" href="scaling-monosemanticity/index.html"><h2>Scaling Monosemanticity</h2></a><p class="sub">Extracting Interpretable Features from Claude 3 Sonnet</p><p class="tag">Reading a mind, one feature at a time — inside a real production model.</p><div class="card-foot"><span class="by">Templeton, Conerly et al. · Anthropic</span><span class="foot-right"><a class="source" href="https://transformer-circuits.pub/2024/scaling-monosemanticity/index.html" target="_blank" rel="noopener">Source ↗</a><span class="play"><span class="tri"></span> Listen</span></span></div></div>
+<div class="card" style="--accent: var(--gold)"><div class="card-top"><span class="chip">Essay</span><span class="dur">~20 min · 19 ch</span></div><a class="ttl" href="machines-of-loving-grace/index.html"><h2>Machines of Loving Grace</h2></a><p class="sub">How AI Could Transform the World for the Better</p><p class="tag">A country of geniuses in a datacenter — and the future worth fighting for.</p><div class="card-foot"><span class="by">Dario Amodei</span><span class="foot-right"><a class="source" href="https://www.darioamodei.com/essay/machines-of-loving-grace" target="_blank" rel="noopener">Source ↗</a><span class="play"><span class="tri"></span> Listen</span></span></div></div>
+</div>
+</section>
+
+<section class="yeargroup"><h3 class="year">2026</h3>
+<div class="grid">
+<div class="card" style="--accent: var(--sage)"><div class="card-top"><span class="chip">Essay</span><span class="dur">~18 min · 17 ch</span></div><a class="ttl" href="claudes-constitution/index.html"><h2>Claude's Constitution</h2></a><p class="sub">Our vision for Claude's character</p><p class="tag">A document that tries to describe not what Claude must obey, but who Claude is.</p><div class="card-foot"><span class="by">Anthropic</span><span class="foot-right"><a class="source" href="https://www.anthropic.com/constitution" target="_blank" rel="noopener">Source ↗</a><span class="play"><span class="tri"></span> Listen</span></span></div></div>
+<div class="card" style="--accent: var(--teal)"><div class="card-top"><span class="chip">Interview</span><span class="dur">~10 min · 14 ch</span></div><a class="ttl" href="amodeis-and-oprah/index.html"><h2>Why Anthropic Stood Up to the Pentagon</h2></a><p class="sub">Dario and Daniela Amodei, in conversation with Oprah Winfrey</p><p class="tag">Two siblings told the Department of Defense no — and meant it, even if it cost them everything.</p><div class="card-foot"><span class="by">Ben Sherry · Inc.</span><span class="foot-right"><a class="source" href="https://www.inc.com/ben-sherry/anthropics-dario-and-daniela-amodei-tell-oprah-why-they-stood-up-to-the-pentagon/91348421" target="_blank" rel="noopener">Source ↗</a><span class="play"><span class="tri"></span> Listen</span></span></div></div>
+</div>
+</section>
+  </div>
+
+  <footer>Machines of Loving Grace · Core Views · Constitutional AI · Interpretability · and more — read aloud.</footer>
+</div>
+<script>
+(function(){
+  var tS=document.getElementById("tabShelves"), tC=document.getElementById("tabChrono");
+  var vS=document.getElementById("viewShelves"), vC=document.getElementById("viewChrono");
+  function show(shelves){ vS.hidden=!shelves; vC.hidden=shelves;
+    tS.classList.toggle("on",shelves); tC.classList.toggle("on",!shelves);
+    tS.setAttribute("aria-selected",shelves); tC.setAttribute("aria-selected",!shelves);
+    try{ localStorage.setItem("st-view", shelves?"shelves":"chrono"); }catch(e){} }
+  tS.addEventListener("click",function(){ show(true); });
+  tC.addEventListener("click",function(){ show(false); });
+  try{ if(localStorage.getItem("st-view")==="chrono") show(false); }catch(e){}
+})();
+(function(){
+  var c=document.getElementById("meadow"), x=c.getContext("2d"), W,H,pts=[],raf;
+  var reduced=matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function size(){ var d=devicePixelRatio||1; W=c.width=innerWidth*d; H=c.height=innerHeight*d; c.style.width=innerWidth+"px"; c.style.height=innerHeight+"px"; }
+  function seed(){ var d=devicePixelRatio||1,n=Math.min(80,Math.floor(innerWidth/16)); pts=[];
+    for(var i=0;i<n;i++) pts.push({x:Math.random()*W,y:Math.random()*H,r:(Math.random()*1.5+0.4)*d,vx:(Math.random()-0.5)*0.1,vy:-(Math.random()*0.16+0.03),a:Math.random()*0.45+0.12,tw:Math.random()*6.28}); }
+  function draw(){ x.clearRect(0,0,W,H);
+    for(var i=0;i<pts.length;i++){ var p=pts[i]; p.x+=p.vx; p.y+=p.vy; p.tw+=0.02; if(p.y<-10){p.y=H+10;p.x=Math.random()*W;}
+      var f=p.a*(0.6+0.4*Math.sin(p.tw)); x.beginPath(); x.arc(p.x,p.y,p.r,0,6.2832); x.fillStyle="rgba(242,200,121,"+f.toFixed(3)+")"; x.fill(); }
+    raf=requestAnimationFrame(draw); }
+  size(); seed(); if(!reduced) draw(); addEventListener("resize",function(){ size(); seed(); });
+})();
+</script>
+</body>
+</html>

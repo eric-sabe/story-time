@@ -1,0 +1,11 @@
+# Secrets — never commit
+.env
+.elevenlabs_key
+
+# OS / editor
+.DS_Store
+*.swp
+
+# Local scratch
+scratchpad/
+.claude/launch.json
