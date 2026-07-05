@@ -80,8 +80,11 @@
     letter-spacing:.16em; text-transform:uppercase; color:var(--accent); white-space:nowrap; }
   .card .play .tri { width:0; height:0; border-left:8px solid var(--accent); border-top:5px solid transparent; border-bottom:5px solid transparent; }
   .card .stbadge { position:absolute; top:-9px; right:16px; z-index:4; font-family:var(--mono); font-size:.54rem;
-    letter-spacing:.1em; text-transform:uppercase; padding:.24rem .55rem; border-radius:999px; background:var(--accent);
-    color:var(--ink); font-weight:700; box-shadow:0 4px 14px -4px rgba(0,0,0,.65); }
+    letter-spacing:.1em; text-transform:uppercase; padding:.24rem .6rem; border-radius:999px; background:var(--accent);
+    color:var(--ink); font-weight:700; text-decoration:none; cursor:pointer; white-space:nowrap;
+    box-shadow:0 4px 14px -4px rgba(0,0,0,.65); transition:transform .15s ease, filter .15s ease; }
+  .card .stbadge:hover { transform:translateY(-1px); filter:brightness(1.08); }
+  .card .stbadge:focus-visible { outline:2px solid var(--text); outline-offset:2px; }
   .card .stbadge.fin { background:var(--sage); }
   .card .pbar { position:absolute; left:0; bottom:0; height:3px; width:0; background:var(--accent);
     border-radius:0 2px 2px 18px; z-index:2; transition:width .6s ease; }
@@ -232,13 +235,15 @@
     var id=card.getAttribute("data-id"), total=+card.getAttribute("data-scenes")||1, p=pget(id);
     if(!p) return;
     var playEl=card.querySelector(".play");
-    var badge=document.createElement("span"); badge.className="stbadge";
+    var badge=document.createElement("a"); badge.className="stbadge";
+    badge.href=id+"/index.html"+(p.done?"":"?at="+p.scene);
     var bar=document.createElement("div"); bar.className="pbar"; card.appendChild(bar);
     if(p.done){ card.classList.add("done"); badge.className="stbadge fin"; badge.textContent="\u2713 Done";
+      badge.setAttribute("aria-label","Finished — open to replay");
       if(playEl) playEl.innerHTML="\u2713 Replay"; card.appendChild(badge);
       setTimeout(function(){ bar.style.width="100%"; },30); }
     else { var pct=Math.max(3,Math.min(97,Math.round(p.scene/total*100)));
-      badge.textContent="\u25B8 "+pct+"%";
+      badge.textContent="\u25B8 Resume "+pct+"%"; badge.title="Resume from "+pct+"%"; badge.setAttribute("aria-label","Resume from "+pct+" percent");
       if(playEl) playEl.innerHTML='<span class="tri"></span> Resume'; card.appendChild(badge);
       setTimeout(function(){ bar.style.width=pct+"%"; },30); }
   });

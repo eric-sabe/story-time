@@ -377,7 +377,7 @@
   var speedBtn=document.getElementById("speedBtn"), remEl=document.getElementById("remain"), showCaptions=true, activeIndex=0;
 
   // per-work resume + time-left
-  var WORK_ID="on-deepseek-and-export-controls", PKEY="st-progress-"+WORK_ID, pendingSeek=0, lastSave=0, resumeSeek=0, savedProg=null;
+  var WORK_ID="on-deepseek-and-export-controls", PKEY="st-progress-"+WORK_ID, pendingSeek=0, lastSave=0, resumeSeek=0, savedProg=null, autoArm=false;
   try{ savedProg=JSON.parse(localStorage.getItem(PKEY)||"null"); }catch(e){}
   function saveProgress(scene,t,done){ try{ localStorage.setItem(PKEY, JSON.stringify({scene:scene,t:Math.round(t||0),done:!!done,total:scenes.length,at:Date.now()})); }catch(e){} }
   function clearProgress(){ try{ localStorage.removeItem(PKEY); }catch(e){} }
@@ -420,18 +420,21 @@
   function highlightByWordIndex(k){ if(k<capTokens.length) markToken(k); }
 
   function srcFor(i){ return "audio/"+SC[i].id+".mp3"; }
+  function applySeek(){ if(pendingSeek>0){ try{ audio.currentTime=(isFinite(audio.duration)&&audio.duration>0)?Math.min(pendingSeek,audio.duration-0.3):pendingSeek; }catch(e){} pendingSeek=0; } }
   function playScene(i,seek){ setActive(i,true); playing=true; paused=false; setPlayIcon(true); buildCaption(i);
     var useAudio=HAS_AUDIO && SC[i].cap;
-    if(useAudio){ mode="audio"; modeFlag.textContent="ElevenLabs"; audio.src=srcFor(i); audio.currentTime=0;
+    if(useAudio){ mode="audio"; modeFlag.textContent="ElevenLabs"; audio.src=srcFor(i);
       pendingSeek=(seek&&seek>0)?seek:0;
       audio.playbackRate=speed; audio.volume=parseFloat(document.getElementById("vol").value);
-      var p=audio.play(); if(p&&p.catch) p.catch(function(){ ttsSpeak(i); }); }
+      var p=audio.play();
+      if(p&&p.then){ p.then(function(){ applySeek(); }).catch(function(){ if(autoArm){ autoArm=false; paused=true; setPlayIcon(false); } else ttsSpeak(i); }); }
+      else applySeek(); }
     else { ttsSpeak(i); }
     saveProgress(i, seek||0, false); updateRemaining(); }
   function advance(){ if(activeIndex<scenes.length-1) playScene(activeIndex+1); else { saveProgress(activeIndex,0,true); stopNarration(); } }
   audio.addEventListener("ended",function(){ if(playing&&mode==="audio") advance(); });
   audio.addEventListener("error",function(){ if(playing&&mode==="audio") ttsSpeak(activeIndex); });
-  audio.addEventListener("loadedmetadata",function(){ if(pendingSeek>0&&isFinite(audio.duration)){ try{ audio.currentTime=Math.min(pendingSeek,audio.duration-0.3); }catch(e){} pendingSeek=0; } });
+  audio.addEventListener("loadedmetadata",function(){ applySeek(); });
   audio.addEventListener("timeupdate",function(){ if(mode!=="audio")return;
     if(audio.duration) seekFill.style.width=(audio.currentTime/audio.duration*100)+"%"; highlightByTime(audio.currentTime); updateRemaining();
     var now=Date.now(); if(now-lastSave>4000){ lastSave=now; saveProgress(activeIndex, audio.currentTime, false); } });
@@ -509,6 +512,12 @@
   addEventListener("beforeunload",function(){ if(playing&&mode==="audio") saveProgress(activeIndex,audio.currentTime,false); if(ttsOK) synth.cancel(); try{audio.pause();}catch(e){} });
   document.addEventListener("keydown",function(e){ if(e.code==="Space"&&player.classList.contains("show")&&e.target===document.body){ e.preventDefault(); playBtn.click(); } });
   setActive(0,false);
+
+  // arrived here from a "resume" link on the library card -> jump straight in
+  try{ var _q=new URLSearchParams(location.search);
+    if(_q.has("at") && savedProg && !savedProg.done && savedProg.scene>0){
+      autoArm=true; startNarration(savedProg.scene, savedProg.t||0); }
+  }catch(e){}
 })();
 </script>
 </body>

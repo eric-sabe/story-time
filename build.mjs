@@ -660,7 +660,7 @@ __SCENES__
   var speedBtn=document.getElementById("speedBtn"), remEl=document.getElementById("remain"), showCaptions=true, activeIndex=0;
 
   // per-work resume + time-left
-  var WORK_ID="__WORK_ID__", PKEY="st-progress-"+WORK_ID, pendingSeek=0, lastSave=0, resumeSeek=0, savedProg=null;
+  var WORK_ID="__WORK_ID__", PKEY="st-progress-"+WORK_ID, pendingSeek=0, lastSave=0, resumeSeek=0, savedProg=null, autoArm=false;
   try{ savedProg=JSON.parse(localStorage.getItem(PKEY)||"null"); }catch(e){}
   function saveProgress(scene,t,done){ try{ localStorage.setItem(PKEY, JSON.stringify({scene:scene,t:Math.round(t||0),done:!!done,total:scenes.length,at:Date.now()})); }catch(e){} }
   function clearProgress(){ try{ localStorage.removeItem(PKEY); }catch(e){} }
@@ -703,18 +703,21 @@ __SCENES__
   function highlightByWordIndex(k){ if(k<capTokens.length) markToken(k); }
 
   function srcFor(i){ return "audio/"+SC[i].id+".mp3"; }
+  function applySeek(){ if(pendingSeek>0){ try{ audio.currentTime=(isFinite(audio.duration)&&audio.duration>0)?Math.min(pendingSeek,audio.duration-0.3):pendingSeek; }catch(e){} pendingSeek=0; } }
   function playScene(i,seek){ setActive(i,true); playing=true; paused=false; setPlayIcon(true); buildCaption(i);
     var useAudio=HAS_AUDIO && SC[i].cap;
-    if(useAudio){ mode="audio"; modeFlag.textContent="ElevenLabs"; audio.src=srcFor(i); audio.currentTime=0;
+    if(useAudio){ mode="audio"; modeFlag.textContent="ElevenLabs"; audio.src=srcFor(i);
       pendingSeek=(seek&&seek>0)?seek:0;
       audio.playbackRate=speed; audio.volume=parseFloat(document.getElementById("vol").value);
-      var p=audio.play(); if(p&&p.catch) p.catch(function(){ ttsSpeak(i); }); }
+      var p=audio.play();
+      if(p&&p.then){ p.then(function(){ applySeek(); }).catch(function(){ if(autoArm){ autoArm=false; paused=true; setPlayIcon(false); } else ttsSpeak(i); }); }
+      else applySeek(); }
     else { ttsSpeak(i); }
     saveProgress(i, seek||0, false); updateRemaining(); }
   function advance(){ if(activeIndex<scenes.length-1) playScene(activeIndex+1); else { saveProgress(activeIndex,0,true); stopNarration(); } }
   audio.addEventListener("ended",function(){ if(playing&&mode==="audio") advance(); });
   audio.addEventListener("error",function(){ if(playing&&mode==="audio") ttsSpeak(activeIndex); });
-  audio.addEventListener("loadedmetadata",function(){ if(pendingSeek>0&&isFinite(audio.duration)){ try{ audio.currentTime=Math.min(pendingSeek,audio.duration-0.3); }catch(e){} pendingSeek=0; } });
+  audio.addEventListener("loadedmetadata",function(){ applySeek(); });
   audio.addEventListener("timeupdate",function(){ if(mode!=="audio")return;
     if(audio.duration) seekFill.style.width=(audio.currentTime/audio.duration*100)+"%"; highlightByTime(audio.currentTime); updateRemaining();
     var now=Date.now(); if(now-lastSave>4000){ lastSave=now; saveProgress(activeIndex, audio.currentTime, false); } });
@@ -792,6 +795,12 @@ __SCENES__
   addEventListener("beforeunload",function(){ if(playing&&mode==="audio") saveProgress(activeIndex,audio.currentTime,false); if(ttsOK) synth.cancel(); try{audio.pause();}catch(e){} });
   document.addEventListener("keydown",function(e){ if(e.code==="Space"&&player.classList.contains("show")&&e.target===document.body){ e.preventDefault(); playBtn.click(); } });
   setActive(0,false);
+
+  // arrived here from a "resume" link on the library card -> jump straight in
+  try{ var _q=new URLSearchParams(location.search);
+    if(_q.has("at") && savedProg && !savedProg.done && savedProg.scene>0){
+      autoArm=true; startNarration(savedProg.scene, savedProg.t||0); }
+  }catch(e){}
 })();
 </script>
 </body>
@@ -880,8 +889,11 @@ const LIBRARY_TEMPLATE = `<!doctype html>
     letter-spacing:.16em; text-transform:uppercase; color:var(--accent); white-space:nowrap; }
   .card .play .tri { width:0; height:0; border-left:8px solid var(--accent); border-top:5px solid transparent; border-bottom:5px solid transparent; }
   .card .stbadge { position:absolute; top:-9px; right:16px; z-index:4; font-family:var(--mono); font-size:.54rem;
-    letter-spacing:.1em; text-transform:uppercase; padding:.24rem .55rem; border-radius:999px; background:var(--accent);
-    color:var(--ink); font-weight:700; box-shadow:0 4px 14px -4px rgba(0,0,0,.65); }
+    letter-spacing:.1em; text-transform:uppercase; padding:.24rem .6rem; border-radius:999px; background:var(--accent);
+    color:var(--ink); font-weight:700; text-decoration:none; cursor:pointer; white-space:nowrap;
+    box-shadow:0 4px 14px -4px rgba(0,0,0,.65); transition:transform .15s ease, filter .15s ease; }
+  .card .stbadge:hover { transform:translateY(-1px); filter:brightness(1.08); }
+  .card .stbadge:focus-visible { outline:2px solid var(--text); outline-offset:2px; }
   .card .stbadge.fin { background:var(--sage); }
   .card .pbar { position:absolute; left:0; bottom:0; height:3px; width:0; background:var(--accent);
     border-radius:0 2px 2px 18px; z-index:2; transition:width .6s ease; }
@@ -945,13 +957,15 @@ __CHRONO__
     var id=card.getAttribute("data-id"), total=+card.getAttribute("data-scenes")||1, p=pget(id);
     if(!p) return;
     var playEl=card.querySelector(".play");
-    var badge=document.createElement("span"); badge.className="stbadge";
+    var badge=document.createElement("a"); badge.className="stbadge";
+    badge.href=id+"/index.html"+(p.done?"":"?at="+p.scene);
     var bar=document.createElement("div"); bar.className="pbar"; card.appendChild(bar);
     if(p.done){ card.classList.add("done"); badge.className="stbadge fin"; badge.textContent="\\u2713 Done";
+      badge.setAttribute("aria-label","Finished — open to replay");
       if(playEl) playEl.innerHTML="\\u2713 Replay"; card.appendChild(badge);
       setTimeout(function(){ bar.style.width="100%"; },30); }
     else { var pct=Math.max(3,Math.min(97,Math.round(p.scene/total*100)));
-      badge.textContent="\\u25B8 "+pct+"%";
+      badge.textContent="\\u25B8 Resume "+pct+"%"; badge.title="Resume from "+pct+"%"; badge.setAttribute("aria-label","Resume from "+pct+" percent");
       if(playEl) playEl.innerHTML='<span class="tri"></span> Resume'; card.appendChild(badge);
       setTimeout(function(){ bar.style.width=pct+"%"; },30); }
   });
