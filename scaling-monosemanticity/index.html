@@ -131,10 +131,12 @@
       color-mix(in oklab, var(--grad-c) 78%, transparent) 54%,
       color-mix(in oklab, var(--grad-c) 28%, transparent) 74%, transparent 100%); }
   #capscrim.show { opacity:1; }
-  #caption { display:none; width:min(92vw,44rem); text-align:center; font-family:var(--serif);
-    font-size:clamp(1rem,2.4vw,1.4rem); line-height:1.5; color:var(--faint); pointer-events:none;
+  #caption { display:block; height:1.7em; line-height:1.7; overflow:hidden; white-space:nowrap;
+    width:min(92vw,44rem); text-align:center; font-family:var(--serif); font-size:clamp(1rem,2.4vw,1.4rem);
+    color:var(--faint); pointer-events:none; opacity:0; transition:opacity .25s ease;
     text-shadow:0 2px 30px rgba(11,14,20,.95); }
-  #caption.show { display:block; }
+  #caption.show { opacity:1; }
+  #caption.off { height:0; }
   #caption .w { transition:color .12s ease; }
   #caption .w.spoken { color:var(--muted); }
   #caption .w.active { color:var(--accent); }
@@ -436,25 +438,28 @@
     document.getElementById("topbar").style.width=(scenes.length>1?(activeIndex/(scenes.length-1))*100:0)+"%"; }
   function setActive(idx,doScroll){ activeIndex=Math.max(0,Math.min(scenes.length-1,idx)); var s=scenes[activeIndex];
     applyHue(s.getAttribute("data-hue")); nowTitle.textContent=SC[activeIndex].sub; nowSub.textContent=(activeIndex+1)+" / "+scenes.length;
-    updateDots(); updateRemaining(); if(doScroll) s.scrollIntoView({behavior:reduced?"auto":"smooth",block:"center"}); }
+    updateDots(); updateRemaining(); if(doScroll) s.scrollIntoView({behavior:reduced?"auto":"smooth",block:"start"}); }
   function setPlayIcon(on){ playIcon.style.display=on?"none":"block"; pauseIcon.style.display=on?"block":"none";
     playBtn.setAttribute("aria-label",on?"Pause narration":"Play narration"); }
 
   /* captions: one sentence window */
-  var capTokens=[], capSentences=[], capSentenceOf=[], capCurSent=-1, capSpans=[];
-  function buildCaption(i){ capEl.innerHTML=""; capSpans=[]; capCurSent=-1;
+  // caption shows ONE active line at a time (a fixed-height ticker), so the dock never moves
+  var capTokens=[], capLines=[], capLineOf=[], capCurLine=-1, capSpans=[], LINE_MAX=38;
+  function buildCaption(i){ capEl.innerHTML=""; capSpans=[]; capCurLine=-1;
     var data=SC[i]; if(!showCaptions){ showCap(false); return; }
     capTokens = data.cap ? data.cap.map(function(p){ return {t:p[0],w:p[1]}; })
                          : data.text.split(/\s+/).map(function(w){ return {t:null,w:w}; });
-    capSentences=[]; capSentenceOf=[]; var cur=[];
-    for(var k=0;k<capTokens.length;k++){ cur.push(k); capSentenceOf[k]=capSentences.length;
-      if(/[.!?]["')]?$/.test(capTokens[k].w)){ capSentences.push(cur); cur=[]; } }
-    if(cur.length){ for(var m=0;m<cur.length;m++) capSentenceOf[cur[m]]=capSentences.length; capSentences.push(cur); }
-    showCap(true); renderSentence(0); }
-  function renderSentence(si){ capCurSent=si; capEl.innerHTML=""; capSpans=[];
-    (capSentences[si]||[]).forEach(function(gi){ var sp=document.createElement("span"); sp.className="w";
+    capLines=[]; capLineOf=[]; var cur=[], len=0;
+    for(var k=0;k<capTokens.length;k++){ var wl=capTokens[k].w.length+1;
+      if(cur.length && len+wl>LINE_MAX){ capLines.push(cur); cur=[]; len=0; }
+      cur.push(k); capLineOf[k]=capLines.length; len+=wl;
+      if(/[.!?]["')]?$/.test(capTokens[k].w)){ capLines.push(cur); cur=[]; len=0; } }
+    if(cur.length){ for(var m=0;m<cur.length;m++) capLineOf[cur[m]]=capLines.length; capLines.push(cur); }
+    showCap(true); renderLine(0); }
+  function renderLine(li){ capCurLine=li; capEl.innerHTML=""; capSpans=[];
+    (capLines[li]||[]).forEach(function(gi){ var sp=document.createElement("span"); sp.className="w";
       sp.setAttribute("data-gi",gi); sp.textContent=capTokens[gi].w+" "; capEl.appendChild(sp); capSpans.push(sp); }); }
-  function markToken(gi){ var si=capSentenceOf[gi]; if(si===undefined)return; if(si!==capCurSent) renderSentence(si);
+  function markToken(gi){ var li=capLineOf[gi]; if(li===undefined)return; if(li!==capCurLine) renderLine(li);
     for(var j=0;j<capSpans.length;j++){ var g=+capSpans[j].getAttribute("data-gi"); capSpans[j].className="w"+(g<gi?" spoken":g===gi?" active":""); } }
   function highlightByTime(t){ if(!capTokens.length)return; var idx=0;
     for(var i=0;i<capTokens.length;i++){ if(capTokens[i].t!==null&&capTokens[i].t<=t) idx=i; else if(capTokens[i].t!==null) break; } markToken(idx); }
@@ -535,6 +540,7 @@
   document.addEventListener("click",function(e){ if(!voiceMenu.contains(e.target)&&e.target.id!=="voiceToggle") voiceMenu.classList.remove("open"); });
   document.getElementById("vol").addEventListener("input",function(){ audio.volume=parseFloat(this.value); });
   document.getElementById("capToggle").addEventListener("change",function(){ showCaptions=this.checked;
+    capEl.classList.toggle("off",!showCaptions);
     if(!showCaptions) showCap(false); else if(playing) buildCaption(activeIndex); });
 
   var voiceSelect=document.getElementById("voiceSelect"), ttsRow=document.getElementById("ttsRow");
