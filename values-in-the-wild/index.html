@@ -121,6 +121,12 @@
   #back:hover { color:var(--text); border-color:rgba(244,239,230,.3); }
 
   /* caption */
+  #capscrim { position:fixed; left:0; right:0; bottom:0; height:16rem; z-index:37; pointer-events:none;
+    opacity:0; transition:opacity .5s ease;
+    background:linear-gradient(to top, var(--grad-c) 0%, var(--grad-c) 30%,
+      color-mix(in oklab, var(--grad-c) 78%, transparent) 54%,
+      color-mix(in oklab, var(--grad-c) 28%, transparent) 74%, transparent 100%); }
+  #capscrim.show { opacity:1; }
   #caption { position:fixed; left:50%; transform:translateX(-50%); bottom:5.6rem; z-index:38;
     width:min(90vw,46rem); text-align:center; font-family:var(--serif); font-size:clamp(1.05rem,2.5vw,1.5rem);
     line-height:1.5; color:var(--faint); pointer-events:none; opacity:0; transition:opacity .4s ease;
@@ -285,6 +291,7 @@
   </section>
 </main>
 
+<div id="capscrim" aria-hidden="true"></div>
 <div id="caption" aria-live="off"></div>
 <audio id="narrator" preload="none"></audio>
 
@@ -377,7 +384,8 @@
   var playBtn=document.getElementById("playBtn"), playIcon=document.getElementById("playIcon"), pauseIcon=document.getElementById("pauseIcon");
   var nowTitle=document.getElementById("nowTitle"), nowSub=document.getElementById("nowSub"), seekFill=document.getElementById("seekFill");
   var dotsWrap=document.getElementById("dots"), player=document.getElementById("player");
-  var capEl=document.getElementById("caption"), modeFlag=document.getElementById("modeFlag");
+  var capEl=document.getElementById("caption"), capScrim=document.getElementById("capscrim"), modeFlag=document.getElementById("modeFlag");
+  function showCap(on){ capEl.classList.toggle("show",on); capScrim.classList.toggle("show",on); }
   var speedBtn=document.getElementById("speedBtn"), remEl=document.getElementById("remain"), showCaptions=true, activeIndex=0;
 
   // per-work resume + time-left
@@ -406,14 +414,14 @@
   /* captions: one sentence window */
   var capTokens=[], capSentences=[], capSentenceOf=[], capCurSent=-1, capSpans=[];
   function buildCaption(i){ capEl.innerHTML=""; capSpans=[]; capCurSent=-1;
-    var data=SC[i]; if(!showCaptions){ capEl.classList.remove("show"); return; }
+    var data=SC[i]; if(!showCaptions){ showCap(false); return; }
     capTokens = data.cap ? data.cap.map(function(p){ return {t:p[0],w:p[1]}; })
                          : data.text.split(/\s+/).map(function(w){ return {t:null,w:w}; });
     capSentences=[]; capSentenceOf=[]; var cur=[];
     for(var k=0;k<capTokens.length;k++){ cur.push(k); capSentenceOf[k]=capSentences.length;
       if(/[.!?]["')]?$/.test(capTokens[k].w)){ capSentences.push(cur); cur=[]; } }
     if(cur.length){ for(var m=0;m<cur.length;m++) capSentenceOf[cur[m]]=capSentences.length; capSentences.push(cur); }
-    capEl.classList.add("show"); renderSentence(0); }
+    showCap(true); renderSentence(0); }
   function renderSentence(si){ capCurSent=si; capEl.innerHTML=""; capSpans=[];
     (capSentences[si]||[]).forEach(function(gi){ var sp=document.createElement("span"); sp.className="w";
       sp.setAttribute("data-gi",gi); sp.textContent=capTokens[gi].w+" "; capEl.appendChild(sp); capSpans.push(sp); }); }
@@ -452,7 +460,7 @@
 
   function startNarration(i,seek){ playScene(typeof i==="number"?i:activeIndex, seek); player.classList.add("show"); }
   function stopNarration(){ playing=false; paused=false; setPlayIcon(false); try{ audio.pause(); }catch(e){}
-    if(ttsOK) synth.cancel(); capEl.classList.remove("show"); seekFill.style.width="0%"; remEl.textContent=""; }
+    if(ttsOK) synth.cancel(); showCap(false); seekFill.style.width="0%"; remEl.textContent=""; }
 
   playBtn.addEventListener("click",function(){
     if(!playing){ startNarration(activeIndex); return; }
@@ -498,7 +506,7 @@
   document.addEventListener("click",function(e){ if(!voiceMenu.contains(e.target)&&e.target.id!=="voiceToggle") voiceMenu.classList.remove("open"); });
   document.getElementById("vol").addEventListener("input",function(){ audio.volume=parseFloat(this.value); });
   document.getElementById("capToggle").addEventListener("change",function(){ showCaptions=this.checked;
-    if(!showCaptions) capEl.classList.remove("show"); else if(playing) buildCaption(activeIndex); });
+    if(!showCaptions) showCap(false); else if(playing) buildCaption(activeIndex); });
 
   var voiceSelect=document.getElementById("voiceSelect"), ttsRow=document.getElementById("ttsRow");
   var PREF=["Samantha","Serena","Allison","Ava","Daniel","Karen","Moira","Google UK English Female","Google US English","Microsoft Aria"];
