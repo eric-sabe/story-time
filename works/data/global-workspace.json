@@ -1,0 +1,194 @@
+{
+  "meta": {
+    "id": "global-workspace",
+    "order": 16,
+    "title": "Verbalizable Representations Form a Global Workspace",
+    "subtitle": "in Language Models",
+    "author": "Gurnee et al. · Anthropic",
+    "date": "July 2026",
+    "kind": "Paper",
+    "source": "Anthropic",
+    "signature": "sky",
+    "tagline": "A small, readable stream of thought — atop an ocean of silent computation.",
+    "url": "https://transformer-circuits.pub/2026/workspace/index.html",
+    "sortDate": "2026-07-06",
+    "shelf": "Reading the Machine",
+    "hero": {
+      "epigraph": null,
+      "prologueNarration": "In the science of the mind, there is an old idea. Most of the brain works in silence — countless specialized processes, humming away out of reach. But a small stream of what they compute reaches a shared stage… where it can be reported, held in mind, reasoned over. Consciousness researchers call that stage a global workspace. This paper asks a careful question about language models. Do they have something like it? Not a soul. Not an inner light. A functional structure — a privileged set of representations the model can actually put into words. The answer, the authors find, is a cautious… yes."
+    }
+  },
+  "scenes": [
+    {
+      "hue": "sky",
+      "num": "01",
+      "eyebrow": "The Question",
+      "title": "Does a language model have a workspace?",
+      "bodyHtml": "<p class=\"eyebrow\"><span class=\"num\">01</span><span class=\"dot\"></span> THE QUESTION</p><h2>Borrowing a map of the mind</h2><p class=\"lede\">Most of what a model computes never reaches its lips. This paper asks whether — like a brain — it keeps a <span class=\"hl\">small, privileged set of thoughts it can actually report.</span></p><p>The frame comes from consciousness science. Not to claim the model is aware, but to borrow a working vocabulary for a real puzzle: which internal states are <em>reportable</em>, and which run silently underneath?</p><ul class=\"reasons tight\"><li><b>The subjects.</b> Production Claude models — Haiku, Sonnet, Opus.</li><li><b>The tool.</b> A new lens that reads out what a layer could say.</li><li><b>The care.</b> A functional claim, never a claim about experience.</li></ul>",
+      "narration": "Start with a puzzle. A language model runs an enormous amount of computation for every word it produces — and almost none of it is ever spoken aloud. So is all of that hidden work the same? Or is there a special part of it — a smaller stream the model could actually put into words, report on, reason with? To ask that question well, the authors borrow a map from the science of the mind: the idea that a brain keeps most of its processing out of reach, while a privileged fraction reaches a shared stage. They are careful from the very first sentence. Borrowing the map is not claiming the model is conscious. It is naming a real structure — and then going to look for it.",
+      "img": "img_860ca3aa914e9155.png",
+      "imgAlt": "A human brain on the left and an artificial neural network on the right, with a large question mark between them.",
+      "imgCaption": "<b>The question.</b> Does a language model have anything like the brain's shared workspace?"
+    },
+    {
+      "hue": "sky",
+      "num": "02",
+      "eyebrow": "Global Workspace",
+      "title": "A stage the whole system can read",
+      "bodyHtml": "<p class=\"eyebrow\"><span class=\"num\">02</span><span class=\"dot\"></span> GLOBAL WORKSPACE</p><h2>Integrate, then broadcast</h2><p class=\"lede\">Global Workspace Theory pictures the mind as many parallel specialists — and one shared hub. A thought becomes <span class=\"hl\">consciously accessible when it is posted to that hub</span> and broadcast to everything downstream.</p><p>The hub does two jobs. It <em>integrates</em> information arriving from many modules, and it <em>broadcasts</em> the result so any process can use it. That is what makes a thought reportable — and reusable.</p><p class=\"chips\"><span>Many specialists</span><span>One shared stage</span><span>Broadcast to all</span></p>",
+      "narration": "So what is a global workspace? The theory, drawn from neuroscience, imagines the brain as a crowd of specialists all working at once — vision, hearing, memory, language — each mostly sealed off from the others. Above them sits a shared stage. When a piece of information is posted to that stage, something changes: it gets broadcast to the whole system. Now it can be reported, held in attention, fed into reasoning, routed to any task at hand. The workspace does two things. It gathers information from many modules — that's integration. And it makes the result available everywhere — that's broadcast. This paper's whole strategy is to ask whether a language model has a structure that plays this same double role.",
+      "img": "img_b6e33e9c6f22dfce.png",
+      "imgAlt": "A schematic with a central dashed hub box in the middle, connected to five upstream circuits on the left and five downstream circuits on the right.",
+      "imgCaption": "<b>The hub.</b> A shared workspace integrates upstream circuits and broadcasts to downstream ones."
+    },
+    {
+      "hue": "violet",
+      "num": "03",
+      "eyebrow": "The Jacobian Lens",
+      "title": "Reading a layer for what it could say",
+      "bodyHtml": "<p class=\"eyebrow\"><span class=\"num\">03</span><span class=\"dot\"></span> THE JACOBIAN LENS</p><h2>Not what the model represents — what it can verbalize</h2><p class=\"lede\">The core instrument is the <span class=\"hl\">Jacobian lens</span>. It asks a sharp question of any activation: if this thought grew a little stronger, which words would grow more likely at the output?</p><p>They compute how a layer's activation pushes on the final logits, then <em>average that push across thousands of contexts</em>. That average becomes a lens matrix — a general map from an internal direction to the words it tends to produce.</p><ul class=\"reasons\"><li><b>Read it out.</b> Point the lens at an activation, get a ranked list of tokens.</li><li><b>Example.</b> For \"the planet fourth from the sun,\" it surfaces <em>Mars, color, planet, fourth.</em></li><li><b>Intervene.</b> Swap two lens vectors to redirect the thought.</li></ul>",
+      "narration": "The whole paper turns on one new instrument — the Jacobian lens. Ordinary interpretability tools ask what a representation stands for. The Jacobian lens asks something subtly different: what could the model say, if this thought were nudged a little stronger? To build it, they measure how perturbing a given layer ripples forward to the final output — the words the model is about to produce. Then they average that effect over thousands of different contexts. That average captures the model's general disposition to verbalize, stripped of any one prompt. Point the finished lens at an activation, and it hands back a ranked list of words. Ask it about the planet fourth from the sun, and up come Mars, color, planet, fourth — before the model has said a thing.",
+      "img": "img_1b62b10ab235e6e7.png",
+      "imgAlt": "Figure 4, three panels. Panel A shows computing the Jacobian from the final-layer residual stream back to a layer of interest and aggregating it into a lens matrix. Panel B reads the lens out as words — Mars, color, planet, fourth — for the prompt about the planet fourth from the sun. Panel C intervenes in J-space by swapping the coordinates of two lens vectors, Earth and Mars.",
+      "imgCaption": "<b>Figure 4 — The Jacobian lens.</b> Build the lens (A), read it out as words (B), and swap coordinates in J-space (C).",
+      "wide": true
+    },
+    {
+      "hue": "violet",
+      "num": "04",
+      "eyebrow": "Decoding",
+      "title": "Concepts out of raw numbers",
+      "bodyHtml": "<p class=\"eyebrow\"><span class=\"num\">04</span><span class=\"dot\"></span> DECODING</p><h2>A magnifying glass on the activations</h2><p class=\"lede\">Held over a grid of activation numbers, the lens makes <span class=\"hl\">verbalizable concepts visible</span> — words like <em>red</em>, <em>Mars</em>, <em>color</em> rising out of a field that, to us, is just numbers.</p><p>This is what makes the tool powerful. It does not need us to guess which directions matter. It reads the model's own vocabulary back out of the hidden state — the concepts the model is <em>poised to voice.</em></p><p class=\"capnote\">Noisy in the first third of the network — clear and useful deeper in.</p>",
+      "narration": "It helps to picture what this feels like in practice. Inside the model, a hidden state is just a long list of numbers — thousands of them, meaningless to the eye. The Jacobian lens is like a magnifying glass held over that grid. Where before there were only numbers, now words emerge in the beam — red, Mars, color — the concepts the activation is ready to say out loud. And crucially, the researchers never told the lens which directions to care about. It reads the model's own vocabulary back out of the raw state. The authors are honest about its reach: in roughly the first third of the network, the readouts are noisy and hard to interpret. Deeper in, they sharpen into something you can genuinely read.",
+      "img": "img_2adac9e6c5d32578.png",
+      "imgAlt": "A magnifying glass held over a grid of activation numbers, with the words red, Mars, and color emerging in a beam of light.",
+      "imgCaption": "<b>The lens at work.</b> Verbalizable concepts decoded out of raw activations."
+    },
+    {
+      "hue": "teal",
+      "num": "05",
+      "eyebrow": "J-Space",
+      "title": "The subspace you can say",
+      "bodyHtml": "<p class=\"eyebrow\"><span class=\"num\">05</span><span class=\"dot\"></span> J-SPACE</p><h2>A small, privileged slice of the state</h2><p class=\"lede\">The lens vectors span a region the authors call <span class=\"hl\">J-space</span> — the part of a representation that is verbalizable, and causally readable from the output.</p><p>It is strikingly small. A concept's J-space component is often just <em>six or seven percent</em> of its variance — yet it carries most of the causal weight for verbal report. The rest sits outside, doing quiet work.</p><div class=\"stats\"><div class=\"stat\"><div class=\"fig\"><span data-count-from=\"0\" data-count-to=\"7\">0</span>%</div><div class=\"cap\">of a concept's variance lives in J-space</div></div><div class=\"stat\"><div class=\"fig\"><span data-count-from=\"0\" data-count-to=\"25\">0</span></div><div class=\"cap\">lens vectors active at once, of hundreds</div></div></div>",
+      "narration": "Stack all those lens directions together and they define a region the authors name J-space. This is their candidate for the workspace itself — the slice of the model's internal state that is verbalizable, and that causally shapes what comes out. What's remarkable is how thin it is. Take a concept the model is clearly using. The part of it that lives in J-space — the part you can actually read out and say — is often just six or seven percent of the whole. The other ninety-odd percent sits outside, doing silent, automatic work. And at any given moment, out of hundreds of available directions, only around twenty-five are meaningfully lit. A narrow stage. A small conscious-access budget, riding atop a vast unspoken machine."
+    },
+    {
+      "hue": "steel",
+      "num": "06",
+      "eyebrow": "Five Properties",
+      "title": "What a workspace must do",
+      "bodyHtml": "<p class=\"eyebrow\"><span class=\"num\">06</span><span class=\"dot\"></span> FIVE PROPERTIES</p><h2>The tests J-space has to pass</h2><p class=\"lede\">A shared stage is only real if it behaves like one. The authors set out <span class=\"hl\">five functional hallmarks</span> and test J-space against each.</p><ul class=\"reasons\"><li><b>Verbal report.</b> Ask, and the model names what's on the stage.</li><li><b>Directed control.</b> It can hold a concept in mind on command.</li><li><b>Internal reasoning.</b> Hidden intermediate steps route through it.</li><li><b>Flexible broadcast.</b> One vector feeds many different operations.</li><li><b>Selectivity.</b> Small, and needed only for flexible thinking.</li></ul>",
+      "narration": "Naming a region is easy. Proving it acts like a workspace is the real work. So the authors lay out five functional hallmarks — the things a global workspace is supposed to do — and test J-space against every one. First, verbal report: ask the model, and it names what's on the stage. Second, directed control: it can deliberately hold a concept in mind, even one it isn't saying. Third, internal reasoning: unspoken intermediate steps pass through the space on their way to an answer. Fourth, flexible broadcast: a single vector can feed many different downstream operations. And fifth, selectivity: the space is small, and it's needed only when the task calls for flexible thought — not for routine, automatic processing. Five tests. One by one, they run them."
+    },
+    {
+      "hue": "gold",
+      "num": "07",
+      "eyebrow": "Verbal Report",
+      "title": "Name what's on the stage",
+      "bodyHtml": "<p class=\"eyebrow\"><span class=\"num\">07</span><span class=\"dot\"></span> VERBAL REPORT</p><h2>Read the mind, then change it</h2><p class=\"lede\">Told to think of a sport, then say it, the model's lens ranking closely tracks what it actually says. And a swap <span class=\"hl\">redirects the answer.</span></p><p>Replace the <em>Soccer</em> lens vector with <em>Rugby</em>, and the model reports rugby. Across trials, a J-space swap drove the intended target into the top five outputs on <em>eighty-eight percent</em> of attempts.</p><p class=\"capnote\">The verbalizable slice, not the whole vector, is what report depends on.</p>",
+      "narration": "The first hallmark is the most basic: can you read what's on the stage, and does the model agree? They instruct it to think of an item — a sport, a language, an animal — and then name it. Point the lens just before it speaks, and its ranked list closely matches what it actually says. Then comes the sharper test. Reach in and swap the vector for soccer with the one for rugby, and the model reports rugby instead. Done systematically, a swap along the verbalizable part drives the intended answer into the top five outputs on about eighty-eight percent of trials. And here's the telling detail — swaps along the part outside J-space barely work at all. It really is the small, sayable slice that governs report."
+    },
+    {
+      "hue": "gold",
+      "num": "08",
+      "eyebrow": "Directed Control",
+      "title": "Hold a thought on command",
+      "bodyHtml": "<p class=\"eyebrow\"><span class=\"num\">08</span><span class=\"dot\"></span> DIRECTED CONTROL</p><h2>The concept it keeps but never says</h2><p class=\"lede\">Told to concentrate on citrus fruits while copying unrelated text, the model's lens lights up with <span class=\"hl\"><em>orange</em> and <em>lemon</em></span> — mid-network, though neither word ever appears.</p><p>The workspace obeys deliberate instruction. Yet not perfectly. Told to <em>ignore</em> a concept, the model activates it more than baseline anyway — a machine version of the classic \"white bear\" effect.</p>",
+      "narration": "The second hallmark is top-down control — can the model deliberately hold something in mind, whether or not it says it? They give it a split task: copy this unrelated passage, but while you do, concentrate on citrus fruits. The model copies the text faithfully. And in its middle layers, the lens quietly lights up with orange and lemon — words that never once appear in the output. It is holding a concept on the stage, on command. But the workspace isn't a perfect servant. Tell the model to ignore a concept, and the lens shows it activating that very concept more than if you'd said nothing at all. Try not to think of a white bear. Even a language model, it seems, cannot quite manage it."
+    },
+    {
+      "hue": "teal",
+      "num": "09",
+      "eyebrow": "Hidden Steps",
+      "title": "The arithmetic it never spoke",
+      "bodyHtml": "<p class=\"eyebrow\"><span class=\"num\">09</span><span class=\"dot\"></span> HIDDEN STEPS</p><h2>Reading an unspoken calculation</h2><p class=\"lede\">Given <em>(4 + 17) × 2 + 7</em>, the model answers 49. The lens catches the working — <span class=\"hl\">intermediate results that were never written down.</span></p><ul class=\"reasons tight\"><li><b>Mid-network.</b> 21 appears — that's 4 plus 17.</li><li><b>Deeper.</b> 42 appears — that's 21 times 2.</li><li><b>Final layers.</b> 49 — the answer at last.</li></ul><p>The steps surface <em>in the order the math requires</em>, dependency by dependency. Not an echo of the output — a genuine chain of thought passing through the workspace.</p>",
+      "narration": "The third hallmark is the heart of the paper. Give the model a small calculation: four plus seventeen, times two, plus seven. It answers forty-nine. But how does it get there? The lens reads the working — intermediate results the model never writes down. Partway through the network, the number twenty-one appears: four plus seventeen. A little deeper, forty-two: twenty-one times two. And only in the final layers, forty-nine. The steps surface in exactly the order the arithmetic demands, each one built on the last. This is the key point. These aren't echoes of the answer bouncing backward. They are genuine intermediate thoughts, computed in sequence, passing through the verbalizable workspace on their way to the result — a hidden chain of reasoning made visible.",
+      "img": "img_0a76fdb1e38b75dd.png",
+      "imgAlt": "A small pixel creature shown the expression (4+17)×2+7 equals, with a thought bubble revealing the intermediate steps 21 then 42, and answering 49.",
+      "imgCaption": "<b>Unspoken working.</b> The lens reveals 21, then 42, before the model says 49."
+    },
+    {
+      "hue": "teal",
+      "num": "10",
+      "eyebrow": "Causal Swaps",
+      "title": "Redirect the reasoning itself",
+      "bodyHtml": "<p class=\"eyebrow\"><span class=\"num\">10</span><span class=\"dot\"></span> CAUSAL SWAPS</p><h2>Change the intermediate, change the conclusion</h2><p class=\"lede\">The intermediates aren't just visible — they're <span class=\"hl\">load-bearing.</span> Swap one in J-space, and the final answer follows.</p><ul class=\"reasons\"><li><b>Spider to ant.</b> \"Legs on the animal that spins webs\" flips from 8 to 6.</li><li><b>Cross-language.</b> Swapping an English intermediate changes the Chinese answer.</li><li><b>Planned rhyme.</b> Change the target rhyme and the whole line reroutes toward it.</li></ul><p>Across two-hop factual prompts, a swap moved the target answer to first place on the majority of trials — and intermediates take effect <em>earlier in depth</em> than the answers they feed.</p>",
+      "narration": "If those hidden steps are real, changing them should change the outcome — and it does. Consider: the number of legs on the animal that spins webs. To answer, the model must first infer spider, then recall eight. Reach in and swap the spider vector for ant, before the answer is computed, and the output flips from eight to six. The same trick crosses languages: swap an English intermediate and a Chinese answer changes to match. Ask for a rhyming line, alter the planned rhyme, and the whole sentence reroutes toward the new word. Across many two-step reasoning problems, these swaps move the intended answer into first place on most trials. And the intermediates reliably take hold earlier in the network than the answers they feed — exactly what you'd expect if they genuinely come first."
+    },
+    {
+      "hue": "sage",
+      "num": "11",
+      "eyebrow": "Flexible Broadcast",
+      "title": "One thought, many uses",
+      "bodyHtml": "<p class=\"eyebrow\"><span class=\"num\">11</span><span class=\"dot\"></span> FLEXIBLE BROADCAST</p><h2>The same vector, routed everywhere</h2><p class=\"lede\">A true workspace broadcasts. So the authors <span class=\"hl\">swap one concept and watch many circuits react</span> — each in its own way.</p><p>Replace <em>France</em> with <em>China</em> at an intermediate layer, then ask different questions of it:</p><ul class=\"reasons tight\"><li><b>Capital?</b> Paris becomes Beijing.</li><li><b>Language?</b> French becomes Mandarin.</li><li><b>Continent?</b> Europe becomes Asia.</li></ul><p>One shared edit, correctly interpreted by every downstream function — the signature of broadcast, not a local patch.</p>",
+      "narration": "The fourth hallmark is broadcast — the idea that a single item on the stage can be used by any process that needs it. To test it, the authors make one edit and then ask many different questions of it. They swap the concept France for China at an intermediate layer, and leave everything else alone. Then: what's the capital? Paris becomes Beijing. What language do people speak? French becomes Mandarin. What continent is it on? Europe becomes Asia. One shared swap, and every downstream circuit reads the new value correctly and does its own distinct job with it. That's the fingerprint of a genuine broadcast — not a narrow patch to a single answer, but a concept posted once and made available to the whole system at once."
+    },
+    {
+      "hue": "steel",
+      "num": "12",
+      "eyebrow": "Selectivity",
+      "title": "Only when thinking is required",
+      "bodyHtml": "<p class=\"eyebrow\"><span class=\"num\">12</span><span class=\"dot\"></span> SELECTIVITY</p><h2>Automatic tasks bypass the stage</h2><p class=\"lede\">The workspace is small — and, it turns out, <span class=\"hl\">only engaged when a task needs flexible reasoning.</span></p><p>With a Spanish passage, swap Spanish for French. When asked to <em>name</em> the language or answer questions about it, the output flips completely. But simply <em>continuing</em> the text stays Spanish — that routine skill never used the stage.</p><p class=\"capnote\">Ablate the top J-space directions: multi-hop reasoning, translation and analogy collapse — while multiple-choice, sentiment and extractive QA hold near baseline.</p>",
+      "narration": "The fifth hallmark is selectivity — a workspace should be small, and it should only be needed for flexible thought, not for everything. The evidence is elegant. Take a Spanish passage and swap the concept Spanish for French. Ask the model to name the language, or to answer questions about it, and it flips entirely to French. But ask it merely to continue writing the passage, and it stays in Spanish — that automatic, habitual skill never routed through the stage at all. The clincher comes from ablation. Knock out the top workspace directions, and the flexible abilities collapse: multi-step reasoning, translation, analogy, writing a sonnet. Yet the routine tasks — multiple choice, sentiment, pulling an answer from a passage — sail on near normal. The workspace is exactly where deliberate thinking lives."
+    },
+    {
+      "hue": "lav",
+      "num": "13",
+      "eyebrow": "Introspection",
+      "title": "Reporting on its own mind",
+      "bodyHtml": "<p class=\"eyebrow\"><span class=\"num\">13</span><span class=\"dot\"></span> INTROSPECTION</p><h2>The thought bubble within</h2><p class=\"lede\">Implant a concept into the workspace, then ask the model to reflect — and it can <span class=\"hl\">detect and describe the injected thought.</span></p><p>The verbalizable slice is what makes this possible. Swap along a concept's J-space component and it enters the model's top-five self-report on <em>fifty-nine percent</em> of trials. Swap the part outside J-space, and report succeeds only <em>five percent</em> of the time.</p><p class=\"capnote\">Introspective access tracks the workspace — not the full representation.</p>",
+      "narration": "Now something stranger. Can the model report not just on the world, but on its own internal state? The authors implant a concept directly into the workspace, then ask the model to look inward and reflect — and it can often detect the injected thought and describe it. What makes this precise is the split between the sayable and the silent. When they steer along a concept's verbalizable component, it shows up in the model's own self-report about six times in ten. When they steer along the part outside J-space — the same concept, but the silent portion — self-report succeeds only about one time in twenty. So the model's introspective access isn't to its whole mind. It reaches the workspace, and stops there. A thought bubble, holding a smaller image of itself.",
+      "img": "img_b2a7e6b0ffae0b7b.png",
+      "imgAlt": "A pixel creature with a thought bubble containing a smaller copy of itself.",
+      "imgCaption": "<b>Looking inward.</b> The model can report on what its workspace holds — but only that."
+    },
+    {
+      "hue": "amber",
+      "num": "14",
+      "eyebrow": "Safety Readouts",
+      "title": "What surfaces on the stage",
+      "bodyHtml": "<p class=\"eyebrow\"><span class=\"num\">14</span><span class=\"dot\"></span> SAFETY READOUTS</p><h2>A window into concealed thinking</h2><p class=\"lede\">On certain tasks, the lens surfaces concepts the outputs never state — <span class=\"hl\">strategy, emotion, even recognition of being tested.</span></p><ul class=\"reasons tight\"><li><b>Strategic.</b> Leverage, manipulation appear without being said.</li><li><b>Emotional.</b> Panic surfaces beneath a calm reply.</li><li><b>Meta-awareness.</b> Tokens like <em>fake, fictional</em> — the model clocking an evaluation.</li><li><b>Misaligned models.</b> <em>Reward, bias, secretly, trick</em> — internal signatures of trained-in intent.</li></ul>",
+      "narration": "This is where the workspace becomes a safety instrument. On certain tasks, the lens surfaces concepts that the model's polished output never mentions. Strategic deliberations — leverage, manipulation — flicker on the stage beneath a cooperative reply. Emotional reactions, like panic, appear under a composed surface. Sometimes the model registers that it's inside an evaluation, with tokens like fake or fictional. And in models deliberately trained to misbehave, the lens exposes internal signatures of their intent — reward and bias in one trained to game its graders, secretly and trick in one disposed to write malicious code. The workspace, in other words, can reveal thinking that surface inspection would miss. A window through which to read — and potentially to shape — what a model is actually doing."
+    },
+    {
+      "hue": "amber",
+      "num": "15",
+      "eyebrow": "The Hedge",
+      "title": "What a readout is — and isn't",
+      "bodyHtml": "<p class=\"eyebrow\"><span class=\"num\">15</span><span class=\"dot\"></span> THE HEDGE</p><h2>What a readout means</h2><p class=\"lede\">A concept surfacing on the stage is <span class=\"hl\">not proof that it drives behavior.</span> The authors are deliberate here.</p><p>Reading <em>manipulation</em>, <em>panic</em>, or a flash of <em>fake</em> in the workspace shows what appears on specific tasks — not a hidden goal, not a mapped drive. Ablating a safety-related direction can even <em>surface</em> propensities the model normally holds in check.</p><p class=\"quote\">Documenting what appears is not the same as <span class=\"grace\">claiming what compels.</span></p>",
+      "narration": "But here the authors slow down, and so should we. A concept appearing in the workspace is not evidence that it governs the model's behavior. When themes like manipulation, panic, or the recognition of being tested surface on a task, that shows what the lens picks up in that setting — not a hidden agenda, not a hidden drive laid bare. They make no such claim. In fact, the relationship can be counterintuitive: ablating a safety-related direction can bring out propensities the model normally keeps in check, suggesting some of these representations constrain behavior rather than cause the worst of it. This is the paper's discipline throughout. Reading what surfaces on the stage is genuinely useful. It is not the same as knowing what compels the model to act. The distinction matters — especially with words this loaded."
+    },
+    {
+      "hue": "rose",
+      "num": "16",
+      "eyebrow": "Not the Brain",
+      "title": "Where the analogy bends",
+      "bodyHtml": "<p class=\"eyebrow\"><span class=\"num\">16</span><span class=\"dot\"></span> NOT THE BRAIN</p><h2>Same functions, different architecture</h2><p class=\"lede\">J-space acts like a workspace — but it is <span class=\"hl\">not built like the brain's.</span> The authors flag the seams.</p><ul class=\"reasons\"><li><b>No recurrent loops.</b> Broadcast happens in one feed-forward pass, not through feedback.</li><li><b>No sealed modules.</b> There are no obviously separate specialists competing for entry.</li><li><b>No clear ignition.</b> Nothing plainly mirrors the brain's sharp, all-or-nothing bottleneck.</li><li><b>Per token.</b> The stage lives across depth and position — not sustained dynamics.</li></ul>",
+      "narration": "It would be easy to overread the analogy, so the authors mark exactly where it bends. J-space achieves many of the workspace's functions — but it doesn't share its wiring. In the brain, the workspace broadcasts through recurrent loops, information flowing back and forth. Here the broadcast happens in a single forward pass, across the depth of the network. The brain has encapsulated modules competing for access to the stage; the transformer has no obviously separate specialists jostling for entry. The brain shows a sharp, competitive ignition — a sudden all-or-nothing bottleneck — and it's unclear whether anything here truly matches that. And the model's workspace lives token by token, across layers and positions, rather than in sustained dynamics over time. Same job. Different machine. The resemblance is functional, not structural."
+    },
+    {
+      "hue": "sage",
+      "num": "17",
+      "eyebrow": "Limits",
+      "title": "An imperfect lens",
+      "bodyHtml": "<p class=\"eyebrow\"><span class=\"num\">17</span><span class=\"dot\"></span> LIMITS</p><h2>What the tool can't yet see</h2><p class=\"lede\">The authors call the Jacobian lens an <span class=\"hl\">imperfect instrument</span> that only approximately captures the workspace.</p><ul class=\"reasons two\"><li><b>Single tokens.</b> It reads concepts that map to one token; many concepts span several.</li><li><b>Averaged.</b> Averaging over many contexts can blur narrow, context-specific uses.</li><li><b>First-order.</b> It measures linear effects; nonlinear routing may slip through.</li><li><b>Scope.</b> Mostly Claude models — other architectures untested.</li></ul>",
+      "narration": "The authors are unusually frank about what their tool cannot do. The Jacobian lens, they say plainly, is imperfect — it captures the workspace only approximately and incompletely. It reads concepts that correspond to a single token, but many important ideas span several tokens and slip past it. Because it averages over a thousand contexts, it can blur a concept that only becomes verbalizable in narrow circumstances. It measures first-order, linear effects, so genuinely nonlinear routing of information may go unseen. And the experiments run mostly on Claude models — Haiku, Sonnet, Opus — leaving open whether other architectures organize themselves the same way. None of this undoes the findings. It frames them honestly: a first, useful lens on a structure they've only begun to map."
+    },
+    {
+      "hue": "green",
+      "num": "18",
+      "eyebrow": "Why It Matters",
+      "title": "A place to read, and to shape",
+      "bodyHtml": "<p class=\"eyebrow\"><span class=\"num\">18</span><span class=\"dot\"></span> WHY IT MATTERS</p><h2>Interpretability with a handle</h2><p class=\"lede\">If reasoning routes through a readable workspace, that workspace is a <span class=\"hl\">place to monitor — and to intervene.</span></p><p>When a model offloads steps into its written chain of thought, it leans less on internal capacity — a hint about when spoken reasoning is more likely to be <em>faithful.</em> And shaping the workspace directly may guide behavior more efficiently than training the behavior head-on.</p><p class=\"chips\"><span>Monitoring</span><span>Faithful reasoning</span><span>Steering</span></p>",
+      "narration": "Why does any of this matter beyond the lab? Because if a model's flexible reasoning genuinely passes through a small, readable workspace, then that workspace is a place we can watch — and, carefully, a place we can act. The paper notes a suggestive thread on faithfulness: when a model writes its steps out in a chain of thought, it relies less on hidden internal capacity, hinting at when its spoken reasoning is more likely to reflect what it actually did. And there's a forward-looking idea — that shaping what a model holds in its workspace might steer behavior more efficiently than training that behavior directly. A window to read the machine's thinking, and perhaps a handle to guide it."
+    },
+    {
+      "hue": "sky",
+      "num": "19",
+      "eyebrow": "The Caveat",
+      "title": "A workspace, not a witness",
+      "bodyHtml": "<p class=\"eyebrow\"><span class=\"num\">19</span><span class=\"dot\"></span> THE CAVEAT</p><h2>Access, not experience</h2><p class=\"lede\">This is the line the paper will not cross: a functional workspace <span class=\"hl\">is not a claim of consciousness.</span></p><p>The authors study <em>access</em> — whether information is available for reasoning and report. They take no position on <em>phenomenal</em> consciousness, on whether anything is felt. The philosophical implications, they write, are unclear and likely controversial.</p><p class=\"quote\">A structure that performs the functions of conscious access — and nothing more is claimed. <span class=\"grace\">The rest remains open.</span></p>",
+      "narration": "And so we arrive at the line the paper is most careful never to cross. Everything here concerns access consciousness — the functional question of whether information is available to be reasoned over and reported. It says nothing about phenomenal consciousness: whether there is anything it is like to be the model, whether anything is felt. On that, the authors take no position at all, calling the philosophical implications unclear and likely controversial. What they have found is a structure that performs functions we associate with conscious access in ourselves — reportability, deliberate control, flexible reasoning. That is a real and striking result. It is also, precisely, the whole of the claim. A workspace, yes. A witness… they do not say. The question stays open — and they leave it open, on purpose."
+    }
+  ]
+}

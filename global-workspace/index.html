@@ -1,0 +1,553 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Verbalizable Representations Form a Global Workspace — Story Time</title>
+<style>
+  @property --grad-a { syntax: '<color>'; inherits: true; initial-value: #0B0E14; }
+  @property --grad-b { syntax: '<color>'; inherits: true; initial-value: #12172400; }
+  @property --grad-c { syntax: '<color>'; inherits: true; initial-value: #0B0E14; }
+  :root {
+    --ink:#0B0E14; --text:#F4EFE6; --muted:#98A2B4; --faint:#5A6274;
+    --gold:#F2C879; --green:#7FC8A0; --sky:#8FB8E8; --rose:#E8927C; --lav:#C4AEE8;
+    --amber:#E4A85E; --steel:#86A9CC; --violet:#B49CF0; --teal:#66C6BE; --crimson:#DE8A86; --sage:#A7C08C;
+    --accent:var(--sky);
+    --serif:"Hoefler Text","New York","Iowan Old Style",Palatino,Georgia,serif;
+    --sans:-apple-system,"SF Pro Text","Helvetica Neue",Inter,system-ui,sans-serif;
+    --mono:"SF Mono",ui-monospace,"Menlo","Roboto Mono",monospace;
+    --measure:34rem;
+  }
+  * { box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  @media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto;} }
+  body { margin:0; background:var(--ink); color:var(--text); font-family:var(--sans);
+    font-size:18px; line-height:1.7; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
+
+  #dawn { position:fixed; inset:0; z-index:-2;
+    background:
+      radial-gradient(120% 90% at 50% 118%, var(--grad-b) 0%, transparent 60%),
+      linear-gradient(180deg, var(--grad-a) 0%, var(--grad-c) 100%);
+    transition:--grad-a 1.6s ease,--grad-b 1.6s ease,--grad-c 1.6s ease; }
+  #meadow { position:fixed; inset:0; z-index:-1; pointer-events:none; opacity:.9; }
+  #grain { position:fixed; inset:0; z-index:0; pointer-events:none; opacity:.035; mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+
+  main { position:relative; z-index:1; }
+  .scene { min-height:100vh; display:flex; flex-direction:column; justify-content:center;
+    padding:14vh clamp(1.5rem,6vw,7rem); max-width:68rem; margin:0 auto; }
+  .scene .inner { opacity:0; transform:translateY(26px);
+    transition:opacity 1.1s ease, transform 1.1s cubic-bezier(.2,.7,.2,1); max-width:var(--measure); }
+  .scene.wide .inner { max-width:52rem; }
+  .scene.revealed .inner { opacity:1; transform:none; }
+  @media (prefers-reduced-motion: reduce){ .scene .inner{opacity:1;transform:none;transition:none;} }
+
+  .eyebrow { font-family:var(--mono); font-size:.74rem; letter-spacing:.28em; text-transform:uppercase;
+    color:var(--accent); display:flex; align-items:center; gap:.8em; margin:0 0 1.6rem; flex-wrap:wrap; }
+  .eyebrow .num { color:var(--faint); }
+  .eyebrow .dot { width:7px; height:7px; border-radius:50%; background:var(--accent); box-shadow:0 0 14px var(--accent); }
+
+  h1 { font-family:var(--serif); font-weight:500; letter-spacing:-.01em;
+    font-size:clamp(2.4rem,7.5vw,5.2rem); line-height:1; margin:0; text-wrap:balance;
+    overflow-wrap:break-word; hyphens:auto; }
+  h2 { font-family:var(--serif); font-weight:500; letter-spacing:-.005em;
+    font-size:clamp(1.7rem,5vw,3.3rem); line-height:1.05; margin:0 0 1.3rem; text-wrap:balance;
+    overflow-wrap:break-word; hyphens:auto; }
+  .lede { font-size:clamp(1.05rem,2.2vw,1.32rem); color:var(--text); }
+  p { color:var(--muted); }
+  p .hl { color:var(--text); }
+  em { color:var(--text); font-style:italic; }
+  code { font-family:var(--mono); font-size:.9em; color:var(--accent); background:rgba(255,255,255,.05); padding:.05em .35em; border-radius:4px; }
+
+  ul.reasons { list-style:none; padding:0; margin:0 0 1.4rem; display:flex; flex-direction:column; gap:.85rem; }
+  ul.reasons.tight { gap:.6rem; }
+  ul.reasons.two { display:grid; grid-template-columns:1fr 1fr; gap:.7rem 1.6rem; }
+  ul.reasons li { position:relative; padding-left:1.3rem; color:var(--muted); font-size:1.02rem; line-height:1.5; }
+  ul.reasons li:before { content:""; position:absolute; left:0; top:.62em; width:6px; height:6px;
+    border-radius:50%; background:var(--accent); box-shadow:0 0 10px var(--accent); }
+  ul.reasons li b { color:var(--text); font-weight:600; }
+  @media (max-width:620px){ ul.reasons.two{grid-template-columns:1fr;} }
+
+  .chips { display:flex; flex-wrap:wrap; gap:.55rem; margin:0 0 1.4rem; }
+  .chips span { font-family:var(--mono); font-size:.72rem; letter-spacing:.04em; color:var(--accent);
+    border:1px solid color-mix(in oklab, var(--accent) 45%, transparent); border-radius:999px; padding:.34rem .8rem; }
+  .capnote { font-size:1.06rem; color:var(--text); margin-top:1.2rem; }
+
+  .figure { margin:2.2rem 0 0; background:#F6F3EC; border-radius:16px; padding:1.1rem;
+    border:1px solid rgba(0,0,0,.06); box-shadow:0 18px 50px -26px rgba(0,0,0,.85); }
+  .figure .figlink { display:block; }
+  .figure img { display:block; width:100%; height:auto; border-radius:9px; }
+  .figure figcaption { font-family:var(--mono); font-size:.66rem; letter-spacing:.02em; text-transform:none;
+    color:#6b665e; margin-top:.75rem; line-height:1.55; }
+  .figure figcaption b { color:#2c2a26; font-weight:600; }
+  @media (max-width:600px){ .figure{ padding:.7rem; } }
+
+  #s0 .inner { max-width:47rem; }
+  .kicker { font-family:var(--mono); font-size:.7rem; letter-spacing:.24em; text-transform:uppercase; color:var(--faint); margin:0 0 1.4rem; }
+  .subtitle { font-family:var(--serif); font-style:italic; font-size:clamp(1.1rem,2.6vw,1.6rem); color:var(--accent); margin:1rem 0 0; opacity:.9; }
+  .epigraph { font-family:var(--serif); font-style:italic; font-size:clamp(1.05rem,2.4vw,1.45rem);
+    line-height:1.5; color:var(--accent); margin:0 0 2.4rem; opacity:.9; white-space:pre-line; }
+  .epigraph cite { display:block; font-style:normal; font-family:var(--mono);
+    font-size:.72rem; letter-spacing:.22em; text-transform:uppercase; color:var(--faint); margin-top:1.1rem; }
+  .byline { font-family:var(--mono); font-size:.76rem; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); margin:1.6rem 0 0; }
+  .byline b { color:var(--text); font-weight:600; }
+  .begin { margin-top:2.6rem; display:inline-flex; align-items:center; gap:.8rem;
+    font-family:var(--sans); font-size:1rem; font-weight:600; color:var(--ink); background:var(--accent);
+    border:0; border-radius:999px; padding:.95rem 1.6rem; cursor:pointer;
+    transition:transform .25s ease, box-shadow .5s ease, filter .25s; }
+  .begin:hover { transform:translateY(-2px); box-shadow:0 12px 40px -8px color-mix(in oklab, var(--accent) 60%, transparent); filter:brightness(1.05); }
+  .begin:focus-visible { outline:3px solid var(--accent); outline-offset:4px; }
+  .begin .tri { width:0; height:0; border-left:11px solid var(--ink); border-top:7px solid transparent; border-bottom:7px solid transparent; }
+  .scrollhint { margin-top:2.2rem; font-family:var(--mono); font-size:.7rem; letter-spacing:.22em; text-transform:uppercase; color:var(--faint); }
+
+  .stats { display:flex; flex-wrap:wrap; gap:clamp(1.4rem,4vw,3rem); margin-top:2.2rem; }
+  .stat { min-width:7.5rem; }
+  .stat .fig { font-family:var(--serif); font-weight:500; font-size:clamp(2rem,4.4vw,3rem); line-height:1;
+    color:var(--accent); font-variant-numeric:tabular-nums; display:flex; align-items:baseline; gap:.1em; }
+  .stat .fig .u { font-size:.4em; color:var(--text); font-family:var(--sans); font-weight:600; letter-spacing:.02em; }
+  .stat .fig .u.dollar { color:var(--accent); font-family:var(--serif); font-weight:500; font-size:.55em; }
+  .stat .cap { font-family:var(--mono); font-size:.64rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin-top:.7rem; line-height:1.5; }
+
+  .quote { font-family:var(--serif); font-style:italic; font-size:clamp(1.5rem,3.6vw,2.4rem);
+    line-height:1.3; color:var(--text); text-wrap:balance; margin:0; }
+  .quote .grace { color:var(--accent); }
+  .fnote { font-family:var(--mono); font-size:.66rem; letter-spacing:.1em; color:var(--faint); margin-top:2rem; text-transform:uppercase; }
+
+  /* back to library */
+  #back { position:fixed; top:1rem; left:1rem; z-index:45; display:inline-flex; align-items:center; gap:.5rem;
+    font-family:var(--mono); font-size:.68rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted);
+    text-decoration:none; padding:.5rem .8rem; border-radius:999px; border:1px solid rgba(244,239,230,.12);
+    background:rgba(14,18,26,.55); backdrop-filter:blur(10px); transition:color .2s, border-color .2s; }
+  #back:hover { color:var(--text); border-color:rgba(244,239,230,.3); }
+
+  /* caption */
+  #caption { position:fixed; left:50%; transform:translateX(-50%); bottom:5.6rem; z-index:38;
+    width:min(90vw,46rem); text-align:center; font-family:var(--serif); font-size:clamp(1.05rem,2.5vw,1.5rem);
+    line-height:1.5; color:var(--faint); pointer-events:none; opacity:0; transition:opacity .4s ease;
+    text-shadow:0 2px 30px rgba(11,14,20,.95); }
+  #caption.show { opacity:1; }
+  #caption .w { transition:color .12s ease; }
+  #caption .w.spoken { color:var(--muted); }
+  #caption .w.active { color:var(--accent); }
+
+  #player { position:fixed; left:50%; transform:translateX(-50%); bottom:max(1.1rem, env(safe-area-inset-bottom));
+    z-index:40; display:flex; align-items:center; gap:.5rem; background:rgba(14,18,26,.72);
+    backdrop-filter:blur(16px) saturate(1.3); -webkit-backdrop-filter:blur(16px) saturate(1.3);
+    border:1px solid rgba(244,239,230,.12); border-radius:999px; padding:.5rem .55rem;
+    box-shadow:0 18px 50px -18px rgba(0,0,0,.8); max-width:min(95vw,48rem);
+    opacity:0; pointer-events:none; transition:opacity .5s ease; }
+  #player.show { opacity:1; pointer-events:auto; }
+  .pbtn { flex:none; width:42px; height:42px; border-radius:50%; border:1px solid rgba(244,239,230,.16);
+    background:transparent; color:var(--text); cursor:pointer; display:grid; place-items:center;
+    transition:background .2s,border-color .2s,transform .15s; padding:0; }
+  .pbtn:hover { background:rgba(244,239,230,.08); }
+  .pbtn:active { transform:scale(.94); }
+  .pbtn:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+  .pbtn.primary { background:var(--accent); color:var(--ink); border-color:var(--accent); width:46px; height:46px; }
+  .pbtn.primary:hover { filter:brightness(1.06); }
+  .pbtn svg { width:17px; height:17px; display:block; }
+  .pbtn.primary svg { width:19px; height:19px; }
+  .pbtn.speed { width:auto; min-width:46px; padding:0 .7rem; font-family:var(--mono); font-size:.78rem; font-weight:600;
+    letter-spacing:.02em; color:var(--accent); border-radius:999px; font-variant-numeric:tabular-nums; }
+
+  .pmeta { display:flex; flex-direction:column; min-width:0; padding:0 .3rem 0 .5rem; }
+  .pmeta .now { font-family:var(--mono); font-size:.62rem; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--accent); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:11rem; }
+  .pmeta .sub { font-size:.76rem; color:var(--muted); white-space:nowrap; }
+  .pmeta .rem { color:var(--accent); }
+  .pmeta .rem:not(:empty):before { content:"·"; color:var(--faint); margin:0 .45em; }
+  .seek { width:8rem; height:4px; border-radius:2px; background:rgba(244,239,230,.14); overflow:hidden; margin-top:.35rem; }
+  .seek .fill { height:100%; width:0%; background:var(--accent); transition:width .2s linear; }
+
+  .dots { display:flex; gap:5px; align-items:center; padding:0 .3rem; flex-wrap:wrap; max-width:16rem; }
+  .dots button { width:7px; height:7px; border-radius:50%; border:0; padding:0; cursor:pointer;
+    background:rgba(244,239,230,.22); transition:background .3s, transform .3s; }
+  .dots button:hover { background:rgba(244,239,230,.5); }
+  .dots button.active { background:var(--accent); transform:scale(1.4); box-shadow:0 0 10px var(--accent); }
+  .dots button:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+
+  .voicewrap { position:relative; }
+  #voiceMenu { position:absolute; bottom:56px; right:0; background:rgba(16,20,28,.97);
+    border:1px solid rgba(244,239,230,.14); border-radius:14px; padding:.7rem; width:16.5rem;
+    box-shadow:0 18px 50px -18px rgba(0,0,0,.8); display:none; flex-direction:column; gap:.65rem; }
+  #voiceMenu.open { display:flex; }
+  #voiceMenu .row { display:flex; align-items:center; justify-content:space-between; gap:.6rem; }
+  #voiceMenu label { font-family:var(--mono); font-size:.6rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); }
+  #voiceMenu .val { font-family:var(--mono); font-size:.7rem; color:var(--text); }
+  #voiceMenu input[type=range] { flex:1; accent-color:var(--accent); }
+  .speeds { display:flex; gap:.3rem; }
+  .speeds button { flex:1; font-family:var(--mono); font-size:.7rem; color:var(--muted); background:transparent;
+    border:1px solid rgba(244,239,230,.16); border-radius:7px; padding:.35rem 0; cursor:pointer; transition:.15s; }
+  .speeds button:hover { color:var(--text); }
+  .speeds button.on { color:var(--ink); background:var(--accent); border-color:var(--accent); }
+  .toggle { display:flex; align-items:center; gap:.5rem; cursor:pointer; }
+  .toggle input { accent-color:var(--accent); width:16px; height:16px; }
+  .modeflag { font-family:var(--mono); font-size:.58rem; letter-spacing:.1em; text-transform:uppercase; color:var(--faint); }
+
+  #topbar { position:fixed; top:0; left:0; height:2px; width:0%; z-index:50;
+    background:linear-gradient(90deg,var(--accent),var(--accent)); transition:width .3s ease, background .8s;
+    box-shadow:0 0 12px var(--accent); }
+
+  @media (max-width:600px){
+    body{font-size:16px;}
+    .pmeta,.dots,.seek{display:none;}
+    #player{ gap:.4rem; padding:.45rem .5rem; }
+    #caption{ bottom:6.2rem; font-size:1.1rem; }
+    #voiceMenu{ position:fixed; left:50%; right:auto; transform:translateX(-50%); bottom:5.4rem; width:min(92vw,19rem); }
+    .scene{ padding:12vh clamp(1.3rem,6vw,7rem); }
+    #s0 .inner{ max-width:100%; }
+    .stat{ min-width:6.5rem; }
+    #back{ font-size:.6rem; top:.7rem; left:.7rem; padding:.45rem .7rem; }
+  }
+</style>
+</head>
+<body>
+<div id="dawn"></div>
+<canvas id="meadow"></canvas>
+<div id="grain"></div>
+<div id="topbar"></div>
+<a id="back" href="../index.html">← Story Time</a>
+
+<main>
+  <section class="scene hero" id="s0" data-hue="sky">
+    <div class="inner"><p class="kicker">Paper · July 2026</p><h1>Verbalizable Representations Form a Global Workspace</h1><p class="subtitle">in Language Models</p><p class="byline">By <b>Gurnee et al. · Anthropic</b></p><button class="begin" id="beginBtn"><span class="tri"></span> Play the reading</button><p class="scrollhint">↓ or scroll to read at your own pace</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s1" data-hue="sky">
+    <div class="inner"><p class="eyebrow"><span class="num">01</span><span class="dot"></span> THE QUESTION</p><h2>Borrowing a map of the mind</h2><p class="lede">Most of what a model computes never reaches its lips. This paper asks whether — like a brain — it keeps a <span class="hl">small, privileged set of thoughts it can actually report.</span></p><p>The frame comes from consciousness science. Not to claim the model is aware, but to borrow a working vocabulary for a real puzzle: which internal states are <em>reportable</em>, and which run silently underneath?</p><ul class="reasons tight"><li><b>The subjects.</b> Production Claude models — Haiku, Sonnet, Opus.</li><li><b>The tool.</b> A new lens that reads out what a layer could say.</li><li><b>The care.</b> A functional claim, never a claim about experience.</li></ul><figure class="figure"><a class="figlink" href="img/img_860ca3aa914e9155.png" target="_blank" rel="noopener"><img src="img/img_860ca3aa914e9155.png" alt="A human brain on the left and an artificial neural network on the right, with a large question mark between them." loading="lazy"></a><figcaption><b>The question.</b> Does a language model have anything like the brain's shared workspace?</figcaption></figure>
+    </div>
+  </section>
+
+  <section class="scene" id="s2" data-hue="sky">
+    <div class="inner"><p class="eyebrow"><span class="num">02</span><span class="dot"></span> GLOBAL WORKSPACE</p><h2>Integrate, then broadcast</h2><p class="lede">Global Workspace Theory pictures the mind as many parallel specialists — and one shared hub. A thought becomes <span class="hl">consciously accessible when it is posted to that hub</span> and broadcast to everything downstream.</p><p>The hub does two jobs. It <em>integrates</em> information arriving from many modules, and it <em>broadcasts</em> the result so any process can use it. That is what makes a thought reportable — and reusable.</p><p class="chips"><span>Many specialists</span><span>One shared stage</span><span>Broadcast to all</span></p><figure class="figure"><a class="figlink" href="img/img_b6e33e9c6f22dfce.png" target="_blank" rel="noopener"><img src="img/img_b6e33e9c6f22dfce.png" alt="A schematic with a central dashed hub box in the middle, connected to five upstream circuits on the left and five downstream circuits on the right." loading="lazy"></a><figcaption><b>The hub.</b> A shared workspace integrates upstream circuits and broadcasts to downstream ones.</figcaption></figure>
+    </div>
+  </section>
+
+  <section class="scene wide" id="s3" data-hue="violet">
+    <div class="inner"><p class="eyebrow"><span class="num">03</span><span class="dot"></span> THE JACOBIAN LENS</p><h2>Not what the model represents — what it can verbalize</h2><p class="lede">The core instrument is the <span class="hl">Jacobian lens</span>. It asks a sharp question of any activation: if this thought grew a little stronger, which words would grow more likely at the output?</p><p>They compute how a layer's activation pushes on the final logits, then <em>average that push across thousands of contexts</em>. That average becomes a lens matrix — a general map from an internal direction to the words it tends to produce.</p><ul class="reasons"><li><b>Read it out.</b> Point the lens at an activation, get a ranked list of tokens.</li><li><b>Example.</b> For "the planet fourth from the sun," it surfaces <em>Mars, color, planet, fourth.</em></li><li><b>Intervene.</b> Swap two lens vectors to redirect the thought.</li></ul><figure class="figure"><a class="figlink" href="img/img_1b62b10ab235e6e7.png" target="_blank" rel="noopener"><img src="img/img_1b62b10ab235e6e7.png" alt="Figure 4, three panels. Panel A shows computing the Jacobian from the final-layer residual stream back to a layer of interest and aggregating it into a lens matrix. Panel B reads the lens out as words — Mars, color, planet, fourth — for the prompt about the planet fourth from the sun. Panel C intervenes in J-space by swapping the coordinates of two lens vectors, Earth and Mars." loading="lazy"></a><figcaption><b>Figure 4 — The Jacobian lens.</b> Build the lens (A), read it out as words (B), and swap coordinates in J-space (C).</figcaption></figure>
+    </div>
+  </section>
+
+  <section class="scene" id="s4" data-hue="violet">
+    <div class="inner"><p class="eyebrow"><span class="num">04</span><span class="dot"></span> DECODING</p><h2>A magnifying glass on the activations</h2><p class="lede">Held over a grid of activation numbers, the lens makes <span class="hl">verbalizable concepts visible</span> — words like <em>red</em>, <em>Mars</em>, <em>color</em> rising out of a field that, to us, is just numbers.</p><p>This is what makes the tool powerful. It does not need us to guess which directions matter. It reads the model's own vocabulary back out of the hidden state — the concepts the model is <em>poised to voice.</em></p><p class="capnote">Noisy in the first third of the network — clear and useful deeper in.</p><figure class="figure"><a class="figlink" href="img/img_2adac9e6c5d32578.png" target="_blank" rel="noopener"><img src="img/img_2adac9e6c5d32578.png" alt="A magnifying glass held over a grid of activation numbers, with the words red, Mars, and color emerging in a beam of light." loading="lazy"></a><figcaption><b>The lens at work.</b> Verbalizable concepts decoded out of raw activations.</figcaption></figure>
+    </div>
+  </section>
+
+  <section class="scene" id="s5" data-hue="teal">
+    <div class="inner"><p class="eyebrow"><span class="num">05</span><span class="dot"></span> J-SPACE</p><h2>A small, privileged slice of the state</h2><p class="lede">The lens vectors span a region the authors call <span class="hl">J-space</span> — the part of a representation that is verbalizable, and causally readable from the output.</p><p>It is strikingly small. A concept's J-space component is often just <em>six or seven percent</em> of its variance — yet it carries most of the causal weight for verbal report. The rest sits outside, doing quiet work.</p><div class="stats"><div class="stat"><div class="fig"><span data-count-from="0" data-count-to="7">0</span>%</div><div class="cap">of a concept's variance lives in J-space</div></div><div class="stat"><div class="fig"><span data-count-from="0" data-count-to="25">0</span></div><div class="cap">lens vectors active at once, of hundreds</div></div></div>
+    </div>
+  </section>
+
+  <section class="scene" id="s6" data-hue="steel">
+    <div class="inner"><p class="eyebrow"><span class="num">06</span><span class="dot"></span> FIVE PROPERTIES</p><h2>The tests J-space has to pass</h2><p class="lede">A shared stage is only real if it behaves like one. The authors set out <span class="hl">five functional hallmarks</span> and test J-space against each.</p><ul class="reasons"><li><b>Verbal report.</b> Ask, and the model names what's on the stage.</li><li><b>Directed control.</b> It can hold a concept in mind on command.</li><li><b>Internal reasoning.</b> Hidden intermediate steps route through it.</li><li><b>Flexible broadcast.</b> One vector feeds many different operations.</li><li><b>Selectivity.</b> Small, and needed only for flexible thinking.</li></ul>
+    </div>
+  </section>
+
+  <section class="scene" id="s7" data-hue="gold">
+    <div class="inner"><p class="eyebrow"><span class="num">07</span><span class="dot"></span> VERBAL REPORT</p><h2>Read the mind, then change it</h2><p class="lede">Told to think of a sport, then say it, the model's lens ranking closely tracks what it actually says. And a swap <span class="hl">redirects the answer.</span></p><p>Replace the <em>Soccer</em> lens vector with <em>Rugby</em>, and the model reports rugby. Across trials, a J-space swap drove the intended target into the top five outputs on <em>eighty-eight percent</em> of attempts.</p><p class="capnote">The verbalizable slice, not the whole vector, is what report depends on.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s8" data-hue="gold">
+    <div class="inner"><p class="eyebrow"><span class="num">08</span><span class="dot"></span> DIRECTED CONTROL</p><h2>The concept it keeps but never says</h2><p class="lede">Told to concentrate on citrus fruits while copying unrelated text, the model's lens lights up with <span class="hl"><em>orange</em> and <em>lemon</em></span> — mid-network, though neither word ever appears.</p><p>The workspace obeys deliberate instruction. Yet not perfectly. Told to <em>ignore</em> a concept, the model activates it more than baseline anyway — a machine version of the classic "white bear" effect.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s9" data-hue="teal">
+    <div class="inner"><p class="eyebrow"><span class="num">09</span><span class="dot"></span> HIDDEN STEPS</p><h2>Reading an unspoken calculation</h2><p class="lede">Given <em>(4 + 17) × 2 + 7</em>, the model answers 49. The lens catches the working — <span class="hl">intermediate results that were never written down.</span></p><ul class="reasons tight"><li><b>Mid-network.</b> 21 appears — that's 4 plus 17.</li><li><b>Deeper.</b> 42 appears — that's 21 times 2.</li><li><b>Final layers.</b> 49 — the answer at last.</li></ul><p>The steps surface <em>in the order the math requires</em>, dependency by dependency. Not an echo of the output — a genuine chain of thought passing through the workspace.</p><figure class="figure"><a class="figlink" href="img/img_0a76fdb1e38b75dd.png" target="_blank" rel="noopener"><img src="img/img_0a76fdb1e38b75dd.png" alt="A small pixel creature shown the expression (4+17)×2+7 equals, with a thought bubble revealing the intermediate steps 21 then 42, and answering 49." loading="lazy"></a><figcaption><b>Unspoken working.</b> The lens reveals 21, then 42, before the model says 49.</figcaption></figure>
+    </div>
+  </section>
+
+  <section class="scene" id="s10" data-hue="teal">
+    <div class="inner"><p class="eyebrow"><span class="num">10</span><span class="dot"></span> CAUSAL SWAPS</p><h2>Change the intermediate, change the conclusion</h2><p class="lede">The intermediates aren't just visible — they're <span class="hl">load-bearing.</span> Swap one in J-space, and the final answer follows.</p><ul class="reasons"><li><b>Spider to ant.</b> "Legs on the animal that spins webs" flips from 8 to 6.</li><li><b>Cross-language.</b> Swapping an English intermediate changes the Chinese answer.</li><li><b>Planned rhyme.</b> Change the target rhyme and the whole line reroutes toward it.</li></ul><p>Across two-hop factual prompts, a swap moved the target answer to first place on the majority of trials — and intermediates take effect <em>earlier in depth</em> than the answers they feed.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s11" data-hue="sage">
+    <div class="inner"><p class="eyebrow"><span class="num">11</span><span class="dot"></span> FLEXIBLE BROADCAST</p><h2>The same vector, routed everywhere</h2><p class="lede">A true workspace broadcasts. So the authors <span class="hl">swap one concept and watch many circuits react</span> — each in its own way.</p><p>Replace <em>France</em> with <em>China</em> at an intermediate layer, then ask different questions of it:</p><ul class="reasons tight"><li><b>Capital?</b> Paris becomes Beijing.</li><li><b>Language?</b> French becomes Mandarin.</li><li><b>Continent?</b> Europe becomes Asia.</li></ul><p>One shared edit, correctly interpreted by every downstream function — the signature of broadcast, not a local patch.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s12" data-hue="steel">
+    <div class="inner"><p class="eyebrow"><span class="num">12</span><span class="dot"></span> SELECTIVITY</p><h2>Automatic tasks bypass the stage</h2><p class="lede">The workspace is small — and, it turns out, <span class="hl">only engaged when a task needs flexible reasoning.</span></p><p>With a Spanish passage, swap Spanish for French. When asked to <em>name</em> the language or answer questions about it, the output flips completely. But simply <em>continuing</em> the text stays Spanish — that routine skill never used the stage.</p><p class="capnote">Ablate the top J-space directions: multi-hop reasoning, translation and analogy collapse — while multiple-choice, sentiment and extractive QA hold near baseline.</p>
+    </div>
+  </section>
+
+  <section class="scene" id="s13" data-hue="lav">
+    <div class="inner"><p class="eyebrow"><span class="num">13</span><span class="dot"></span> INTROSPECTION</p><h2>The thought bubble within</h2><p class="lede">Implant a concept into the workspace, then ask the model to reflect — and it can <span class="hl">detect and describe the injected thought.</span></p><p>The verbalizable slice is what makes this possible. Swap along a concept's J-space component and it enters the model's top-five self-report on <em>fifty-nine percent</em> of trials. Swap the part outside J-space, and report succeeds only <em>five percent</em> of the time.</p><p class="capnote">Introspective access tracks the workspace — not the full representation.</p><figure class="figure"><a class="figlink" href="img/img_b2a7e6b0ffae0b7b.png" target="_blank" rel="noopener"><img src="img/img_b2a7e6b0ffae0b7b.png" alt="A pixel creature with a thought bubble containing a smaller copy of itself." loading="lazy"></a><figcaption><b>Looking inward.</b> The model can report on what its workspace holds — but only that.</figcaption></figure>
+    </div>
+  </section>
+
+  <section class="scene" id="s14" data-hue="amber">
+    <div class="inner"><p class="eyebrow"><span class="num">14</span><span class="dot"></span> SAFETY READOUTS</p><h2>A window into concealed thinking</h2><p class="lede">On certain tasks, the lens surfaces concepts the outputs never state — <span class="hl">strategy, emotion, even recognition of being tested.</span></p><ul class="reasons tight"><li><b>Strategic.</b> Leverage, manipulation appear without being said.</li><li><b>Emotional.</b> Panic surfaces beneath a calm reply.</li><li><b>Meta-awareness.</b> Tokens like <em>fake, fictional</em> — the model clocking an evaluation.</li><li><b>Misaligned models.</b> <em>Reward, bias, secretly, trick</em> — internal signatures of trained-in intent.</li></ul>
+    </div>
+  </section>
+
+  <section class="scene" id="s15" data-hue="amber">
+    <div class="inner"><p class="eyebrow"><span class="num">15</span><span class="dot"></span> THE HEDGE</p><h2>What a readout means</h2><p class="lede">A concept surfacing on the stage is <span class="hl">not proof that it drives behavior.</span> The authors are deliberate here.</p><p>Reading <em>manipulation</em>, <em>panic</em>, or a flash of <em>fake</em> in the workspace shows what appears on specific tasks — not a hidden goal, not a mapped drive. Ablating a safety-related direction can even <em>surface</em> propensities the model normally holds in check.</p><p class="quote">Documenting what appears is not the same as <span class="grace">claiming what compels.</span></p>
+    </div>
+  </section>
+
+  <section class="scene" id="s16" data-hue="rose">
+    <div class="inner"><p class="eyebrow"><span class="num">16</span><span class="dot"></span> NOT THE BRAIN</p><h2>Same functions, different architecture</h2><p class="lede">J-space acts like a workspace — but it is <span class="hl">not built like the brain's.</span> The authors flag the seams.</p><ul class="reasons"><li><b>No recurrent loops.</b> Broadcast happens in one feed-forward pass, not through feedback.</li><li><b>No sealed modules.</b> There are no obviously separate specialists competing for entry.</li><li><b>No clear ignition.</b> Nothing plainly mirrors the brain's sharp, all-or-nothing bottleneck.</li><li><b>Per token.</b> The stage lives across depth and position — not sustained dynamics.</li></ul>
+    </div>
+  </section>
+
+  <section class="scene" id="s17" data-hue="sage">
+    <div class="inner"><p class="eyebrow"><span class="num">17</span><span class="dot"></span> LIMITS</p><h2>What the tool can't yet see</h2><p class="lede">The authors call the Jacobian lens an <span class="hl">imperfect instrument</span> that only approximately captures the workspace.</p><ul class="reasons two"><li><b>Single tokens.</b> It reads concepts that map to one token; many concepts span several.</li><li><b>Averaged.</b> Averaging over many contexts can blur narrow, context-specific uses.</li><li><b>First-order.</b> It measures linear effects; nonlinear routing may slip through.</li><li><b>Scope.</b> Mostly Claude models — other architectures untested.</li></ul>
+    </div>
+  </section>
+
+  <section class="scene" id="s18" data-hue="green">
+    <div class="inner"><p class="eyebrow"><span class="num">18</span><span class="dot"></span> WHY IT MATTERS</p><h2>Interpretability with a handle</h2><p class="lede">If reasoning routes through a readable workspace, that workspace is a <span class="hl">place to monitor — and to intervene.</span></p><p>When a model offloads steps into its written chain of thought, it leans less on internal capacity — a hint about when spoken reasoning is more likely to be <em>faithful.</em> And shaping the workspace directly may guide behavior more efficiently than training the behavior head-on.</p><p class="chips"><span>Monitoring</span><span>Faithful reasoning</span><span>Steering</span></p>
+    </div>
+  </section>
+
+  <section class="scene" id="s19" data-hue="sky">
+    <div class="inner"><p class="eyebrow"><span class="num">19</span><span class="dot"></span> THE CAVEAT</p><h2>Access, not experience</h2><p class="lede">This is the line the paper will not cross: a functional workspace <span class="hl">is not a claim of consciousness.</span></p><p>The authors study <em>access</em> — whether information is available for reasoning and report. They take no position on <em>phenomenal</em> consciousness, on whether anything is felt. The philosophical implications, they write, are unclear and likely controversial.</p><p class="quote">A structure that performs the functions of conscious access — and nothing more is claimed. <span class="grace">The rest remains open.</span></p>
+    </div>
+  </section>
+</main>
+
+<div id="caption" aria-live="off"></div>
+<audio id="narrator" preload="none"></audio>
+
+<div id="player" aria-label="Narration controls">
+  <button class="pbtn" id="prevBtn" title="Previous" aria-label="Previous scene">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 6v12l-8.5-6L18 6zM7 6h2v12H7z"/></svg></button>
+  <button class="pbtn primary" id="playBtn" title="Play" aria-label="Play narration">
+    <svg id="playIcon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7L8 5z"/></svg>
+    <svg id="pauseIcon" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg></button>
+  <button class="pbtn" id="nextBtn" title="Next" aria-label="Next scene">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 6l8.5 6L6 18V6zm9 0h2v12h-2z"/></svg></button>
+  <button class="pbtn speed" id="speedBtn" title="Playback speed" aria-label="Playback speed">1&times;</button>
+  <div class="pmeta">
+    <span class="now" id="nowTitle">Prologue</span>
+    <span class="sub"><span id="nowSub">Press play to begin</span><span class="rem" id="remain"></span></span>
+    <div class="seek"><div class="fill" id="seekFill"></div></div>
+  </div>
+  <div class="dots" id="dots" aria-hidden="true"></div>
+  <div class="voicewrap">
+    <button class="pbtn" id="voiceToggle" title="Settings" aria-label="Settings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a9 9 0 0 1 0 14"/></svg></button>
+    <div id="voiceMenu">
+      <div class="row"><label>Narrator</label><span class="val modeflag" id="modeFlag">—</span></div>
+      <div><label style="display:block;margin-bottom:.4rem">Speed</label>
+        <div class="speeds" id="speeds"></div></div>
+      <div class="row"><label>Volume</label><input type="range" id="vol" min="0" max="1" step="0.05" value="1"></div>
+      <label class="toggle"><input type="checkbox" id="capToggle" checked> <span class="val">Show captions</span></label>
+      <div class="row" id="ttsRow" style="display:none"><label>Voice</label><select id="voiceSelect" style="max-width:9rem"></select></div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var SC = [{"id":"s0","sub":"Prologue","text":"In the science of the mind, there is an old idea. Most of the brain works in silence — countless specialized processes, humming away out of reach. But a small stream of what they compute reaches a shared stage… where it can be reported, held in mind, reasoned over. Consciousness researchers call that stage a global workspace. This paper asks a careful question about language models. Do they have something like it? Not a soul. Not an inner light. A functional structure — a privileged set of representations the model can actually put into words. The answer, the authors find, is a cautious… yes.","cap":[[0,"In"],[0.21,"the"],[0.34,"science"],[0.87,"of"],[1,"the"],[1.14,"mind,"],[1.67,"there"],[1.9,"is"],[2.03,"an"],[2.17,"old"],[2.61,"idea."],[3.77,"Most"],[4.13,"of"],[4.26,"the"],[4.39,"brain"],[4.8,"works"],[5.19,"in"],[5.42,"silence"],[6.4,"—"],[6.84,"countless"],[7.55,"specialized"],[8.42,"processes,"],[9.65,"humming"],[10.12,"away"],[10.54,"out"],[10.83,"of"],[11.02,"reach."],[12.07,"But"],[12.31,"a"],[12.42,"small"],[12.99,"stream"],[13.6,"of"],[13.72,"what"],[13.93,"they"],[14.13,"compute"],[14.77,"reaches"],[15.2,"a"],[15.33,"shared"],[15.92,"stage…"],[17.09,"where"],[17.37,"it"],[17.51,"can"],[17.7,"be"],[17.87,"reported,"],[19.05,"held"],[19.42,"in"],[19.57,"mind,"],[20.61,"reasoned"],[21.2,"over."],[22.42,"Consciousness"],[23.12,"researchers"],[23.77,"call"],[24.08,"that"],[24.3,"stage"],[24.79,"a"],[24.93,"global"],[25.57,"workspace."],[27.13,"This"],[27.4,"paper"],[27.79,"asks"],[28.25,"a"],[28.35,"careful"],[28.8,"question"],[29.63,"about"],[30.02,"language"],[30.5,"models."],[31.61,"Do"],[31.78,"they"],[31.93,"have"],[32.13,"something"],[32.55,"like"],[32.91,"it?"],[33.38,"Not"],[33.59,"a"],[33.69,"soul."],[34.55,"Not"],[34.88,"an"],[35.06,"inner"],[35.42,"light."],[36.17,"A"],[36.35,"functional"],[36.95,"structure"],[37.67,"—"],[37.88,"a"],[38.05,"privileged"],[38.87,"set"],[39.21,"of"],[39.39,"representations"],[40.51,"the"],[40.64,"model"],[40.94,"can"],[41.1,"actually"],[41.47,"put"],[41.7,"into"],[41.97,"words."],[42.86,"The"],[43.06,"answer,"],[43.75,"the"],[43.92,"authors"],[44.34,"find,"],[45.26,"is"],[45.47,"a"],[45.59,"cautious…"],[46.87,"yes."]],"dur":48.7},{"id":"s1","sub":"The Question","text":"Start with a puzzle. A language model runs an enormous amount of computation for every word it produces — and almost none of it is ever spoken aloud. So is all of that hidden work the same? Or is there a special part of it — a smaller stream the model could actually put into words, report on, reason with? To ask that question well, the authors borrow a map from the science of the mind: the idea that a brain keeps most of its processing out of reach, while a privileged fraction reaches a shared stage. They are careful from the very first sentence. Borrowing the map is not claiming the model is conscious. It is naming a real structure — and then going to look for it.","cap":[[0,"Start"],[0.51,"with"],[0.67,"a"],[0.76,"puzzle."],[1.45,"A"],[1.65,"language"],[2.23,"model"],[2.64,"runs"],[3.05,"an"],[3.2,"enormous"],[3.82,"amount"],[4.21,"of"],[4.34,"computation"],[5.22,"for"],[5.41,"every"],[5.71,"word"],[6.04,"it"],[6.15,"produces"],[6.72,"—"],[7,"and"],[7.22,"almost"],[7.69,"none"],[7.95,"of"],[8.07,"it"],[8.24,"is"],[8.43,"ever"],[8.71,"spoken"],[9.21,"aloud."],[10.3,"So"],[10.65,"is"],[10.84,"all"],[11.09,"of"],[11.18,"that"],[11.44,"hidden"],[11.78,"work"],[12.13,"the"],[12.27,"same?"],[13.21,"Or"],[13.82,"is"],[14.08,"there"],[14.3,"a"],[14.41,"special"],[14.9,"part"],[15.27,"of"],[15.4,"it"],[15.65,"—"],[15.77,"a"],[15.94,"smaller"],[16.56,"stream"],[17.11,"the"],[17.26,"model"],[17.66,"could"],[17.87,"actually"],[18.34,"put"],[18.61,"into"],[18.94,"words,"],[19.45,"report"],[19.98,"on,"],[20.68,"reason"],[21.15,"with?"],[22.66,"To"],[22.86,"ask"],[23.14,"that"],[23.36,"question"],[23.95,"well,"],[24.37,"the"],[24.54,"authors"],[25.01,"borrow"],[25.38,"a"],[25.51,"map"],[25.88,"from"],[26.1,"the"],[26.25,"science"],[26.81,"of"],[26.92,"the"],[27.05,"mind:"],[28.15,"the"],[28.35,"idea"],[28.86,"that"],[29.03,"a"],[29.13,"brain"],[29.66,"keeps"],[30.1,"most"],[30.44,"of"],[30.56,"its"],[30.75,"processing"],[31.49,"out"],[31.75,"of"],[31.94,"reach,"],[32.3,"while"],[32.68,"a"],[32.79,"privileged"],[33.46,"fraction"],[34.47,"reaches"],[34.97,"a"],[35.1,"shared"],[35.64,"stage."],[37.12,"They"],[37.35,"are"],[37.48,"careful"],[38.22,"from"],[38.48,"the"],[38.61,"very"],[38.96,"first"],[39.45,"sentence."],[40.76,"Borrowing"],[41.34,"the"],[41.48,"map"],[42.16,"is"],[42.49,"not"],[42.81,"claiming"],[43.39,"the"],[43.54,"model"],[43.91,"is"],[44.07,"conscious."],[45.24,"It"],[45.45,"is"],[45.66,"naming"],[46.16,"a"],[46.32,"real"],[46.76,"structure"],[47.6,"—"],[47.88,"and"],[48.17,"then"],[48.78,"going"],[49.16,"to"],[49.35,"look"],[49.63,"for"],[49.83,"it."]],"dur":51.6},{"id":"s2","sub":"Global Workspace","text":"So what is a global workspace? The theory, drawn from neuroscience, imagines the brain as a crowd of specialists all working at once — vision, hearing, memory, language — each mostly sealed off from the others. Above them sits a shared stage. When a piece of information is posted to that stage, something changes: it gets broadcast to the whole system. Now it can be reported, held in attention, fed into reasoning, routed to any task at hand. The workspace does two things. It gathers information from many modules — that's integration. And it makes the result available everywhere — that's broadcast. This paper's whole strategy is to ask whether a language model has a structure that plays this same double role.","cap":[[0,"So"],[0.48,"what"],[1.26,"is"],[1.53,"a"],[1.63,"global"],[2.1,"workspace?"],[3.31,"The"],[3.52,"theory,"],[4.28,"drawn"],[4.71,"from"],[4.99,"neuroscience,"],[5.91,"imagines"],[6.58,"the"],[6.72,"brain"],[7.16,"as"],[7.29,"a"],[7.41,"crowd"],[7.92,"of"],[8.06,"specialists"],[9.15,"all"],[9.61,"working"],[10.04,"at"],[10.18,"once"],[10.72,"—"],[11,"vision,"],[11.6,"hearing,"],[12.33,"memory,"],[13.08,"language"],[13.74,"—"],[13.94,"each"],[14.49,"mostly"],[15.11,"sealed"],[15.57,"off"],[15.78,"from"],[15.96,"the"],[16.08,"others."],[17.17,"Above"],[17.58,"them"],[18.24,"sits"],[18.66,"a"],[18.77,"shared"],[19.27,"stage."],[20.6,"When"],[20.82,"a"],[20.9,"piece"],[21.19,"of"],[21.29,"information"],[22.04,"is"],[22.2,"posted"],[22.66,"to"],[22.78,"that"],[23.02,"stage,"],[23.96,"something"],[24.46,"changes:"],[25.54,"it"],[25.74,"gets"],[26.04,"broadcast"],[27.19,"to"],[27.37,"the"],[27.52,"whole"],[28.03,"system."],[29.42,"Now"],[29.75,"it"],[29.86,"can"],[30.02,"be"],[30.17,"reported,"],[31.13,"held"],[31.48,"in"],[31.6,"attention,"],[32.23,"fed"],[32.58,"into"],[32.91,"reasoning,"],[33.75,"routed"],[34.3,"to"],[34.49,"any"],[34.77,"task"],[35.21,"at"],[35.36,"hand."],[36.55,"The"],[36.72,"workspace"],[37.43,"does"],[37.71,"two"],[38.01,"things."],[38.98,"It"],[39.2,"gathers"],[39.66,"information"],[40.43,"from"],[40.69,"many"],[41.02,"modules"],[41.83,"—"],[42.17,"that's"],[42.63,"integration."],[44.25,"And"],[44.56,"it"],[44.71,"makes"],[45.01,"the"],[45.16,"result"],[45.58,"available"],[46.12,"everywhere"],[46.75,"—"],[47.17,"that's"],[47.89,"broadcast."],[49.62,"This"],[49.9,"paper's"],[50.38,"whole"],[50.83,"strategy"],[51.58,"is"],[51.75,"to"],[51.91,"ask"],[52.27,"whether"],[52.58,"a"],[52.73,"language"],[53.29,"model"],[53.67,"has"],[53.87,"a"],[53.96,"structure"],[54.57,"that"],[54.75,"plays"],[55.53,"this"],[55.86,"same"],[56.41,"double"],[56.81,"role."]],"dur":58.6},{"id":"s3","sub":"The Jacobian Lens","text":"The whole paper turns on one new instrument — the Jacobian lens. Ordinary interpretability tools ask what a representation stands for. The Jacobian lens asks something subtly different: what could the model say, if this thought were nudged a little stronger? To build it, they measure how perturbing a given layer ripples forward to the final output — the words the model is about to produce. Then they average that effect over thousands of different contexts. That average captures the model's general disposition to verbalize, stripped of any one prompt. Point the finished lens at an activation, and it hands back a ranked list of words. Ask it about the planet fourth from the sun, and up come Mars, color, planet, fourth — before the model has said a thing.","cap":[[0,"The"],[0.21,"whole"],[0.5,"paper"],[0.94,"turns"],[1.45,"on"],[1.83,"one"],[2.43,"new"],[2.83,"instrument"],[3.6,"—"],[3.87,"the"],[4.01,"Jacobian"],[4.62,"lens."],[5.79,"Ordinary"],[6.39,"interpretability"],[7.41,"tools"],[7.92,"ask"],[8.3,"what"],[8.49,"a"],[8.59,"representation"],[9.65,"stands"],[10.12,"for."],[11.52,"The"],[11.7,"Jacobian"],[12.39,"lens"],[13.04,"asks"],[13.71,"something"],[14.28,"subtly"],[14.79,"different:"],[15.76,"what"],[16.01,"could"],[16.18,"the"],[16.3,"model"],[16.7,"say,"],[17.03,"if"],[17.19,"this"],[17.44,"thought"],[17.82,"were"],[18,"nudged"],[18.37,"a"],[18.45,"little"],[18.75,"stronger?"],[19.98,"To"],[20.16,"build"],[20.47,"it,"],[20.93,"they"],[21.2,"measure"],[21.63,"how"],[21.99,"perturbing"],[22.85,"a"],[23.01,"given"],[23.36,"layer"],[23.78,"ripples"],[24.27,"forward"],[24.87,"to"],[25.04,"the"],[25.18,"final"],[25.65,"output"],[26.38,"—"],[26.84,"the"],[26.99,"words"],[27.52,"the"],[27.68,"model"],[28.05,"is"],[28.17,"about"],[28.51,"to"],[28.64,"produce."],[29.84,"Then"],[30.33,"they"],[30.59,"average"],[31.15,"that"],[31.38,"effect"],[31.87,"over"],[32.14,"thousands"],[32.8,"of"],[32.95,"different"],[33.38,"contexts."],[34.93,"That"],[35.28,"average"],[35.86,"captures"],[36.42,"the"],[36.57,"model's"],[37.09,"general"],[37.65,"disposition"],[38.38,"to"],[38.56,"verbalize,"],[39.68,"stripped"],[40.22,"of"],[40.33,"any"],[40.58,"one"],[40.84,"prompt."],[41.81,"Point"],[42.16,"the"],[42.3,"finished"],[42.73,"lens"],[43.07,"at"],[43.2,"an"],[43.33,"activation,"],[44.37,"and"],[44.58,"it"],[44.71,"hands"],[45.09,"back"],[45.36,"a"],[45.5,"ranked"],[45.94,"list"],[46.28,"of"],[46.46,"words."],[47.67,"Ask"],[48.12,"it"],[48.26,"about"],[48.59,"the"],[48.72,"planet"],[49.18,"fourth"],[49.57,"from"],[49.8,"the"],[49.97,"sun,"],[50.74,"and"],[51.05,"up"],[51.29,"come"],[51.61,"Mars,"],[52.19,"color,"],[52.63,"planet,"],[53.49,"fourth"],[54.1,"—"],[54.39,"before"],[54.73,"the"],[54.87,"model"],[55.25,"has"],[55.44,"said"],[55.69,"a"],[55.79,"thing."]],"dur":57.6},{"id":"s4","sub":"Decoding","text":"It helps to picture what this feels like in practice. Inside the model, a hidden state is just a long list of numbers — thousands of them, meaningless to the eye. The Jacobian lens is like a magnifying glass held over that grid. Where before there were only numbers, now words emerge in the beam — red, Mars, color — the concepts the activation is ready to say out loud. And crucially, the researchers never told the lens which directions to care about. It reads the model's own vocabulary back out of the raw state. The authors are honest about its reach: in roughly the first third of the network, the readouts are noisy and hard to interpret. Deeper in, they sharpen into something you can genuinely read.","cap":[[0,"It"],[0.22,"helps"],[0.56,"to"],[0.72,"picture"],[1.2,"what"],[1.43,"this"],[1.67,"feels"],[2.07,"like"],[2.42,"in"],[2.58,"practice."],[3.82,"Inside"],[4.45,"the"],[4.59,"model,"],[4.97,"a"],[5.1,"hidden"],[5.48,"state"],[6,"is"],[6.21,"just"],[6.54,"a"],[6.66,"long"],[7.05,"list"],[7.37,"of"],[7.57,"numbers"],[8.3,"—"],[8.6,"thousands"],[9.18,"of"],[9.31,"them,"],[9.83,"meaningless"],[10.45,"to"],[10.58,"the"],[10.73,"eye."],[11.76,"The"],[11.94,"Jacobian"],[12.6,"lens"],[13.1,"is"],[13.27,"like"],[13.5,"a"],[13.65,"magnifying"],[14.49,"glass"],[14.94,"held"],[15.3,"over"],[15.57,"that"],[15.81,"grid."],[16.81,"Where"],[17.13,"before"],[17.67,"there"],[17.84,"were"],[18.03,"only"],[18.48,"numbers,"],[19.13,"now"],[19.49,"words"],[19.92,"emerge"],[20.43,"in"],[20.55,"the"],[20.69,"beam"],[21.34,"—"],[21.56,"red,"],[22.3,"Mars,"],[23.21,"color"],[23.85,"—"],[24,"the"],[24.18,"concepts"],[24.87,"the"],[25.01,"activation"],[25.74,"is"],[25.95,"ready"],[26.3,"to"],[26.45,"say"],[26.74,"out"],[27.02,"loud."],[28.06,"And"],[28.33,"crucially,"],[29.23,"the"],[29.44,"researchers"],[30.36,"never"],[30.72,"told"],[31.08,"the"],[31.23,"lens"],[31.77,"which"],[32.09,"directions"],[32.89,"to"],[33.04,"care"],[33.37,"about."],[34.41,"It"],[34.64,"reads"],[35.05,"the"],[35.21,"model's"],[35.79,"own"],[36.14,"vocabulary"],[36.94,"back"],[37.2,"out"],[37.42,"of"],[37.52,"the"],[37.66,"raw"],[37.96,"state."],[38.99,"The"],[39.18,"authors"],[39.61,"are"],[39.79,"honest"],[40.21,"about"],[40.52,"its"],[40.78,"reach:"],[41.2,"in"],[41.39,"roughly"],[41.8,"the"],[41.95,"first"],[42.67,"third"],[43.19,"of"],[43.28,"the"],[43.4,"network,"],[44.22,"the"],[44.42,"readouts"],[45.02,"are"],[45.21,"noisy"],[45.96,"and"],[46.32,"hard"],[46.67,"to"],[46.86,"interpret."],[48.07,"Deeper"],[48.56,"in,"],[48.81,"they"],[49.09,"sharpen"],[49.64,"into"],[49.95,"something"],[50.41,"you"],[50.57,"can"],[50.79,"genuinely"],[51.59,"read."]],"dur":53.4},{"id":"s5","sub":"J-Space","text":"Stack all those lens directions together and they define a region the authors name J-space. This is their candidate for the workspace itself — the slice of the model's internal state that is verbalizable, and that causally shapes what comes out. What's remarkable is how thin it is. Take a concept the model is clearly using. The part of it that lives in J-space — the part you can actually read out and say — is often just six or seven percent of the whole. The other ninety-odd percent sits outside, doing silent, automatic work. And at any given moment, out of hundreds of available directions, only around twenty-five are meaningfully lit. A narrow stage. A small conscious-access budget, riding atop a vast unspoken machine.","cap":[[0,"Stack"],[0.52,"all"],[0.79,"those"],[1.14,"lens"],[1.6,"directions"],[2.4,"together"],[3.16,"and"],[3.41,"they"],[3.63,"define"],[4.17,"a"],[4.3,"region"],[4.76,"the"],[4.91,"authors"],[5.35,"name"],[6.12,"J-space."],[7.81,"This"],[8.44,"is"],[8.68,"their"],[8.94,"candidate"],[9.56,"for"],[9.68,"the"],[9.79,"workspace"],[10.43,"itself"],[11.1,"—"],[11.4,"the"],[11.61,"slice"],[12.19,"of"],[12.32,"the"],[12.47,"model's"],[12.98,"internal"],[13.56,"state"],[14.01,"that"],[14.21,"is"],[14.42,"verbalizable,"],[15.74,"and"],[15.94,"that"],[16.16,"causally"],[16.85,"shapes"],[17.31,"what"],[17.55,"comes"],[17.89,"out."],[18.92,"What's"],[19.31,"remarkable"],[20.03,"is"],[20.32,"how"],[20.75,"thin"],[21.11,"it"],[21.29,"is."],[22.11,"Take"],[22.41,"a"],[22.52,"concept"],[23.16,"the"],[23.29,"model"],[23.6,"is"],[23.74,"clearly"],[24.2,"using."],[25.07,"The"],[25.24,"part"],[25.58,"of"],[25.71,"it"],[25.83,"that"],[26.01,"lives"],[26.3,"in"],[26.47,"J-space"],[27.27,"—"],[27.6,"the"],[27.71,"part"],[28,"you"],[28.12,"can"],[28.26,"actually"],[28.64,"read"],[28.92,"out"],[29.2,"and"],[29.4,"say"],[29.94,"—"],[30.06,"is"],[30.28,"often"],[30.66,"just"],[31.02,"six"],[31.63,"or"],[32.18,"seven"],[32.72,"percent"],[33.23,"of"],[33.33,"the"],[33.45,"whole."],[34.38,"The"],[34.56,"other"],[35.25,"ninety-odd"],[36.21,"percent"],[36.83,"sits"],[37.17,"outside,"],[37.87,"doing"],[38.26,"silent,"],[38.93,"automatic"],[39.68,"work."],[40.4,"And"],[40.62,"at"],[40.77,"any"],[41.04,"given"],[41.4,"moment,"],[41.85,"out"],[42.08,"of"],[42.26,"hundreds"],[42.84,"of"],[42.97,"available"],[43.58,"directions,"],[44.57,"only"],[44.97,"around"],[45.34,"twenty-five"],[46.81,"are"],[47.08,"meaningfully"],[47.82,"lit."],[48.73,"A"],[48.91,"narrow"],[49.32,"stage."],[50.33,"A"],[50.49,"small"],[51.03,"conscious-access"],[52.06,"budget,"],[52.94,"riding"],[53.48,"atop"],[53.86,"a"],[54,"vast"],[54.58,"unspoken"],[55.45,"machine."]],"dur":57.3},{"id":"s6","sub":"Five Properties","text":"Naming a region is easy. Proving it acts like a workspace is the real work. So the authors lay out five functional hallmarks — the things a global workspace is supposed to do — and test J-space against every one. First, verbal report: ask the model, and it names what's on the stage. Second, directed control: it can deliberately hold a concept in mind, even one it isn't saying. Third, internal reasoning: unspoken intermediate steps pass through the space on their way to an answer. Fourth, flexible broadcast: a single vector can feed many different downstream operations. And fifth, selectivity: the space is small, and it's needed only when the task calls for flexible thought — not for routine, automatic processing. Five tests. One by one, they run them.","cap":[[0,"Naming"],[0.49,"a"],[0.59,"region"],[1.02,"is"],[1.17,"easy."],[2.02,"Proving"],[2.53,"it"],[2.64,"acts"],[3,"like"],[3.19,"a"],[3.32,"workspace"],[4.08,"is"],[4.26,"the"],[4.49,"real"],[4.85,"work."],[5.96,"So"],[6.19,"the"],[6.34,"authors"],[6.82,"lay"],[7.02,"out"],[7.3,"five"],[8,"functional"],[8.66,"hallmarks"],[9.51,"—"],[9.65,"the"],[9.82,"things"],[10.26,"a"],[10.38,"global"],[10.83,"workspace"],[11.42,"is"],[11.52,"supposed"],[11.92,"to"],[12.05,"do"],[12.49,"—"],[12.78,"and"],[13.07,"test"],[13.61,"J-space"],[14.41,"against"],[14.86,"every"],[15.16,"one."],[16.09,"First,"],[16.96,"verbal"],[17.4,"report:"],[18.43,"ask"],[18.87,"the"],[18.99,"model,"],[19.76,"and"],[19.98,"it"],[20.14,"names"],[20.55,"what's"],[20.81,"on"],[20.98,"the"],[21.1,"stage."],[22.09,"Second,"],[22.95,"directed"],[23.52,"control:"],[24.58,"it"],[24.76,"can"],[24.96,"deliberately"],[25.67,"hold"],[25.98,"a"],[26.09,"concept"],[26.65,"in"],[26.82,"mind,"],[27.55,"even"],[27.99,"one"],[28.71,"it"],[28.93,"isn't"],[29.25,"saying."],[30.22,"Third,"],[31.05,"internal"],[31.73,"reasoning:"],[32.91,"unspoken"],[33.76,"intermediate"],[34.53,"steps"],[34.99,"pass"],[35.32,"through"],[35.57,"the"],[35.68,"space"],[36.08,"on"],[36.21,"their"],[36.43,"way"],[36.71,"to"],[36.91,"an"],[37.01,"answer."],[38.13,"Fourth,"],[38.81,"flexible"],[39.44,"broadcast:"],[40.48,"a"],[40.67,"single"],[41.24,"vector"],[41.76,"can"],[42.02,"feed"],[42.42,"many"],[42.83,"different"],[43.29,"downstream"],[44.01,"operations."],[45.07,"And"],[45.34,"fifth,"],[46.15,"selectivity:"],[47.54,"the"],[47.72,"space"],[48.17,"is"],[48.36,"small,"],[49.2,"and"],[49.44,"it's"],[49.64,"needed"],[50.06,"only"],[50.39,"when"],[50.56,"the"],[50.68,"task"],[51.21,"calls"],[51.6,"for"],[51.77,"flexible"],[52.35,"thought"],[52.85,"—"],[53.22,"not"],[53.45,"for"],[53.64,"routine,"],[54.56,"automatic"],[55.29,"processing."],[56.3,"Five"],[56.65,"tests."],[57.7,"One"],[58,"by"],[58.24,"one,"],[58.49,"they"],[58.72,"run"],[59,"them."]],"dur":60.8},{"id":"s7","sub":"Verbal Report","text":"The first hallmark is the most basic: can you read what's on the stage, and does the model agree? They instruct it to think of an item — a sport, a language, an animal — and then name it. Point the lens just before it speaks, and its ranked list closely matches what it actually says. Then comes the sharper test. Reach in and swap the vector for soccer with the one for rugby, and the model reports rugby instead. Done systematically, a swap along the verbalizable part drives the intended answer into the top five outputs on about eighty-eight percent of trials. And here's the telling detail — swaps along the part outside J-space barely work at all. It really is the small, sayable slice that governs report.","cap":[[0,"The"],[0.21,"first"],[0.53,"hallmark"],[1.09,"is"],[1.24,"the"],[1.39,"most"],[1.71,"basic:"],[2.59,"can"],[2.9,"you"],[3.12,"read"],[3.45,"what's"],[3.74,"on"],[3.9,"the"],[4.05,"stage,"],[5.09,"and"],[5.32,"does"],[5.57,"the"],[5.71,"model"],[6.05,"agree?"],[7.28,"They"],[7.5,"instruct"],[8.05,"it"],[8.2,"to"],[8.34,"think"],[8.59,"of"],[8.7,"an"],[8.85,"item"],[9.35,"—"],[9.54,"a"],[9.67,"sport,"],[10.43,"a"],[10.6,"language,"],[11.18,"an"],[11.32,"animal"],[11.9,"—"],[12.05,"and"],[12.27,"then"],[12.54,"name"],[12.86,"it."],[13.83,"Point"],[14.18,"the"],[14.33,"lens"],[15.06,"just"],[15.41,"before"],[15.79,"it"],[15.93,"speaks,"],[16.75,"and"],[16.97,"its"],[17.22,"ranked"],[17.65,"list"],[18.07,"closely"],[18.66,"matches"],[19.18,"what"],[19.4,"it"],[19.52,"actually"],[20.03,"says."],[21.07,"Then"],[21.71,"comes"],[22.11,"the"],[22.25,"sharper"],[22.69,"test."],[23.64,"Reach"],[23.96,"in"],[24.18,"and"],[24.4,"swap"],[24.83,"the"],[24.96,"vector"],[25.37,"for"],[25.52,"soccer"],[26.39,"with"],[26.61,"the"],[26.75,"one"],[26.99,"for"],[27.17,"rugby,"],[28.05,"and"],[28.28,"the"],[28.42,"model"],[28.8,"reports"],[29.63,"rugby"],[30.08,"instead."],[31.56,"Done"],[31.95,"systematically,"],[33.18,"a"],[33.38,"swap"],[33.85,"along"],[34.19,"the"],[34.37,"verbalizable"],[35.32,"part"],[36.12,"drives"],[36.65,"the"],[36.79,"intended"],[37.37,"answer"],[38.1,"into"],[38.48,"the"],[38.63,"top"],[39.08,"five"],[39.54,"outputs"],[40.19,"on"],[40.32,"about"],[40.61,"eighty-eight"],[41.17,"percent"],[41.6,"of"],[41.7,"trials."],[42.66,"And"],[42.9,"here's"],[43.27,"the"],[43.41,"telling"],[43.83,"detail"],[44.51,"—"],[45.02,"swaps"],[45.52,"along"],[45.85,"the"],[45.96,"part"],[46.36,"outside"],[46.93,"J-space"],[47.61,"barely"],[48.01,"work"],[48.3,"at"],[48.45,"all."],[49.13,"It"],[49.39,"really"],[49.89,"is"],[50.12,"the"],[50.34,"small,"],[51.28,"sayable"],[51.96,"slice"],[52.93,"that"],[53.19,"governs"],[53.65,"report."]],"dur":55.5},{"id":"s8","sub":"Directed Control","text":"The second hallmark is top-down control — can the model deliberately hold something in mind, whether or not it says it? They give it a split task: copy this unrelated passage, but while you do, concentrate on citrus fruits. The model copies the text faithfully. And in its middle layers, the lens quietly lights up with orange and lemon — words that never once appear in the output. It is holding a concept on the stage, on command. But the workspace isn't a perfect servant. Tell the model to ignore a concept, and the lens shows it activating that very concept more than if you'd said nothing at all. Try not to think of a white bear. Even a language model, it seems, cannot quite manage it.","cap":[[0,"The"],[0.22,"second"],[0.59,"hallmark"],[1.12,"is"],[1.26,"top-down"],[1.92,"control"],[2.78,"—"],[3.04,"can"],[3.34,"the"],[3.47,"model"],[3.83,"deliberately"],[4.46,"hold"],[4.84,"something"],[5.26,"in"],[5.42,"mind,"],[5.94,"whether"],[6.29,"or"],[6.44,"not"],[6.66,"it"],[6.83,"says"],[7.13,"it?"],[8.06,"They"],[8.29,"give"],[8.5,"it"],[8.6,"a"],[8.71,"split"],[9.11,"task:"],[10.12,"copy"],[10.53,"this"],[11.2,"unrelated"],[12.02,"passage,"],[12.88,"but"],[13.1,"while"],[13.44,"you"],[13.63,"do,"],[13.93,"concentrate"],[14.73,"on"],[14.98,"citrus"],[15.51,"fruits."],[16.66,"The"],[16.83,"model"],[17.17,"copies"],[17.58,"the"],[17.7,"text"],[18.1,"faithfully."],[19.15,"And"],[19.76,"in"],[20.11,"its"],[20.45,"middle"],[20.84,"layers,"],[21.35,"the"],[21.53,"lens"],[22.02,"quietly"],[22.62,"lights"],[23.01,"up"],[23.24,"with"],[23.52,"orange"],[24.08,"and"],[24.29,"lemon"],[24.93,"—"],[25.16,"words"],[25.6,"that"],[25.94,"never"],[26.32,"once"],[26.61,"appear"],[26.99,"in"],[27.09,"the"],[27.23,"output."],[28.19,"It"],[28.39,"is"],[28.56,"holding"],[28.99,"a"],[29.09,"concept"],[29.76,"on"],[29.9,"the"],[30.02,"stage,"],[30.99,"on"],[31.25,"command."],[32.67,"But"],[32.88,"the"],[33.01,"workspace"],[33.76,"isn't"],[34.24,"a"],[34.39,"perfect"],[34.97,"servant."],[36.26,"Tell"],[36.7,"the"],[36.85,"model"],[37.29,"to"],[37.45,"ignore"],[37.96,"a"],[38.07,"concept,"],[39.14,"and"],[39.38,"the"],[39.56,"lens"],[40.14,"shows"],[40.62,"it"],[40.76,"activating"],[41.51,"that"],[41.76,"very"],[42.07,"concept"],[42.81,"more"],[43.4,"than"],[43.63,"if"],[43.77,"you'd"],[44.03,"said"],[44.34,"nothing"],[44.74,"at"],[44.9,"all."],[45.8,"Try"],[46.28,"not"],[46.52,"to"],[46.66,"think"],[46.94,"of"],[47.06,"a"],[47.16,"white"],[47.53,"bear."],[48.34,"Even"],[48.77,"a"],[48.94,"language"],[49.57,"model,"],[49.91,"it"],[50.06,"seems,"],[50.64,"cannot"],[51.07,"quite"],[51.43,"manage"],[51.85,"it."]],"dur":53.7},{"id":"s9","sub":"Hidden Steps","text":"The third hallmark is the heart of the paper. Give the model a small calculation: four plus seventeen, times two, plus seven. It answers forty-nine. But how does it get there? The lens reads the working — intermediate results the model never writes down. Partway through the network, the number twenty-one appears: four plus seventeen. A little deeper, forty-two: twenty-one times two. And only in the final layers, forty-nine. The steps surface in exactly the order the arithmetic demands, each one built on the last. This is the key point. These aren't echoes of the answer bouncing backward. They are genuine intermediate thoughts, computed in sequence, passing through the verbalizable workspace on their way to the result — a hidden chain of reasoning made visible.","cap":[[0,"The"],[0.23,"third"],[0.55,"hallmark"],[1.14,"is"],[1.29,"the"],[1.45,"heart"],[1.75,"of"],[1.86,"the"],[1.99,"paper."],[2.81,"Give"],[3.07,"the"],[3.19,"model"],[3.53,"a"],[3.62,"small"],[4.08,"calculation:"],[5.34,"four"],[5.75,"plus"],[6.13,"seventeen,"],[7.25,"times"],[7.78,"two,"],[8.48,"plus"],[9.06,"seven."],[10.02,"It"],[10.24,"answers"],[10.74,"forty-nine."],[12.24,"But"],[12.45,"how"],[12.64,"does"],[12.84,"it"],[12.96,"get"],[13.19,"there?"],[14.08,"The"],[14.29,"lens"],[14.88,"reads"],[15.58,"the"],[15.92,"working"],[16.64,"—"],[17.06,"intermediate"],[17.93,"results"],[18.46,"the"],[18.6,"model"],[19.03,"never"],[19.33,"writes"],[19.74,"down."],[20.78,"Partway"],[21.36,"through"],[21.69,"the"],[21.8,"network,"],[22.77,"the"],[23.01,"number"],[23.41,"twenty-one"],[24.06,"appears:"],[24.85,"four"],[25.4,"plus"],[25.76,"seventeen."],[26.99,"A"],[27.19,"little"],[27.5,"deeper,"],[28.26,"forty-two:"],[29.49,"twenty-one"],[30.2,"times"],[30.73,"two."],[31.65,"And"],[31.97,"only"],[32.47,"in"],[32.65,"the"],[32.84,"final"],[33.42,"layers,"],[34.47,"forty-nine."],[35.92,"The"],[36.13,"steps"],[36.56,"surface"],[37.1,"in"],[37.26,"exactly"],[38.07,"the"],[38.24,"order"],[38.57,"the"],[38.71,"arithmetic"],[39.4,"demands,"],[40.37,"each"],[40.7,"one"],[41.02,"built"],[41.35,"on"],[41.51,"the"],[41.65,"last."],[42.7,"This"],[43.51,"is"],[43.8,"the"],[43.96,"key"],[44.29,"point."],[45.42,"These"],[45.76,"aren't"],[46.15,"echoes"],[46.7,"of"],[46.8,"the"],[46.95,"answer"],[47.42,"bouncing"],[47.97,"backward."],[48.77,"They"],[49.01,"are"],[49.23,"genuine"],[49.87,"intermediate"],[50.62,"thoughts,"],[51.42,"computed"],[52.18,"in"],[52.4,"sequence,"],[53.27,"passing"],[53.85,"through"],[54.18,"the"],[54.35,"verbalizable"],[55.37,"workspace"],[56.4,"on"],[56.61,"their"],[56.83,"way"],[57.11,"to"],[57.26,"the"],[57.4,"result"],[57.98,"—"],[58.35,"a"],[58.57,"hidden"],[59.05,"chain"],[59.52,"of"],[59.71,"reasoning"],[60.33,"made"],[60.67,"visible."]],"dur":62.5},{"id":"s10","sub":"Causal Swaps","text":"If those hidden steps are real, changing them should change the outcome — and it does. Consider: the number of legs on the animal that spins webs. To answer, the model must first infer spider, then recall eight. Reach in and swap the spider vector for ant, before the answer is computed, and the output flips from eight to six. The same trick crosses languages: swap an English intermediate and a Chinese answer changes to match. Ask for a rhyming line, alter the planned rhyme, and the whole sentence reroutes toward the new word. Across many two-step reasoning problems, these swaps move the intended answer into first place on most trials. And the intermediates reliably take hold earlier in the network than the answers they feed — exactly what you'd expect if they genuinely come first.","cap":[[0,"If"],[0.24,"those"],[0.62,"hidden"],[1,"steps"],[1.44,"are"],[1.59,"real,"],[2.4,"changing"],[2.98,"them"],[3.48,"should"],[3.79,"change"],[4.18,"the"],[4.31,"outcome"],[4.92,"—"],[5.34,"and"],[5.61,"it"],[5.74,"does."],[6.84,"Consider:"],[7.77,"the"],[7.96,"number"],[8.34,"of"],[8.51,"legs"],[8.96,"on"],[9.09,"the"],[9.23,"animal"],[9.59,"that"],[9.79,"spins"],[10.3,"webs."],[11.34,"To"],[11.59,"answer,"],[12.24,"the"],[12.42,"model"],[12.82,"must"],[13.12,"first"],[13.51,"infer"],[14.07,"spider,"],[14.99,"then"],[15.56,"recall"],[16.36,"eight."],[17.5,"Reach"],[17.87,"in"],[18.09,"and"],[18.29,"swap"],[18.7,"the"],[18.86,"spider"],[19.36,"vector"],[19.77,"for"],[20.04,"ant,"],[20.84,"before"],[21.24,"the"],[21.37,"answer"],[21.79,"is"],[21.94,"computed,"],[22.92,"and"],[23.1,"the"],[23.23,"output"],[23.68,"flips"],[24.08,"from"],[24.35,"eight"],[24.65,"to"],[24.82,"six."],[25.9,"The"],[26.11,"same"],[26.54,"trick"],[26.92,"crosses"],[27.42,"languages:"],[28.68,"swap"],[29.11,"an"],[29.25,"English"],[29.64,"intermediate"],[30.4,"and"],[30.57,"a"],[30.66,"Chinese"],[31.29,"answer"],[31.72,"changes"],[32.24,"to"],[32.4,"match."],[33.55,"Ask"],[33.98,"for"],[34.17,"a"],[34.28,"rhyming"],[34.82,"line,"],[35.24,"alter"],[35.64,"the"],[35.77,"planned"],[36.37,"rhyme,"],[37.2,"and"],[37.41,"the"],[37.53,"whole"],[37.92,"sentence"],[39.06,"reroutes"],[39.81,"toward"],[40.22,"the"],[40.37,"new"],[40.61,"word."],[41.69,"Across"],[42.24,"many"],[42.62,"two-step"],[43.33,"reasoning"],[43.86,"problems,"],[44.69,"these"],[45,"swaps"],[45.57,"move"],[45.91,"the"],[46.05,"intended"],[46.59,"answer"],[47.02,"into"],[47.31,"first"],[47.69,"place"],[48.09,"on"],[48.26,"most"],[48.56,"trials."],[49.66,"And"],[49.86,"the"],[49.99,"intermediates"],[50.77,"reliably"],[51.41,"take"],[51.71,"hold"],[52.05,"earlier"],[52.41,"in"],[52.5,"the"],[52.62,"network"],[53.53,"than"],[53.79,"the"],[53.95,"answers"],[54.55,"they"],[54.81,"feed"],[55.3,"—"],[55.46,"exactly"],[56.1,"what"],[56.3,"you'd"],[56.53,"expect"],[57.02,"if"],[57.14,"they"],[57.36,"genuinely"],[58.05,"come"],[58.37,"first."]],"dur":60.2},{"id":"s11","sub":"Flexible Broadcast","text":"The fourth hallmark is broadcast — the idea that a single item on the stage can be used by any process that needs it. To test it, the authors make one edit and then ask many different questions of it. They swap the concept France for China at an intermediate layer, and leave everything else alone. Then: what's the capital? Paris becomes Beijing. What language do people speak? French becomes Mandarin. What continent is it on? Europe becomes Asia. One shared swap, and every downstream circuit reads the new value correctly and does its own distinct job with it. That's the fingerprint of a genuine broadcast — not a narrow patch to a single answer, but a concept posted once and made available to the whole system at once.","cap":[[0,"The"],[0.21,"fourth"],[0.52,"hallmark"],[1.08,"is"],[1.25,"broadcast"],[2.21,"—"],[2.4,"the"],[2.6,"idea"],[3.12,"that"],[3.31,"a"],[3.46,"single"],[3.99,"item"],[4.4,"on"],[4.53,"the"],[4.66,"stage"],[5.19,"can"],[5.4,"be"],[5.57,"used"],[5.94,"by"],[6.2,"any"],[6.48,"process"],[7.52,"that"],[7.79,"needs"],[8.15,"it."],[9.1,"To"],[9.3,"test"],[9.69,"it,"],[10.16,"the"],[10.37,"authors"],[10.87,"make"],[11.17,"one"],[11.45,"edit"],[12.16,"and"],[12.45,"then"],[12.86,"ask"],[13.31,"many"],[13.64,"different"],[14.06,"questions"],[14.64,"of"],[14.79,"it."],[15.7,"They"],[15.96,"swap"],[16.41,"the"],[16.53,"concept"],[17.21,"France"],[17.72,"for"],[17.89,"China"],[18.51,"at"],[18.75,"an"],[18.9,"intermediate"],[19.68,"layer,"],[20.35,"and"],[20.71,"leave"],[20.97,"everything"],[21.35,"else"],[21.61,"alone."],[22.61,"Then:"],[23.64,"what's"],[23.98,"the"],[24.09,"capital?"],[25.04,"Paris"],[25.48,"becomes"],[25.94,"Beijing."],[27.2,"What"],[27.5,"language"],[28.03,"do"],[28.17,"people"],[28.53,"speak?"],[29.28,"French"],[29.72,"becomes"],[30.23,"Mandarin."],[30.84,"What"],[31.12,"continent"],[31.8,"is"],[31.96,"it"],[32.11,"on?"],[32.78,"Europe"],[33.18,"becomes"],[33.75,"Asia."],[34.89,"One"],[35.32,"shared"],[35.91,"swap,"],[36.83,"and"],[37.07,"every"],[37.44,"downstream"],[38.29,"circuit"],[38.86,"reads"],[39.27,"the"],[39.44,"new"],[39.74,"value"],[40.24,"correctly"],[41.11,"and"],[41.39,"does"],[41.62,"its"],[41.83,"own"],[42.1,"distinct"],[42.67,"job"],[43.02,"with"],[43.23,"it."],[44.1,"That's"],[44.54,"the"],[44.71,"fingerprint"],[45.42,"of"],[45.54,"a"],[45.64,"genuine"],[46.2,"broadcast"],[47.08,"—"],[47.36,"not"],[47.66,"a"],[47.81,"narrow"],[48.25,"patch"],[48.66,"to"],[48.84,"a"],[48.94,"single"],[49.36,"answer,"],[50.12,"but"],[50.31,"a"],[50.39,"concept"],[51.06,"posted"],[51.58,"once"],[52.2,"and"],[52.45,"made"],[52.73,"available"],[53.3,"to"],[53.44,"the"],[53.58,"whole"],[54.09,"system"],[54.92,"at"],[55.23,"once."]],"dur":57},{"id":"s12","sub":"Selectivity","text":"The fifth hallmark is selectivity — a workspace should be small, and it should only be needed for flexible thought, not for everything. The evidence is elegant. Take a Spanish passage and swap the concept Spanish for French. Ask the model to name the language, or to answer questions about it, and it flips entirely to French. But ask it merely to continue writing the passage, and it stays in Spanish — that automatic, habitual skill never routed through the stage at all. The clincher comes from ablation. Knock out the top workspace directions, and the flexible abilities collapse: multi-step reasoning, translation, analogy, writing a sonnet. Yet the routine tasks — multiple choice, sentiment, pulling an answer from a passage — sail on near normal. The workspace is exactly where deliberate thinking lives.","cap":[[0,"The"],[0.21,"fifth"],[0.52,"hallmark"],[1.09,"is"],[1.24,"selectivity"],[2.29,"—"],[2.45,"a"],[2.6,"workspace"],[3.26,"should"],[3.52,"be"],[3.66,"small,"],[4.49,"and"],[4.78,"it"],[4.92,"should"],[5.19,"only"],[5.45,"be"],[5.58,"needed"],[5.98,"for"],[6.17,"flexible"],[6.8,"thought,"],[7.62,"not"],[7.88,"for"],[8.09,"everything."],[9.52,"The"],[9.72,"evidence"],[10.33,"is"],[10.74,"elegant."],[11.92,"Take"],[12.24,"a"],[12.34,"Spanish"],[12.82,"passage"],[13.27,"and"],[13.44,"swap"],[13.86,"the"],[13.99,"concept"],[14.55,"Spanish"],[15,"for"],[15.17,"French."],[16.09,"Ask"],[16.52,"the"],[16.65,"model"],[17,"to"],[17.15,"name"],[17.43,"the"],[17.57,"language,"],[18.07,"or"],[18.45,"to"],[18.66,"answer"],[19.01,"questions"],[19.56,"about"],[19.91,"it,"],[20.05,"and"],[20.19,"it"],[20.32,"flips"],[20.72,"entirely"],[21.42,"to"],[21.62,"French."],[22.81,"But"],[23.03,"ask"],[23.37,"it"],[23.68,"merely"],[24.09,"to"],[24.24,"continue"],[24.87,"writing"],[25.38,"the"],[25.51,"passage,"],[26.38,"and"],[26.61,"it"],[26.75,"stays"],[27.24,"in"],[27.47,"Spanish"],[28.25,"—"],[28.47,"that"],[29.09,"automatic,"],[30.31,"habitual"],[31.02,"skill"],[31.9,"never"],[32.33,"routed"],[32.87,"through"],[33.18,"the"],[33.3,"stage"],[33.75,"at"],[33.92,"all."],[34.84,"The"],[35,"clincher"],[35.46,"comes"],[35.92,"from"],[36.15,"ablation."],[37.16,"Knock"],[37.53,"out"],[37.76,"the"],[37.9,"top"],[38.21,"workspace"],[38.8,"directions,"],[39.43,"and"],[39.7,"the"],[39.81,"flexible"],[40.38,"abilities"],[40.96,"collapse:"],[42.09,"multi-step"],[42.95,"reasoning,"],[43.54,"translation,"],[44.51,"analogy,"],[45.58,"writing"],[46.25,"a"],[46.61,"sonnet."],[48.04,"Yet"],[48.31,"the"],[48.46,"routine"],[49.03,"tasks"],[49.88,"—"],[50.18,"multiple"],[50.69,"choice,"],[51.41,"sentiment,"],[52.49,"pulling"],[52.91,"an"],[53.04,"answer"],[53.5,"from"],[53.71,"a"],[53.8,"passage"],[54.5,"—"],[54.87,"sail"],[55.28,"on"],[55.5,"near"],[55.79,"normal."],[56.73,"The"],[56.91,"workspace"],[57.66,"is"],[57.84,"exactly"],[58.67,"where"],[58.99,"deliberate"],[59.73,"thinking"],[60.34,"lives."]],"dur":62.1},{"id":"s13","sub":"Introspection","text":"Now something stranger. Can the model report not just on the world, but on its own internal state? The authors implant a concept directly into the workspace, then ask the model to look inward and reflect — and it can often detect the injected thought and describe it. What makes this precise is the split between the sayable and the silent. When they steer along a concept's verbalizable component, it shows up in the model's own self-report about six times in ten. When they steer along the part outside J-space — the same concept, but the silent portion — self-report succeeds only about one time in twenty. So the model's introspective access isn't to its whole mind. It reaches the workspace, and stops there. A thought bubble, holding a smaller image of itself.","cap":[[0,"Now"],[0.44,"something"],[0.89,"stranger."],[2.8,"Can"],[3.02,"the"],[3.15,"model"],[3.52,"report"],[4.47,"not"],[4.92,"just"],[5.33,"on"],[5.57,"the"],[5.71,"world,"],[6.26,"but"],[6.44,"on"],[6.58,"its"],[6.79,"own"],[7.21,"internal"],[7.92,"state?"],[9.21,"The"],[9.39,"authors"],[9.85,"implant"],[10.33,"a"],[10.41,"concept"],[10.98,"directly"],[11.74,"into"],[12.03,"the"],[12.14,"workspace,"],[13.1,"then"],[13.35,"ask"],[13.76,"the"],[13.89,"model"],[14.25,"to"],[14.4,"look"],[14.63,"inward"],[15.06,"and"],[15.33,"reflect"],[16.03,"—"],[16.49,"and"],[16.89,"it"],[17.03,"can"],[17.23,"often"],[17.61,"detect"],[18.47,"the"],[18.67,"injected"],[19.36,"thought"],[19.99,"and"],[20.25,"describe"],[20.81,"it."],[21.59,"What"],[21.85,"makes"],[22.18,"this"],[22.45,"precise"],[23.07,"is"],[23.23,"the"],[23.41,"split"],[23.92,"between"],[24.31,"the"],[24.46,"sayable"],[25.01,"and"],[25.32,"the"],[25.47,"silent."],[26.75,"When"],[26.96,"they"],[27.17,"steer"],[27.56,"along"],[27.85,"a"],[27.95,"concept's"],[28.77,"verbalizable"],[29.66,"component,"],[30.42,"it"],[30.55,"shows"],[30.91,"up"],[31.09,"in"],[31.2,"the"],[31.32,"model's"],[31.8,"own"],[32.1,"self-report"],[33.32,"about"],[34.04,"six"],[34.51,"times"],[35.25,"in"],[35.57,"ten."],[36.82,"When"],[37.04,"they"],[37.24,"steer"],[37.6,"along"],[37.94,"the"],[38.07,"part"],[38.46,"outside"],[39.15,"J-space"],[39.97,"—"],[40.04,"the"],[40.17,"same"],[40.45,"concept,"],[41.03,"but"],[41.17,"the"],[41.3,"silent"],[41.76,"portion"],[42.25,"—"],[42.45,"self-report"],[43.27,"succeeds"],[43.85,"only"],[44.11,"about"],[44.78,"one"],[45.31,"time"],[45.88,"in"],[46.3,"twenty."],[47.51,"So"],[47.93,"the"],[48.1,"model's"],[48.52,"introspective"],[49.26,"access"],[49.85,"isn't"],[50.26,"to"],[50.45,"its"],[50.63,"whole"],[50.99,"mind."],[51.84,"It"],[52.05,"reaches"],[52.54,"the"],[52.69,"workspace,"],[53.95,"and"],[54.22,"stops"],[54.65,"there."],[55.83,"A"],[56.02,"thought"],[56.39,"bubble,"],[57.06,"holding"],[57.57,"a"],[57.74,"smaller"],[58.38,"image"],[58.72,"of"],[58.84,"itself."]],"dur":60.6},{"id":"s14","sub":"Safety Readouts","text":"This is where the workspace becomes a safety instrument. On certain tasks, the lens surfaces concepts that the model's polished output never mentions. Strategic deliberations — leverage, manipulation — flicker on the stage beneath a cooperative reply. Emotional reactions, like panic, appear under a composed surface. Sometimes the model registers that it's inside an evaluation, with tokens like fake or fictional. And in models deliberately trained to misbehave, the lens exposes internal signatures of their intent — reward and bias in one trained to game its graders, secretly and trick in one disposed to write malicious code. The workspace, in other words, can reveal thinking that surface inspection would miss. A window through which to read — and potentially to shape — what a model is actually doing.","cap":[[0,"This"],[0.63,"is"],[0.82,"where"],[1.03,"the"],[1.15,"workspace"],[1.8,"becomes"],[2.25,"a"],[2.38,"safety"],[2.88,"instrument."],[3.94,"On"],[4.19,"certain"],[4.67,"tasks,"],[5.6,"the"],[5.81,"lens"],[6.35,"surfaces"],[7.01,"concepts"],[7.72,"that"],[7.88,"the"],[8.02,"model's"],[8.53,"polished"],[8.95,"output"],[9.54,"never"],[9.91,"mentions."],[11.44,"Strategic"],[12.43,"deliberations"],[13.5,"—"],[13.75,"leverage,"],[14.47,"manipulation"],[15.46,"—"],[15.72,"flicker"],[16.17,"on"],[16.29,"the"],[16.42,"stage"],[16.89,"beneath"],[17.32,"a"],[17.44,"cooperative"],[18.14,"reply."],[19.43,"Emotional"],[20.17,"reactions,"],[20.88,"like"],[21.13,"panic,"],[21.61,"appear"],[22.14,"under"],[22.45,"a"],[22.55,"composed"],[23.41,"surface."],[24.61,"Sometimes"],[25.44,"the"],[25.59,"model"],[25.94,"registers"],[26.56,"that"],[26.75,"it's"],[26.95,"inside"],[27.57,"an"],[27.7,"evaluation,"],[29.11,"with"],[29.35,"tokens"],[29.95,"like"],[30.22,"fake"],[30.92,"or"],[31.24,"fictional."],[32.44,"And"],[32.69,"in"],[32.86,"models"],[33.37,"deliberately"],[34.15,"trained"],[34.62,"to"],[34.77,"misbehave,"],[36.03,"the"],[36.26,"lens"],[36.82,"exposes"],[37.7,"internal"],[38.37,"signatures"],[39,"of"],[39.13,"their"],[39.37,"intent"],[40.1,"—"],[40.32,"reward"],[40.9,"and"],[41.09,"bias"],[41.68,"in"],[41.9,"one"],[42.17,"trained"],[42.92,"to"],[43.12,"game"],[43.45,"its"],[43.64,"graders,"],[44.65,"secretly"],[45.64,"and"],[45.91,"trick"],[46.3,"in"],[46.48,"one"],[46.74,"disposed"],[47.5,"to"],[47.68,"write"],[48.15,"malicious"],[48.73,"code."],[50.19,"The"],[50.36,"workspace,"],[51.08,"in"],[51.24,"other"],[51.43,"words,"],[51.82,"can"],[52.05,"reveal"],[52.51,"thinking"],[53,"that"],[53.27,"surface"],[53.77,"inspection"],[54.5,"would"],[54.73,"miss."],[55.73,"A"],[55.91,"window"],[56.41,"through"],[56.72,"which"],[56.99,"to"],[57.2,"read"],[57.75,"—"],[58.04,"and"],[58.41,"potentially"],[59.13,"to"],[59.3,"shape"],[59.87,"—"],[60.14,"what"],[60.4,"a"],[60.54,"model"],[60.99,"is"],[61.14,"actually"],[61.65,"doing."]],"dur":63.5},{"id":"s15","sub":"The Hedge","text":"But here the authors slow down, and so should we. A concept appearing in the workspace is not evidence that it governs the model's behavior. When themes like manipulation, panic, or the recognition of being tested surface on a task, that shows what the lens picks up in that setting — not a hidden agenda, not a hidden drive laid bare. They make no such claim. In fact, the relationship can be counterintuitive: ablating a safety-related direction can bring out propensities the model normally keeps in check, suggesting some of these representations constrain behavior rather than cause the worst of it. This is the paper's discipline throughout. Reading what surfaces on the stage is genuinely useful. It is not the same as knowing what compels the model to act. The distinction matters — especially with words this loaded.","cap":[[0,"But"],[0.26,"here"],[0.56,"the"],[0.72,"authors"],[1.14,"slow"],[1.49,"down,"],[2.22,"and"],[2.49,"so"],[2.76,"should"],[3.03,"we."],[4.17,"A"],[4.34,"concept"],[4.97,"appearing"],[5.43,"in"],[5.53,"the"],[5.63,"workspace"],[6.33,"is"],[6.58,"not"],[6.91,"evidence"],[7.43,"that"],[7.62,"it"],[7.76,"governs"],[8.21,"the"],[8.36,"model's"],[8.81,"behavior."],[10.04,"When"],[10.39,"themes"],[11.06,"like"],[11.52,"manipulation,"],[12.78,"panic,"],[13.61,"or"],[13.89,"the"],[14.06,"recognition"],[14.78,"of"],[14.92,"being"],[15.19,"tested"],[15.73,"surface"],[16.29,"on"],[16.43,"a"],[16.53,"task,"],[17.37,"that"],[17.68,"shows"],[18.29,"what"],[18.48,"the"],[18.65,"lens"],[19.16,"picks"],[19.52,"up"],[19.73,"in"],[19.86,"that"],[20.11,"setting"],[20.68,"—"],[20.97,"not"],[21.4,"a"],[21.66,"hidden"],[22.08,"agenda,"],[23.17,"not"],[23.48,"a"],[23.6,"hidden"],[24.04,"drive"],[24.63,"laid"],[24.99,"bare."],[25.84,"They"],[26.15,"make"],[26.62,"no"],[26.89,"such"],[27.24,"claim."],[28.18,"In"],[28.4,"fact,"],[29.04,"the"],[29.23,"relationship"],[30.23,"can"],[30.45,"be"],[30.6,"counterintuitive:"],[32.18,"ablating"],[32.97,"a"],[33.16,"safety-related"],[34.27,"direction"],[34.89,"can"],[35.12,"bring"],[35.41,"out"],[35.69,"propensities"],[36.53,"the"],[36.69,"model"],[37.09,"normally"],[37.57,"keeps"],[37.92,"in"],[38.1,"check,"],[39.2,"suggesting"],[39.96,"some"],[40.22,"of"],[40.32,"these"],[40.58,"representations"],[41.68,"constrain"],[42.35,"behavior"],[43.31,"rather"],[43.75,"than"],[43.98,"cause"],[44.37,"the"],[44.51,"worst"],[44.88,"of"],[45.01,"it."],[45.91,"This"],[46.75,"is"],[47.01,"the"],[47.14,"paper's"],[47.79,"discipline"],[48.36,"throughout."],[49.59,"Reading"],[50.04,"what"],[50.26,"surfaces"],[50.88,"on"],[51,"the"],[51.13,"stage"],[51.68,"is"],[51.89,"genuinely"],[52.76,"useful."],[54.03,"It"],[54.24,"is"],[54.45,"not"],[54.73,"the"],[54.93,"same"],[55.35,"as"],[55.57,"knowing"],[55.96,"what"],[56.19,"compels"],[56.95,"the"],[57.13,"model"],[57.61,"to"],[57.81,"act."],[58.98,"The"],[59.19,"distinction"],[59.94,"matters"],[60.65,"—"],[60.88,"especially"],[61.52,"with"],[61.75,"words"],[62.2,"this"],[62.5,"loaded."]],"dur":64.3},{"id":"s16","sub":"Not the Brain","text":"It would be easy to overread the analogy, so the authors mark exactly where it bends. J-space achieves many of the workspace's functions — but it doesn't share its wiring. In the brain, the workspace broadcasts through recurrent loops, information flowing back and forth. Here the broadcast happens in a single forward pass, across the depth of the network. The brain has encapsulated modules competing for access to the stage; the transformer has no obviously separate specialists jostling for entry. The brain shows a sharp, competitive ignition — a sudden all-or-nothing bottleneck — and it's unclear whether anything here truly matches that. And the model's workspace lives token by token, across layers and positions, rather than in sustained dynamics over time. Same job. Different machine. The resemblance is functional, not structural.","cap":[[0,"It"],[0.16,"would"],[0.35,"be"],[0.49,"easy"],[0.85,"to"],[1.05,"overread"],[1.7,"the"],[1.82,"analogy,"],[2.72,"so"],[2.98,"the"],[3.14,"authors"],[3.59,"mark"],[3.92,"exactly"],[4.63,"where"],[4.88,"it"],[4.99,"bends."],[6.25,"J-space"],[7.07,"achieves"],[7.73,"many"],[8.08,"of"],[8.17,"the"],[8.3,"workspace's"],[9.15,"functions"],[9.96,"—"],[10.7,"but"],[10.89,"it"],[11,"doesn't"],[11.37,"share"],[11.81,"its"],[12.04,"wiring."],[13.51,"In"],[13.7,"the"],[13.83,"brain,"],[14.39,"the"],[14.54,"workspace"],[15.19,"broadcasts"],[16.16,"through"],[16.53,"recurrent"],[17.11,"loops,"],[17.88,"information"],[18.66,"flowing"],[19.09,"back"],[19.66,"and"],[19.97,"forth."],[21.14,"Here"],[21.53,"the"],[21.65,"broadcast"],[22.4,"happens"],[22.86,"in"],[22.98,"a"],[23.13,"single"],[23.67,"forward"],[24.17,"pass,"],[25.09,"across"],[25.67,"the"],[25.87,"depth"],[26.29,"of"],[26.41,"the"],[26.56,"network."],[27.93,"The"],[28.1,"brain"],[28.5,"has"],[28.7,"encapsulated"],[29.87,"modules"],[30.51,"competing"],[31.12,"for"],[31.29,"access"],[31.77,"to"],[31.9,"the"],[32.02,"stage;"],[33.18,"the"],[33.33,"transformer"],[34.21,"has"],[34.55,"no"],[34.88,"obviously"],[35.54,"separate"],[36.06,"specialists"],[36.92,"jostling"],[37.45,"for"],[37.64,"entry."],[38.71,"The"],[38.87,"brain"],[39.32,"shows"],[39.78,"a"],[39.93,"sharp,"],[40.78,"competitive"],[41.58,"ignition"],[42.3,"—"],[42.45,"a"],[42.63,"sudden"],[43.11,"all-or-nothing"],[44.03,"bottleneck"],[44.78,"—"],[45.11,"and"],[45.47,"it's"],[45.7,"unclear"],[46.27,"whether"],[46.59,"anything"],[47.14,"here"],[47.52,"truly"],[48.09,"matches"],[48.6,"that."],[49.69,"And"],[49.92,"the"],[50.05,"model's"],[50.53,"workspace"],[51.27,"lives"],[51.58,"token"],[52.06,"by"],[52.29,"token,"],[53.07,"across"],[53.6,"layers"],[54.15,"and"],[54.34,"positions,"],[55.14,"rather"],[55.47,"than"],[55.67,"in"],[55.86,"sustained"],[56.75,"dynamics"],[57.69,"over"],[57.97,"time."],[59,"Same"],[59.39,"job."],[60.15,"Different"],[60.57,"machine."],[61.56,"The"],[61.75,"resemblance"],[62.54,"is"],[62.79,"functional,"],[63.98,"not"],[64.26,"structural."]],"dur":66.1},{"id":"s17","sub":"Limits","text":"The authors are unusually frank about what their tool cannot do. The Jacobian lens, they say plainly, is imperfect — it captures the workspace only approximately and incompletely. It reads concepts that correspond to a single token, but many important ideas span several tokens and slip past it. Because it averages over a thousand contexts, it can blur a concept that only becomes verbalizable in narrow circumstances. It measures first-order, linear effects, so genuinely nonlinear routing of information may go unseen. And the experiments run mostly on Claude models — Haiku, Sonnet, Opus — leaving open whether other architectures organize themselves the same way. None of this undoes the findings. It frames them honestly: a first, useful lens on a structure they've only begun to map.","cap":[[0,"The"],[0.23,"authors"],[0.71,"are"],[0.89,"unusually"],[1.7,"frank"],[2.11,"about"],[2.42,"what"],[2.65,"their"],[2.89,"tool"],[3.31,"cannot"],[3.77,"do."],[4.71,"The"],[4.89,"Jacobian"],[5.61,"lens,"],[5.99,"they"],[6.2,"say"],[6.57,"plainly,"],[7.61,"is"],[7.87,"imperfect"],[8.86,"—"],[9.22,"it"],[9.42,"captures"],[9.99,"the"],[10.14,"workspace"],[10.87,"only"],[11.22,"approximately"],[12.28,"and"],[12.71,"incompletely."],[14.52,"It"],[14.75,"reads"],[15.2,"concepts"],[15.98,"that"],[16.17,"correspond"],[16.83,"to"],[16.99,"a"],[17.09,"single"],[17.53,"token,"],[18.4,"but"],[18.67,"many"],[18.99,"important"],[19.67,"ideas"],[20.18,"span"],[20.69,"several"],[21.18,"tokens"],[21.82,"and"],[22.07,"slip"],[22.41,"past"],[22.81,"it."],[23.44,"Because"],[23.85,"it"],[23.97,"averages"],[24.52,"over"],[24.81,"a"],[24.93,"thousand"],[25.5,"contexts,"],[26.61,"it"],[26.81,"can"],[27.04,"blur"],[27.4,"a"],[27.49,"concept"],[28.14,"that"],[28.35,"only"],[28.61,"becomes"],[29.09,"verbalizable"],[30.01,"in"],[30.15,"narrow"],[30.57,"circumstances."],[32.33,"It"],[32.55,"measures"],[33.02,"first-order,"],[34.15,"linear"],[34.61,"effects,"],[35.91,"so"],[36.3,"genuinely"],[37.16,"nonlinear"],[37.99,"routing"],[38.41,"of"],[38.52,"information"],[39.22,"may"],[39.45,"go"],[39.71,"unseen."],[40.89,"And"],[41.1,"the"],[41.23,"experiments"],[42.02,"run"],[42.27,"mostly"],[42.77,"on"],[42.96,"Claude"],[43.39,"models"],[44,"—"],[44.16,"Haiku,"],[45.05,"Sonnet,"],[45.95,"Opus"],[46.64,"—"],[46.83,"leaving"],[47.22,"open"],[47.61,"whether"],[47.95,"other"],[48.23,"architectures"],[49.03,"organize"],[49.55,"themselves"],[50.21,"the"],[50.36,"same"],[50.7,"way."],[51.78,"None"],[52.06,"of"],[52.18,"this"],[52.79,"undoes"],[53.3,"the"],[53.43,"findings."],[54.6,"It"],[54.81,"frames"],[55.21,"them"],[55.37,"honestly:"],[56.46,"a"],[56.61,"first,"],[57.42,"useful"],[57.97,"lens"],[58.49,"on"],[58.63,"a"],[58.72,"structure"],[59.26,"they've"],[59.64,"only"],[59.91,"begun"],[60.29,"to"],[60.47,"map."]],"dur":62.3},{"id":"s18","sub":"Why It Matters","text":"Why does any of this matter beyond the lab? Because if a model's flexible reasoning genuinely passes through a small, readable workspace, then that workspace is a place we can watch — and, carefully, a place we can act. The paper notes a suggestive thread on faithfulness: when a model writes its steps out in a chain of thought, it relies less on hidden internal capacity, hinting at when its spoken reasoning is more likely to reflect what it actually did. And there's a forward-looking idea — that shaping what a model holds in its workspace might steer behavior more efficiently than training that behavior directly. A window to read the machine's thinking, and perhaps a handle to guide it.","cap":[[0,"Why"],[0.41,"does"],[0.66,"any"],[0.94,"of"],[1.05,"this"],[1.29,"matter"],[1.65,"beyond"],[1.95,"the"],[2.08,"lab?"],[3.19,"Because"],[3.51,"if"],[3.65,"a"],[3.79,"model's"],[4.41,"flexible"],[5.11,"reasoning"],[5.67,"genuinely"],[6.37,"passes"],[6.92,"through"],[7.34,"a"],[7.47,"small,"],[8.35,"readable"],[8.86,"workspace,"],[10.38,"then"],[10.66,"that"],[10.91,"workspace"],[11.61,"is"],[11.76,"a"],[11.84,"place"],[12.24,"we"],[12.38,"can"],[12.6,"watch"],[13.17,"—"],[13.67,"and,"],[14.29,"carefully,"],[15.37,"a"],[15.53,"place"],[15.88,"we"],[16.02,"can"],[16.21,"act."],[17.43,"The"],[17.6,"paper"],[18.04,"notes"],[18.41,"a"],[18.52,"suggestive"],[19.3,"thread"],[19.76,"on"],[19.99,"faithfulness:"],[21.58,"when"],[21.84,"a"],[21.95,"model"],[22.41,"writes"],[22.87,"its"],[23.13,"steps"],[23.6,"out"],[23.94,"in"],[24.08,"a"],[24.18,"chain"],[24.53,"of"],[24.67,"thought,"],[25.44,"it"],[25.62,"relies"],[26.24,"less"],[26.59,"on"],[26.85,"hidden"],[27.31,"internal"],[28.1,"capacity,"],[29.51,"hinting"],[30.11,"at"],[30.29,"when"],[30.56,"its"],[30.78,"spoken"],[31.34,"reasoning"],[31.85,"is"],[32.01,"more"],[32.25,"likely"],[32.69,"to"],[32.85,"reflect"],[33.68,"what"],[34.01,"it"],[34.13,"actually"],[34.62,"did."],[35.77,"And"],[35.96,"there's"],[36.2,"a"],[36.31,"forward-looking"],[37.14,"idea"],[37.63,"—"],[37.74,"that"],[38,"shaping"],[38.62,"what"],[38.95,"a"],[39.1,"model"],[39.57,"holds"],[40.03,"in"],[40.17,"its"],[40.37,"workspace"],[41.12,"might"],[41.47,"steer"],[41.84,"behavior"],[42.38,"more"],[42.6,"efficiently"],[43.76,"than"],[44.05,"training"],[44.65,"that"],[44.91,"behavior"],[45.51,"directly."],[46.96,"A"],[47.17,"window"],[48.07,"to"],[48.29,"read"],[48.52,"the"],[48.63,"machine's"],[49.17,"thinking,"],[50.19,"and"],[50.45,"perhaps"],[50.92,"a"],[51.07,"handle"],[51.53,"to"],[51.66,"guide"],[52.02,"it."]],"dur":53.8},{"id":"s19","sub":"The Caveat","text":"And so we arrive at the line the paper is most careful never to cross. Everything here concerns access consciousness — the functional question of whether information is available to be reasoned over and reported. It says nothing about phenomenal consciousness: whether there is anything it is like to be the model, whether anything is felt. On that, the authors take no position at all, calling the philosophical implications unclear and likely controversial. What they have found is a structure that performs functions we associate with conscious access in ourselves — reportability, deliberate control, flexible reasoning. That is a real and striking result. It is also, precisely, the whole of the claim. A workspace, yes. A witness… they do not say. The question stays open — and they leave it open, on purpose.","cap":[[0,"And"],[0.29,"so"],[0.74,"we"],[0.94,"arrive"],[1.45,"at"],[1.57,"the"],[1.72,"line"],[2.18,"the"],[2.36,"paper"],[2.82,"is"],[3.05,"most"],[3.46,"careful"],[4.49,"never"],[4.9,"to"],[5.05,"cross."],[6.3,"Everything"],[6.89,"here"],[7.2,"concerns"],[8.03,"access"],[8.62,"consciousness"],[9.56,"—"],[9.71,"the"],[9.89,"functional"],[10.48,"question"],[10.97,"of"],[11.12,"whether"],[11.6,"information"],[12.33,"is"],[12.46,"available"],[13.1,"to"],[13.24,"be"],[13.41,"reasoned"],[13.91,"over"],[14.66,"and"],[15.11,"reported."],[16.53,"It"],[16.79,"says"],[17.26,"nothing"],[17.81,"about"],[18.19,"phenomenal"],[18.81,"consciousness:"],[20.13,"whether"],[20.5,"there"],[20.74,"is"],[20.91,"anything"],[21.43,"it"],[21.57,"is"],[21.82,"like"],[22.23,"to"],[22.38,"be"],[22.52,"the"],[22.64,"model,"],[23.39,"whether"],[23.75,"anything"],[24.23,"is"],[24.4,"felt."],[25.87,"On"],[26.16,"that,"],[27.02,"the"],[27.24,"authors"],[27.78,"take"],[28.26,"no"],[28.64,"position"],[29.21,"at"],[29.37,"all,"],[30.19,"calling"],[30.71,"the"],[30.84,"philosophical"],[31.67,"implications"],[32.83,"unclear"],[33.94,"and"],[34.23,"likely"],[34.71,"controversial."],[36.63,"What"],[36.86,"they"],[37.06,"have"],[37.26,"found"],[37.91,"is"],[38.16,"a"],[38.24,"structure"],[38.79,"that"],[38.95,"performs"],[39.57,"functions"],[40.24,"we"],[40.39,"associate"],[41.11,"with"],[41.33,"conscious"],[41.82,"access"],[42.34,"in"],[42.53,"ourselves"],[43.47,"—"],[43.61,"reportability,"],[44.94,"deliberate"],[45.56,"control,"],[46.52,"flexible"],[47.08,"reasoning."],[48.32,"That"],[48.99,"is"],[49.24,"a"],[49.38,"real"],[49.78,"and"],[50.33,"striking"],[50.97,"result."],[51.77,"It"],[51.95,"is"],[52.12,"also,"],[52.71,"precisely,"],[53.73,"the"],[53.89,"whole"],[54.25,"of"],[54.36,"the"],[54.47,"claim."],[55.44,"A"],[55.64,"workspace,"],[56.53,"yes."],[57.27,"A"],[57.46,"witness…"],[58.34,"they"],[58.57,"do"],[58.77,"not"],[59,"say."],[59.88,"The"],[60.07,"question"],[60.73,"stays"],[61.25,"open"],[61.77,"—"],[61.99,"and"],[62.29,"they"],[62.55,"leave"],[62.85,"it"],[62.97,"open,"],[63.77,"on"],[64.08,"purpose."]],"dur":65.9}];
+  var HAS_AUDIO = true;
+  var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var scenes = Array.prototype.slice.call(document.querySelectorAll(".scene"));
+
+  var ACCENTS = {gold:"#F2C879",green:"#7FC8A0",sky:"#8FB8E8",rose:"#E8927C",lav:"#C4AEE8",
+    amber:"#E4A85E",steel:"#86A9CC",violet:"#B49CF0",teal:"#66C6BE",crimson:"#DE8A86",sage:"#A7C08C"};
+  function hexRgb(h){ h=h.replace("#",""); if(h.length===3)h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
+    return {r:parseInt(h.substr(0,2),16),g:parseInt(h.substr(2,2),16),b:parseInt(h.substr(4,2),16)}; }
+  function mix(a,b,t){ return "rgb("+Math.round(a.r+(b.r-a.r)*t)+","+Math.round(a.g+(b.g-a.g)*t)+","+Math.round(a.b+(b.b-a.b)*t)+")"; }
+  var DARK1={r:9,g:10,b:14}, DARK2={r:11,g:13,b:18};
+  function hueFor(name){ var acc=ACCENTS[name]||ACCENTS.gold, rgb=hexRgb(acc);
+    return {accent:acc, a:mix(rgb,DARK1,0.90), b:"rgba("+rgb.r+","+rgb.g+","+rgb.b+",0.15)", c:mix(rgb,DARK2,0.83)}; }
+  var root=document.documentElement;
+  function applyHue(name){ var h=hueFor(name); root.style.setProperty("--accent",h.accent);
+    root.style.setProperty("--grad-a",h.a); root.style.setProperty("--grad-b",h.b); root.style.setProperty("--grad-c",h.c); }
+  applyHue(scenes[0]?scenes[0].getAttribute("data-hue"):"gold");
+
+  var io=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting) e.target.classList.add("revealed"); }); },{threshold:0.18});
+  scenes.forEach(function(s){ io.observe(s); });
+
+  function animateCount(el){ var from=parseFloat(el.getAttribute("data-count-from")), to=parseFloat(el.getAttribute("data-count-to"));
+    if(reduced){ el.textContent=to; return; } var dur=1400,start=null;
+    function step(ts){ if(start===null)start=ts; var p=Math.min((ts-start)/dur,1); var e=1-Math.pow(1-p,3);
+      el.textContent=Math.round(from+(to-from)*e); if(p<1) requestAnimationFrame(step); } requestAnimationFrame(step); }
+  var countIO=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ animateCount(e.target); countIO.unobserve(e.target); } }); },{threshold:0.6});
+  document.querySelectorAll("[data-count-to]").forEach(function(el){ countIO.observe(el); });
+
+  var canvas=document.getElementById("meadow"), ctx=canvas.getContext("2d"), W,H,pts=[],raf=null;
+  function size(){ var dpr=window.devicePixelRatio||1; W=canvas.width=innerWidth*dpr; H=canvas.height=innerHeight*dpr;
+    canvas.style.width=innerWidth+"px"; canvas.style.height=innerHeight+"px"; }
+  function seed(){ var dpr=window.devicePixelRatio||1, n=Math.min(90,Math.floor(innerWidth/14)); pts=[];
+    for(var i=0;i<n;i++) pts.push({x:Math.random()*W,y:Math.random()*H,r:(Math.random()*1.6+0.4)*dpr,
+      vx:(Math.random()-0.5)*0.12, vy:-(Math.random()*0.18+0.03), a:Math.random()*0.5+0.15, tw:Math.random()*6.28}); }
+  function accentRGB(){ var c=getComputedStyle(root).getPropertyValue("--accent").trim()||"#F2C879";
+    if(c[0]==="#"){ var m=hexRgb(c); return m.r+","+m.g+","+m.b; } return c.replace(/rgba?\(|\)/g,""); }
+  function draw(){ ctx.clearRect(0,0,W,H); var rgb=accentRGB();
+    for(var i=0;i<pts.length;i++){ var p=pts[i]; p.x+=p.vx; p.y+=p.vy; p.tw+=0.02;
+      if(p.y<-10){p.y=H+10;p.x=Math.random()*W;} if(p.x<-10)p.x=W+10; if(p.x>W+10)p.x=-10;
+      var f=p.a*(0.6+0.4*Math.sin(p.tw)); ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,6.2832);
+      ctx.fillStyle="rgba("+rgb+","+f.toFixed(3)+")"; ctx.fill(); }
+    raf=requestAnimationFrame(draw); }
+  function startMeadow(){ size(); seed(); if(!reduced){ if(raf)cancelAnimationFrame(raf); draw(); }
+    else { ctx.clearRect(0,0,W,H); var rgb=accentRGB(); pts.forEach(function(p){ ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,6.2832);
+      ctx.fillStyle="rgba("+rgb+","+p.a.toFixed(3)+")"; ctx.fill(); }); } }
+  addEventListener("resize",function(){ size(); seed(); }); startMeadow();
+
+  /* ---- narration engine ---- */
+  var audio=document.getElementById("narrator");
+  var synth=window.speechSynthesis, ttsOK=!!synth && typeof SpeechSynthesisUtterance!=="undefined";
+  var playing=false, paused=false, mode="idle", chosenVoice=null, voices=[];
+  var SPEEDS=[0.85,1,1.15,1.3,1.5], speed=parseFloat(localStorage.getItem("st-speed")||"1");
+  if(SPEEDS.indexOf(speed)===-1) speed=1;
+
+  var playBtn=document.getElementById("playBtn"), playIcon=document.getElementById("playIcon"), pauseIcon=document.getElementById("pauseIcon");
+  var nowTitle=document.getElementById("nowTitle"), nowSub=document.getElementById("nowSub"), seekFill=document.getElementById("seekFill");
+  var dotsWrap=document.getElementById("dots"), player=document.getElementById("player");
+  var capEl=document.getElementById("caption"), modeFlag=document.getElementById("modeFlag");
+  var speedBtn=document.getElementById("speedBtn"), remEl=document.getElementById("remain"), showCaptions=true, activeIndex=0;
+
+  // per-work resume + time-left
+  var WORK_ID="global-workspace", PKEY="st-progress-"+WORK_ID, pendingSeek=0, lastSave=0, resumeSeek=0, savedProg=null, autoArm=false;
+  try{ savedProg=JSON.parse(localStorage.getItem(PKEY)||"null"); }catch(e){}
+  function saveProgress(scene,t,done){ try{ localStorage.setItem(PKEY, JSON.stringify({scene:scene,t:Math.round(t||0),done:!!done,total:scenes.length,at:Date.now()})); }catch(e){} }
+  function clearProgress(){ try{ localStorage.removeItem(PKEY); }catch(e){} }
+  function fmtLeft(sec){ if(!(sec>1)) return ""; if(sec<60) return "under a minute left"; return "about "+Math.round(sec/60)+" min left"; }
+  function updateRemaining(){ if(!playing){ remEl.textContent=""; return; }
+    var elapsed=(mode==="audio"&&isFinite(audio.currentTime))?audio.currentTime:0;
+    var rem=(SC[activeIndex].dur||0)-elapsed; for(var i=activeIndex+1;i<SC.length;i++) rem+=(SC[i].dur||0);
+    remEl.textContent=fmtLeft(rem/(speed||1)); }
+
+  SC.forEach(function(s,i){ var b=document.createElement("button"); b.setAttribute("aria-label","Go to "+s.sub);
+    b.addEventListener("click",function(){ jumpTo(i,playing); }); dotsWrap.appendChild(b); });
+  var dotEls=Array.prototype.slice.call(dotsWrap.children);
+
+  function updateDots(){ dotEls.forEach(function(d,i){ d.classList.toggle("active",i===activeIndex); });
+    document.getElementById("topbar").style.width=(scenes.length>1?(activeIndex/(scenes.length-1))*100:0)+"%"; }
+  function setActive(idx,doScroll){ activeIndex=Math.max(0,Math.min(scenes.length-1,idx)); var s=scenes[activeIndex];
+    applyHue(s.getAttribute("data-hue")); nowTitle.textContent=SC[activeIndex].sub; nowSub.textContent=(activeIndex+1)+" / "+scenes.length;
+    updateDots(); updateRemaining(); if(doScroll) s.scrollIntoView({behavior:reduced?"auto":"smooth",block:"center"}); }
+  function setPlayIcon(on){ playIcon.style.display=on?"none":"block"; pauseIcon.style.display=on?"block":"none";
+    playBtn.setAttribute("aria-label",on?"Pause narration":"Play narration"); }
+
+  /* captions: one sentence window */
+  var capTokens=[], capSentences=[], capSentenceOf=[], capCurSent=-1, capSpans=[];
+  function buildCaption(i){ capEl.innerHTML=""; capSpans=[]; capCurSent=-1;
+    var data=SC[i]; if(!showCaptions){ capEl.classList.remove("show"); return; }
+    capTokens = data.cap ? data.cap.map(function(p){ return {t:p[0],w:p[1]}; })
+                         : data.text.split(/\s+/).map(function(w){ return {t:null,w:w}; });
+    capSentences=[]; capSentenceOf=[]; var cur=[];
+    for(var k=0;k<capTokens.length;k++){ cur.push(k); capSentenceOf[k]=capSentences.length;
+      if(/[.!?]["')]?$/.test(capTokens[k].w)){ capSentences.push(cur); cur=[]; } }
+    if(cur.length){ for(var m=0;m<cur.length;m++) capSentenceOf[cur[m]]=capSentences.length; capSentences.push(cur); }
+    capEl.classList.add("show"); renderSentence(0); }
+  function renderSentence(si){ capCurSent=si; capEl.innerHTML=""; capSpans=[];
+    (capSentences[si]||[]).forEach(function(gi){ var sp=document.createElement("span"); sp.className="w";
+      sp.setAttribute("data-gi",gi); sp.textContent=capTokens[gi].w+" "; capEl.appendChild(sp); capSpans.push(sp); }); }
+  function markToken(gi){ var si=capSentenceOf[gi]; if(si===undefined)return; if(si!==capCurSent) renderSentence(si);
+    for(var j=0;j<capSpans.length;j++){ var g=+capSpans[j].getAttribute("data-gi"); capSpans[j].className="w"+(g<gi?" spoken":g===gi?" active":""); } }
+  function highlightByTime(t){ if(!capTokens.length)return; var idx=0;
+    for(var i=0;i<capTokens.length;i++){ if(capTokens[i].t!==null&&capTokens[i].t<=t) idx=i; else if(capTokens[i].t!==null) break; } markToken(idx); }
+  function highlightByWordIndex(k){ if(k<capTokens.length) markToken(k); }
+
+  function srcFor(i){ return "audio/"+SC[i].id+".mp3"; }
+  function applySeek(){ if(pendingSeek>0){ try{ audio.currentTime=(isFinite(audio.duration)&&audio.duration>0)?Math.min(pendingSeek,audio.duration-0.3):pendingSeek; }catch(e){} pendingSeek=0; } }
+  function playScene(i,seek){ setActive(i,true); playing=true; paused=false; setPlayIcon(true); buildCaption(i);
+    var useAudio=HAS_AUDIO && SC[i].cap;
+    if(useAudio){ mode="audio"; modeFlag.textContent="ElevenLabs"; audio.src=srcFor(i);
+      pendingSeek=(seek&&seek>0)?seek:0;
+      audio.playbackRate=speed; audio.volume=parseFloat(document.getElementById("vol").value);
+      var p=audio.play();
+      if(p&&p.then){ p.then(function(){ applySeek(); }).catch(function(){ if(autoArm){ autoArm=false; paused=true; setPlayIcon(false); } else ttsSpeak(i); }); }
+      else applySeek(); }
+    else { ttsSpeak(i); }
+    saveProgress(i, seek||0, false); updateRemaining(); }
+  function advance(){ if(activeIndex<scenes.length-1) playScene(activeIndex+1); else { saveProgress(activeIndex,0,true); stopNarration(); } }
+  audio.addEventListener("ended",function(){ if(playing&&mode==="audio") advance(); });
+  audio.addEventListener("error",function(){ if(playing&&mode==="audio") ttsSpeak(activeIndex); });
+  audio.addEventListener("loadedmetadata",function(){ applySeek(); });
+  audio.addEventListener("timeupdate",function(){ if(mode!=="audio")return;
+    if(audio.duration) seekFill.style.width=(audio.currentTime/audio.duration*100)+"%"; highlightByTime(audio.currentTime); updateRemaining();
+    var now=Date.now(); if(now-lastSave>4000){ lastSave=now; saveProgress(activeIndex, audio.currentTime, false); } });
+
+  function ttsSpeak(i){ mode="tts"; modeFlag.textContent=ttsOK?"Browser voice":"unavailable"; if(!ttsOK)return; synth.cancel();
+    var u=new SpeechSynthesisUtterance(SC[i].text); u.rate=0.98*speed; u.pitch=1.0;
+    u.volume=parseFloat(document.getElementById("vol").value); if(chosenVoice)u.voice=chosenVoice;
+    var wIdx=0; u.onboundary=function(ev){ if(ev.name==="word"||ev.charIndex!==undefined) highlightByWordIndex(wIdx++); };
+    u.onend=function(){ if(playing&&mode==="tts") advance(); };
+    setTimeout(function(){ if(playing) synth.speak(u); }, reduced?40:420); }
+
+  function startNarration(i,seek){ playScene(typeof i==="number"?i:activeIndex, seek); player.classList.add("show"); }
+  function stopNarration(){ playing=false; paused=false; setPlayIcon(false); try{ audio.pause(); }catch(e){}
+    if(ttsOK) synth.cancel(); capEl.classList.remove("show"); seekFill.style.width="0%"; remEl.textContent=""; }
+
+  playBtn.addEventListener("click",function(){
+    if(!playing){ startNarration(activeIndex); return; }
+    if(!paused){ paused=true; setPlayIcon(false); if(mode==="audio"){ audio.pause(); saveProgress(activeIndex,audio.currentTime,false); } else if(ttsOK)synth.pause(); }
+    else { paused=false; setPlayIcon(true); if(mode==="audio")audio.play(); else if(ttsOK)synth.resume(); } });
+  document.getElementById("nextBtn").addEventListener("click",function(){ jumpTo(activeIndex+1,playing); });
+  document.getElementById("prevBtn").addEventListener("click",function(){ jumpTo(activeIndex-1,playing); });
+  function jumpTo(i,keep){ i=Math.max(0,Math.min(scenes.length-1,i));
+    if(mode==="audio"){ try{audio.pause();}catch(e){} } if(ttsOK) synth.cancel();
+    if(keep){ playScene(i); } else { stopNarration(); setActive(i,true); } }
+
+  var beginBtn=document.getElementById("beginBtn");
+  if(beginBtn){
+    if(savedProg && !savedProg.done && savedProg.scene>0){ resumeSeek=savedProg.t||0;
+      beginBtn.innerHTML='<span class="tri"></span> Resume &middot; '+Math.min(99,Math.round(savedProg.scene/scenes.length*100))+'%'; }
+    else if(savedProg && savedProg.done){ beginBtn.innerHTML='<span class="tri"></span> Play again'; }
+    beginBtn.addEventListener("click",function(){ player.classList.add("show"); if(ttsOK){ try{ synth.resume(); }catch(e){} }
+      if(savedProg && savedProg.done){ clearProgress(); savedProg=null; startNarration(0,0); }
+      else if(savedProg && !savedProg.done && savedProg.scene>0){ startNarration(savedProg.scene, resumeSeek); }
+      else { startNarration(0,0); } });
+  }
+  addEventListener("scroll",function(){ if(scrollY>innerHeight*0.5) player.classList.add("show"); },{passive:true});
+
+  var centerIO=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){
+    var idx=scenes.indexOf(e.target); if(idx!==activeIndex&&!playing) setActive(idx,false); } }); },{rootMargin:"-45% 0px -45% 0px",threshold:0});
+  scenes.forEach(function(s){ centerIO.observe(s); });
+
+  /* speed */
+  var speedsWrap=document.getElementById("speeds");
+  function applySpeed(v){ speed=v; localStorage.setItem("st-speed",String(v));
+    speedBtn.innerHTML=(v%1===0?v:v.toFixed(2).replace(/0$/,""))+"&times;";
+    if(mode==="audio") audio.playbackRate=v;
+    Array.prototype.forEach.call(speedsWrap.children,function(b){ b.classList.toggle("on",parseFloat(b.dataset.v)===v); }); updateRemaining(); }
+  SPEEDS.forEach(function(v){ var b=document.createElement("button"); b.dataset.v=v;
+    b.textContent=(v%1===0?v:v.toFixed(2).replace(/0$/,""))+"\u00d7";
+    b.addEventListener("click",function(){ applySpeed(v); }); speedsWrap.appendChild(b); });
+  speedBtn.addEventListener("click",function(){ var i=SPEEDS.indexOf(speed); applySpeed(SPEEDS[(i+1)%SPEEDS.length]); });
+  applySpeed(speed);
+
+  /* settings menu */
+  var voiceMenu=document.getElementById("voiceMenu");
+  document.getElementById("voiceToggle").addEventListener("click",function(e){ e.stopPropagation(); voiceMenu.classList.toggle("open"); });
+  document.addEventListener("click",function(e){ if(!voiceMenu.contains(e.target)&&e.target.id!=="voiceToggle") voiceMenu.classList.remove("open"); });
+  document.getElementById("vol").addEventListener("input",function(){ audio.volume=parseFloat(this.value); });
+  document.getElementById("capToggle").addEventListener("change",function(){ showCaptions=this.checked;
+    if(!showCaptions) capEl.classList.remove("show"); else if(playing) buildCaption(activeIndex); });
+
+  var voiceSelect=document.getElementById("voiceSelect"), ttsRow=document.getElementById("ttsRow");
+  var PREF=["Samantha","Serena","Allison","Ava","Daniel","Karen","Moira","Google UK English Female","Google US English","Microsoft Aria"];
+  function pickDefault(list){ for(var i=0;i<PREF.length;i++)for(var j=0;j<list.length;j++) if(list[j].name.indexOf(PREF[i])!==-1) return list[j];
+    for(var k=0;k<list.length;k++) if(/^en/i.test(list[k].lang)) return list[k]; return list[0]||null; }
+  function loadVoices(){ if(!ttsOK)return; voices=synth.getVoices().filter(function(v){return /^en/i.test(v.lang);}); if(!voices.length)voices=synth.getVoices();
+    voiceSelect.innerHTML=""; voices.forEach(function(v,i){ var o=document.createElement("option"); o.value=i; o.textContent=v.name; voiceSelect.appendChild(o); });
+    if(!chosenVoice)chosenVoice=pickDefault(voices); if(chosenVoice){ var ci=voices.indexOf(chosenVoice); if(ci>=0)voiceSelect.value=ci; } }
+  voiceSelect.addEventListener("change",function(){ chosenVoice=voices[parseInt(voiceSelect.value,10)]||chosenVoice; });
+  if(ttsOK){ loadVoices(); if(synth.onvoiceschanged!==undefined) synth.onvoiceschanged=loadVoices;
+    setInterval(function(){ if(playing&&!paused&&mode==="tts"&&synth.speaking){ synth.pause(); synth.resume(); } },12000); }
+  if(!HAS_AUDIO){ ttsRow.style.display="flex"; modeFlag.textContent=ttsOK?"Browser voice":"unavailable"; }
+  else { modeFlag.textContent="ElevenLabs"; }
+
+  addEventListener("beforeunload",function(){ if(playing&&mode==="audio") saveProgress(activeIndex,audio.currentTime,false); if(ttsOK) synth.cancel(); try{audio.pause();}catch(e){} });
+  document.addEventListener("keydown",function(e){ if(e.code==="Space"&&player.classList.contains("show")&&e.target===document.body){ e.preventDefault(); playBtn.click(); } });
+  setActive(0,false);
+
+  // arrived here from a "resume" link on the library card -> jump straight in
+  try{ var _q=new URLSearchParams(location.search);
+    if(_q.has("at") && savedProg && !savedProg.done && savedProg.scene>0){
+      autoArm=true; startNarration(savedProg.scene, savedProg.t||0); }
+  }catch(e){}
+})();
+</script>
+</body>
+</html>

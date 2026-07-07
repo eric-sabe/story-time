@@ -97,11 +97,19 @@ function stripTags(s) {
   return String(s || "").replace(/<[^>]*>/g, "").replace(/\s+/g, " ").trim();
 }
 
+// A figure the source paper provides, shown inside a scene. Images live in <id>/img/.
+function figureHtml(src, alt, cap) {
+  return '<figure class="figure"><a class="figlink" href="img/' + src + '" target="_blank" rel="noopener">' +
+    '<img src="img/' + src + '" alt="' + esc(alt || "") + '" loading="lazy"></a>' +
+    (cap ? '<figcaption>' + cap + "</figcaption>" : "") + "</figure>";
+}
+
 // A content scene may be "native" ({hue,sub,body,narration}) or "data"
 // ({hue,eyebrow,title,bodyHtml,narration,stats,num}). Normalize both.
 function normContentScene(s) {
   let body = s.body != null ? s.body : decodeEntities(s.bodyHtml || "");
   if (s.stats && s.stats.length && !/class="stats"/.test(body)) body += renderStats(s.stats);
+  if (s.img) body += figureHtml(s.img, s.imgAlt, s.imgCaption);
   const sub = s.sub || stripTags(s.eyebrow) || "";
   return { hue: s.hue || "gold", sub, body, narration: s.narration || "", wide: !!s.wide };
 }
@@ -433,6 +441,15 @@ const EXPERIENCE_TEMPLATE = `<!doctype html>
   .chips span { font-family:var(--mono); font-size:.72rem; letter-spacing:.04em; color:var(--accent);
     border:1px solid color-mix(in oklab, var(--accent) 45%, transparent); border-radius:999px; padding:.34rem .8rem; }
   .capnote { font-size:1.06rem; color:var(--text); margin-top:1.2rem; }
+
+  .figure { margin:2.2rem 0 0; background:#F6F3EC; border-radius:16px; padding:1.1rem;
+    border:1px solid rgba(0,0,0,.06); box-shadow:0 18px 50px -26px rgba(0,0,0,.85); }
+  .figure .figlink { display:block; }
+  .figure img { display:block; width:100%; height:auto; border-radius:9px; }
+  .figure figcaption { font-family:var(--mono); font-size:.66rem; letter-spacing:.02em; text-transform:none;
+    color:#6b665e; margin-top:.75rem; line-height:1.55; }
+  .figure figcaption b { color:#2c2a26; font-weight:600; }
+  @media (max-width:600px){ .figure{ padding:.7rem; } }
 
   #s0 .inner { max-width:47rem; }
   .kicker { font-family:var(--mono); font-size:.7rem; letter-spacing:.24em; text-transform:uppercase; color:var(--faint); margin:0 0 1.4rem; }
