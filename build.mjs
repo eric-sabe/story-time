@@ -373,6 +373,8 @@ const EXPERIENCE_TEMPLATE = `<!doctype html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>__TITLE__ — Story Time</title>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<meta name="theme-color" content="#0B0E14">
 <style>
   @property --grad-a { syntax: '<color>'; inherits: true; initial-value: #0B0E14; }
   @property --grad-b { syntax: '<color>'; inherits: true; initial-value: #12172400; }
@@ -854,6 +856,8 @@ const LIBRARY_TEMPLATE = `<!doctype html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Story Time — Anthropic, read aloud</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<meta name="theme-color" content="#0B0E14">
 <style>
   :root {
     --ink:#0B0E14; --ink2:#0E1219; --text:#F4EFE6; --muted:#98A2B4; --faint:#5A6274;

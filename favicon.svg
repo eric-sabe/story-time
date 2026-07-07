@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <radialGradient id="glow" cx="50%" cy="58%" r="60%">
+      <stop offset="0%" stop-color="#F2C879" stop-opacity=".38"/>
+      <stop offset="45%" stop-color="#F2C879" stop-opacity=".12"/>
+      <stop offset="100%" stop-color="#F2C879" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="tri" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#F7D693"/>
+      <stop offset="100%" stop-color="#E9B85C"/>
+    </linearGradient>
+  </defs>
+
+  <!-- ink ground -->
+  <rect width="64" height="64" rx="14" fill="#0B0E14"/>
+  <!-- dawn glow -->
+  <rect width="64" height="64" rx="14" fill="url(#glow)"/>
+
+  <!-- meadow of light -->
+  <circle cx="14" cy="15" r="1.1" fill="#F2C879" opacity=".55"/>
+  <circle cx="50" cy="11" r="0.9" fill="#F2C879" opacity=".4"/>
+  <circle cx="55" cy="27" r="1.0" fill="#F2C879" opacity=".3"/>
+  <circle cx="10" cy="38" r="0.9" fill="#F2C879" opacity=".3"/>
+  <circle cx="45" cy="52" r="1.0" fill="#F2C879" opacity=".35"/>
+
+  <!-- the reading: a play triangle rising like a sun -->
+  <path d="M26.5 21.5 L44.5 32 L26.5 42.5 Z"
+        fill="url(#tri)" stroke="url(#tri)" stroke-width="7" stroke-linejoin="round"/>
+</svg>
