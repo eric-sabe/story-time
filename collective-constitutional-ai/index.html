@@ -114,11 +114,15 @@
   .fnote { font-family:var(--mono); font-size:.66rem; letter-spacing:.1em; color:var(--faint); margin-top:2rem; text-transform:uppercase; }
 
   /* back to library */
-  #back { position:fixed; top:1rem; left:1rem; z-index:45; display:inline-flex; align-items:center; gap:.5rem;
-    font-family:var(--mono); font-size:.68rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted);
-    text-decoration:none; padding:.5rem .8rem; border-radius:999px; border:1px solid rgba(244,239,230,.12);
-    background:rgba(14,18,26,.55); backdrop-filter:blur(10px); transition:color .2s, border-color .2s; }
+  #controls { display:flex; align-items:stretch; gap:.55rem; max-width:100%; }
+  #back { display:inline-flex; align-items:center; justify-content:center; gap:.5rem; flex:none; pointer-events:auto;
+    font-family:var(--mono); font-size:.66rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted);
+    text-decoration:none; padding:0 1rem; border-radius:999px; border:1px solid rgba(244,239,230,.12);
+    background:rgba(14,18,26,.72); backdrop-filter:blur(16px) saturate(1.3); -webkit-backdrop-filter:blur(16px) saturate(1.3);
+    box-shadow:0 18px 50px -18px rgba(0,0,0,.8); transition:color .2s, border-color .2s; }
   #back:hover { color:var(--text); border-color:rgba(244,239,230,.3); }
+  #back:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+  #back .bico { font-size:1.1em; }
 
   /* caption */
   #capscrim { position:fixed; left:0; right:0; bottom:0; height:16rem; z-index:37; pointer-events:none;
@@ -202,7 +206,9 @@
     .scene{ padding:12vh clamp(1.3rem,6vw,7rem); }
     #s0 .inner{ max-width:100%; }
     .stat{ min-width:6.5rem; }
-    #back{ font-size:.6rem; top:.7rem; left:.7rem; padding:.45rem .7rem; }
+    #back{ align-self:center; width:42px; height:42px; padding:0; }
+    #back .blbl{ display:none; }
+    #back .bico{ font-size:1.2em; }
   }
 </style>
 </head>
@@ -211,7 +217,6 @@
 <canvas id="meadow"></canvas>
 <div id="grain"></div>
 <div id="topbar"></div>
-<a id="back" href="../index.html">← Story Time</a>
 
 <main>
   <section class="scene hero" id="s0" data-hue="sage">
@@ -294,6 +299,8 @@
 <audio id="narrator" preload="none"></audio>
 
 <div id="dock">
+<div id="controls">
+<a id="back" href="../index.html" aria-label="Back to Story Time"><span class="bico">&larr;</span><span class="blbl">Story Time</span></a>
 <div id="player" aria-label="Narration controls">
   <button class="pbtn" id="prevBtn" title="Previous" aria-label="Previous scene">
     <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 6v12l-8.5-6L18 6zM7 6h2v12H7z"/></svg></button>
@@ -321,6 +328,7 @@
       <div class="row" id="ttsRow" style="display:none"><label>Voice</label><select id="voiceSelect" style="max-width:9rem"></select></div>
     </div>
   </div>
+</div>
 </div>
 <div id="caption" aria-live="off"></div>
 </div>
